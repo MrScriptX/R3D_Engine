@@ -1,41 +1,56 @@
-#include <vulkan/vulkan.h>
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW\glfw3.h>
 
 #include <iostream>
 #include <stdexcept>
-#include <functional>
 
-class HelloTriangleApplication {
+class HelloTriangleApplication 
+{
 public:
 	void run() {
+		initWindow();
 		initVulkan();
 		mainLoop();
 		cleanup();
 	}
 
 private:
-	void initVulkan() {
+	void initWindow()
+	{
+		glfwInit();
+
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+		m_window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
+	}
+	void initVulkan() 
+	{
 
 	}
 
-	void mainLoop() {
-
+	void mainLoop() 
+	{
+		while (!glfwWindowShouldClose(m_window))
+		{
+			glfwPollEvents();
+		}
 	}
 
-	void cleanup() {
+	void cleanup()
+	{
+		glfwDestroyWindow(m_window);
 
+		glfwTerminate();
 	}
+
+	GLFWwindow * m_window;
 };
 
 int main() {
 	HelloTriangleApplication app;
 
-	try {
-		app.run();
-	}
-	catch (const std::runtime_error& e) {
-		std::cerr << e.what() << std::endl;
-		return EXIT_FAILURE;
-	}
+	app.run();
 
-	return EXIT_SUCCESS;
+	return 0;
 }
