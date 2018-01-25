@@ -17,7 +17,7 @@ public:
 private:
 	void createInstance()
 	{
-		VkApplicationInfo info = {};
+		VkApplicationInfo info = {};//caract de l'app
 		info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;//type of the app
 		info.pApplicationName = "Hello Triangle";//name of app
 		info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);//version of ???
@@ -25,7 +25,7 @@ private:
 		info.engineVersion = VK_MAKE_VERSION(1, 0, 0);//version of ???
 		info.apiVersion = VK_API_VERSION_1_0;//version of vulkan api
 
-		VkInstanceCreateInfo createInfo = {};
+		VkInstanceCreateInfo createInfo = {};//carac de l'instance Vk
 		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo = &info;
 
@@ -65,6 +65,8 @@ private:
 
 	void cleanup()
 	{
+		vkDestroyInstance(m_instance, nullptr);
+
 		glfwDestroyWindow(m_window);
 
 		glfwTerminate();
@@ -77,7 +79,7 @@ private:
 int main()
 {
 	HelloTriangleApplication app;
-
+	
 	app.run();
 
 	return 0;
