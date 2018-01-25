@@ -47,7 +47,8 @@ private:
 	GLFWwindow * m_window;
 };
 
-int main() {
+int main()
+{
 	HelloTriangleApplication app;
 
 	app.run();
