@@ -15,6 +15,32 @@ public:
 	}
 
 private:
+	void createInstance()
+	{
+		VkApplicationInfo info = {};
+		info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;//type of the app
+		info.pApplicationName = "Hello Triangle";//name of app
+		info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);//version of ???
+		info.pEngineName = "No engine";//name of what???
+		info.engineVersion = VK_MAKE_VERSION(1, 0, 0);//version of ???
+		info.apiVersion = VK_API_VERSION_1_0;//version of vulkan api
+
+		VkInstanceCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		createInfo.pApplicationInfo = &info;
+
+		uint32_t glfwExtensionCount = 0;
+		const char** glfwExtensions;
+
+		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+		createInfo.enabledExtensionCount = glfwExtensionCount;
+		createInfo.ppEnabledExtensionNames = glfwExtensions;
+		createInfo.enabledLayerCount = 0;
+
+		VkResult result = vkCreateInstance(&createInfo, nullptr, &m_instance);
+	}
+
 	void initWindow()
 	{
 		glfwInit();
@@ -26,7 +52,7 @@ private:
 	}
 	void initVulkan() 
 	{
-
+		createInstance();
 	}
 
 	void mainLoop() 
@@ -44,6 +70,7 @@ private:
 		glfwTerminate();
 	}
 
+	VkInstance m_instance;
 	GLFWwindow * m_window;
 };
 
