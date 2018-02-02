@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <vector>
+
 
 class HelloTriangleApplication 
 {
