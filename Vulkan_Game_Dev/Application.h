@@ -43,9 +43,12 @@ public:
 	void createInstance();
 	void setupCallBack();
 	void pickPhysicalDevice();
-	void createLoginDevice();
+	void createLogicalDevice();
 
+	bool checkValidationLayerSupport();
 	bool isDeviceSuitable(VkPhysicalDevice device);
+
+	std::vector<const char*> getRequiredExtensions();
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 	static VkResult createDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback);

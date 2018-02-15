@@ -33,7 +33,13 @@ void Application::mainLoop()
 
 void Application::clean()
 {
+	vkDestroyDevice(m_device, nullptr);
+	destroyDebugReportCallbackEXT(m_instance, callback, nullptr);
+	vkDestroyInstance(m_instance, nullptr);
 
+	glfwDestroyWindow(m_window);
+
+	glfwTerminate();
 }
 
 void Application::initWindow()
@@ -51,13 +57,18 @@ void Application::initVulkan()
 	createInstance();
 	setupCallBack();
 	pickPhysicalDevice();
+	createLogicalDevice();
 }
 
 void Application::createInstance()
 {
+	if (enableValidationLayers && !checkValidationLayerSupport())
+	{
+		throw std::runtime_error("validation layers requested, but not available!");
+	}
+
 	VkApplicationInfo appInfo = {};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	appInfo.pNext = NULL;
 	appInfo.pApplicationName = "App name";//name of app
 	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);//API version
 	appInfo.pEngineName = "No engine";//name
@@ -68,17 +79,23 @@ void Application::createInstance()
 	info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	info.pApplicationInfo = &appInfo;
 
-	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions;
+	auto extensions = getRequiredExtensions();
+	info.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+	info.ppEnabledExtensionNames = extensions.data();
 
-	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+	if (enableValidationLayers) {
+		info.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+		info.ppEnabledLayerNames = validationLayers.data();
+	}
+	else
+	{
+		info.enabledLayerCount = 0;
+	}
 
-	info.enabledExtensionCount = glfwExtensionCount;
-	info.ppEnabledExtensionNames = glfwExtensions;
-	info.enabledLayerCount = 0;
-
-	VkResult result = vkCreateInstance(&info, nullptr, &m_instance);
-	assert(result == VK_SUCCESS);
+	if (vkCreateInstance(&info, nullptr, &m_instance) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create instance!");
+	}
 }
 
 void Application::setupCallBack()
@@ -124,7 +141,7 @@ void Application::pickPhysicalDevice()
 	}
 }
 
-void Application::createLoginDevice()
+void Application::createLogicalDevice()
 {
 	QueueFamilyIndices indices = findQueueFamilies(m_physicalDevice);
 
@@ -166,11 +183,57 @@ void Application::createLoginDevice()
 	vkGetDeviceQueue(m_device, indices.graphicsFamily, 0, &m_graphicsQueue);
 }
 
+bool Application::checkValidationLayerSupport()
+{
+	uint32_t layerCount;
+	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+	std::vector<VkLayerProperties> availableLayers(layerCount);
+	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+	for (const char* layerName : validationLayers)
+	{
+		bool layerFound = false;
+
+		for (const auto& layerProperties : availableLayers)
+		{
+			if (strcmp(layerName, layerProperties.layerName) == 0)
+			{
+				layerFound = true;
+				break;
+			}
+		}
+
+		if (!layerFound)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool Application::isDeviceSuitable(VkPhysicalDevice device)
 {
 	QueueFamilyIndices indices = findQueueFamilies(device);
 
 	return indices.isComplete();
+}
+
+std::vector<const char*> Application::getRequiredExtensions()
+{
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions;
+	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
+	if (enableValidationLayers)
+	{
+		extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+	}
+
+	return extensions;
 }
 
 QueueFamilyIndices Application::findQueueFamilies(VkPhysicalDevice device)
