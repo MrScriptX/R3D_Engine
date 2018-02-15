@@ -19,6 +19,7 @@ void Application::run()
 {
 	initWindow();
 	initVulkan();
+	createSurface();//added here
 	mainLoop();
 	clean();
 }
@@ -35,6 +36,7 @@ void Application::clean()
 {
 	vkDestroyDevice(m_device, nullptr);
 	destroyDebugReportCallbackEXT(m_instance, callback, nullptr);
+	vkDestroySurfaceKHR(m_instance, m_surface, nullptr);//new line
 	vkDestroyInstance(m_instance, nullptr);
 
 	glfwDestroyWindow(m_window);
@@ -58,6 +60,14 @@ void Application::initVulkan()
 	setupCallBack();
 	pickPhysicalDevice();
 	createLogicalDevice();
+}
+
+void Application::createSurface()
+{
+	if (glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface) != VK_SUCCESS) 
+	{
+		throw std::runtime_error("failed to create window surface!");
+	}
 }
 
 void Application::createInstance()
@@ -253,6 +263,14 @@ QueueFamilyIndices Application::findQueueFamilies(VkPhysicalDevice device)
 		{
 			indices.graphicsFamily = i;
 		}
+
+		VkBool32 presentSupport = false;//
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);//
+
+		if (queueFamily.queueCount > 0 && presentSupport)//
+		{
+			indices.presentationFamily = i;//
+		}//
 
 		if (indices.isComplete())
 		{

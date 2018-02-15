@@ -20,10 +20,11 @@ const bool enableValidationLayers = true;
 struct QueueFamilyIndices
 {
 	int graphicsFamily = -1;
+	int presentationFamily = -1;//added preFamily
 
 	bool isComplete()
 	{
-		return graphicsFamily >= 0;
+		return graphicsFamily >= 0 && presentationFamily >= 0;
 	}
 };
 
@@ -40,6 +41,7 @@ public:
 	void initWindow();
 	void initVulkan();
 
+	void createSurface();//new fonction
 	void createInstance();
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -57,6 +59,7 @@ public:
 
 private:
 	VkDebugReportCallbackEXT callback;
+	VkSurfaceKHR m_surface;
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
 	VkDevice m_device;
 	VkQueue m_graphicsQueue;
