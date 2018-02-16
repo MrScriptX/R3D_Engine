@@ -9,6 +9,7 @@
 
 
 const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
+const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };//
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -28,6 +29,13 @@ struct QueueFamilyIndices
 	}
 };
 
+struct SwapChainSupportDetails
+{
+	VkSurfaceCapabilitiesKHR capabilities;
+	std::vector<VkSurfaceFormatKHR> formats;
+	std::vector<VkPresentModeKHR> presentModes;
+};
+
 class Application
 {
 public:
@@ -43,13 +51,20 @@ public:
 
 	void createSurface();//new fonction
 	void createInstance();
+	void createLogicalDevice();
+	void createSwapChain();
 	void setupCallBack();
 	void pickPhysicalDevice();
-	void createLogicalDevice();
 
+	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool checkValidationLayerSupport();
 	bool isDeviceSuitable(VkPhysicalDevice device);
 
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
+	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
+	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 	std::vector<const char*> getRequiredExtensions();
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
@@ -64,6 +79,12 @@ private:
 	VkDevice m_device;
 	VkQueue m_graphicsQueue;
 	VkInstance m_instance;
+	VkSwapchainKHR m_swapChain;
 	GLFWwindow * m_window;
+	VkQueue m_presentQueue;
+	std::vector<VkImage> m_swapChainImages;
+
+	VkFormat m_swapChainImageFormat;
+	VkExtent2D m_swapChainExtent;
 };
 
