@@ -441,7 +441,7 @@ QueueFamilyIndices Application::findQueueFamilies(VkPhysicalDevice device)
 		VkBool32 presentSupport = false;//
 		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);//
 
-		if (queueFamily.queueCount > 0 && presentSupport)//
+		if (queueFamily.queueCount > 0 && presentSupport)//execption occurs here
 		{
 			indices.presentationFamily = i;//
 		}//
