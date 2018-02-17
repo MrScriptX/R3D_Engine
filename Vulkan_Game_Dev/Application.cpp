@@ -21,7 +21,6 @@ void Application::run()
 {
 	initWindow();
 	initVulkan();
-	createSurface();//added here
 	mainLoop();
 	clean();
 }
@@ -61,6 +60,7 @@ void Application::initVulkan()
 {
 	createInstance();
 	setupCallBack();
+	createSurface();
 	pickPhysicalDevice();
 	createLogicalDevice();
 }
