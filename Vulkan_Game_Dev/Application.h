@@ -53,6 +53,7 @@ public:
 	void createInstance();
 	void createLogicalDevice();
 	void createSwapChain();
+	void createImageView();
 	void setupCallBack();
 	void pickPhysicalDevice();
 
@@ -79,12 +80,13 @@ private:
 	VkDevice m_device;
 	VkQueue m_graphicsQueue;
 	VkInstance m_instance;
-	VkSwapchainKHR m_swapChain;
 	GLFWwindow * m_window;
 	VkQueue m_presentQueue;
-	std::vector<VkImage> m_swapChainImages;
 
+	std::vector<VkImage> m_swapChainImages;
+	std::vector<VkImageView> m_swapChainImageViews;
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
+	VkSwapchainKHR m_swapChain;
 };
 
