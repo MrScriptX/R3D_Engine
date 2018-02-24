@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <fstream>
 
 
 const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
@@ -73,6 +74,12 @@ public:
 	static void destroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData);
 
+
+	//new fonction
+	void createPipeline();
+	VkShaderModule createShaderModule(const std::vector<char>& code);
+	std::vector<char> loadFromFile(const std::string& filename);
+
 private:
 	VkDebugReportCallbackEXT callback;
 	VkSurfaceKHR m_surface;
@@ -88,5 +95,7 @@ private:
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
+
+	//new 
 };
 
