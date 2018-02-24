@@ -392,7 +392,7 @@ VkSurfaceFormatKHR Application::chooseSwapSurfaceFormat(const std::vector<VkSurf
 		}
 	}
 
-	return availableFormats[0]; //do a ranking 
+	return availableFormats[0]; 
 }
 
 VkExtent2D Application::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabilities)
@@ -473,13 +473,13 @@ QueueFamilyIndices Application::findQueueFamilies(VkPhysicalDevice device)
 			indices.graphicsFamily = i;
 		}
 
-		VkBool32 presentSupport = false;//
-		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);//
+		VkBool32 presentSupport = false;
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
 
-		if (queueFamily.queueCount > 0 && presentSupport)//execption occurs here
+		if (queueFamily.queueCount > 0 && presentSupport)
 		{
-			indices.presentationFamily = i;//
-		}//
+			indices.presentationFamily = i;
+		}
 
 		if (indices.isComplete())
 		{
@@ -519,6 +519,28 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Application::debugCallback(VkDebugReportFlagsEXT 
 	std::cerr << "validation layer: " << msg << std::endl;
 
 	return VK_FALSE;
+}
+
+void Application::createPipeline()
+{
+	auto vertShader = loadFromFile("shader\\vert.spv");
+	auto fragShader = loadFromFile("shader\\frag.spv");
+}
+
+VkShaderModule Application::createShaderModule(const std::vector<char>& code)
+{
+	VkShaderModuleCreateInfo createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = code.size();
+	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+	VkShaderModule shaderModule;
+	if (vkCreateShaderModule(m_device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Failed to create shader module!");
+	}
+
+	return shaderModule;
 }
 
 std::vector<char> Application::loadFromFile(const std::string & filename)
