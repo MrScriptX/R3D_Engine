@@ -79,6 +79,7 @@ public:
 	void createPipeline();
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 	std::vector<char> loadFromFile(const std::string& filename);
+	void createRenderPass();
 
 private:
 	VkDebugReportCallbackEXT callback;
@@ -97,6 +98,8 @@ private:
 	VkSwapchainKHR m_swapChain;
 
 	//new 
-
+	VkPipeline m_graphicsPipeline;
+	VkRenderPass m_renderPass;
+	VkPipelineLayout m_pipelineLayout;
 };
 
