@@ -1,8 +1,7 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW\glfw3.h>
 
+#include "Pipeline.h"
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -74,13 +73,6 @@ public:
 	static void destroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData);
 
-
-	//new fonction
-	void createPipeline();
-	VkShaderModule createShaderModule(const std::vector<char>& code);
-	std::vector<char> loadFromFile(const std::string& filename);
-	void createRenderPass();
-
 private:
 	VkDebugReportCallbackEXT callback;
 	VkSurfaceKHR m_surface;
@@ -97,9 +89,6 @@ private:
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
 
-	//new 
-	VkPipeline m_graphicsPipeline;
-	VkRenderPass m_renderPass;
-	VkPipelineLayout m_pipelineLayout;
+	Pipeline m_pipeline;
 };
 
