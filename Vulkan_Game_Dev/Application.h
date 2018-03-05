@@ -44,6 +44,7 @@ public:
 
 	void run();
 	void mainLoop();
+	void drawFrame();
 	void clean();
 	
 	void initWindow();
@@ -57,6 +58,7 @@ public:
 	void createFrameBuffer();
 	void createCommandPool();
 	void createCommandBuffer();
+	void createSemaphore();
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -100,5 +102,8 @@ private:
 	std::vector<VkFramebuffer> m_swapChainFrameBuffer;
 	std::vector<VkCommandBuffer> m_commandBuffer;
 	VkCommandPool m_commandPool;
+
+	VkSemaphore m_imageAvailable;
+	VkSemaphore m_renderFinished;
 };
 
