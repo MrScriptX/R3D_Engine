@@ -212,3 +212,8 @@ VkRenderPass * Pipeline::getRenderPass()
 {
 	return &m_renderPass;
 }
+
+VkPipeline * Pipeline::getPipeline()
+{
+	return &m_graphicsPipeline;
+}

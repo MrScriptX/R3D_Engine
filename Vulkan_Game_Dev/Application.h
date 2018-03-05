@@ -75,6 +75,8 @@ public:
 
 	//new
 	void createFrameBuffer();
+	void createCommandPool();
+	void createCommandBuffer();
 
 private:
 	VkDebugReportCallbackEXT callback;
@@ -96,5 +98,7 @@ private:
 
 	//new
 	std::vector<VkFramebuffer> m_swapChainFrameBuffer;
+	VkCommandPool m_commandPool;
+	std::vector<VkCommandBuffer> m_commandBuffer;
 };
 
