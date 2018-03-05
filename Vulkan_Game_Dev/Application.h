@@ -54,6 +54,10 @@ public:
 	void createLogicalDevice();
 	void createSwapChain();
 	void createImageView();
+	void createFrameBuffer();
+	void createCommandPool();
+	void createCommandBuffer();
+
 	void setupCallBack();
 	void pickPhysicalDevice();
 
@@ -73,10 +77,6 @@ public:
 	static void destroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData);
 
-	//new
-	void createFrameBuffer();
-	void createCommandPool();
-	void createCommandBuffer();
 
 private:
 	VkDebugReportCallbackEXT callback;
@@ -98,7 +98,7 @@ private:
 
 	//new
 	std::vector<VkFramebuffer> m_swapChainFrameBuffer;
-	VkCommandPool m_commandPool;
 	std::vector<VkCommandBuffer> m_commandBuffer;
+	VkCommandPool m_commandPool;
 };
 
