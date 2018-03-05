@@ -90,5 +90,6 @@ private:
 	VkSwapchainKHR m_swapChain;
 
 	Pipeline m_pipeline;
+
 };
 
