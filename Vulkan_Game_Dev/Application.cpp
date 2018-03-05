@@ -30,11 +30,59 @@ void Application::mainLoop()
 	while (!glfwWindowShouldClose(m_window))
 	{
 		glfwPollEvents();
+		drawFrame();
 	}
+
+	vkDeviceWaitIdle(m_device);
+}
+
+void Application::drawFrame()
+{
+	//update app state here
+
+	vkQueueWaitIdle(m_presentQueue);
+
+	uint32_t imageIndex;
+	vkAcquireNextImageKHR(m_device, m_swapChain, std::numeric_limits<uint64_t>::max(), m_imageAvailable, VK_NULL_HANDLE, &imageIndex);
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+	VkSemaphore waitSemaphore[] = { m_imageAvailable };
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = waitSemaphore;
+	submitInfo.pWaitDstStageMask = waitStages;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &m_commandBuffer[imageIndex];
+
+	VkSemaphore signalSemaphore[] = { m_renderFinished };
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = signalSemaphore;
+
+	if (vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to submit draw command buffer!");
+	}
+
+	VkPresentInfoKHR presentInfo = {};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+	presentInfo.waitSemaphoreCount = 1;
+	presentInfo.pWaitSemaphores = signalSemaphore;
+
+	VkSwapchainKHR swapChains[] = { m_swapChain };
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = swapChains;
+	presentInfo.pImageIndices = &imageIndex;
+	presentInfo.pResults = nullptr;
+
+	vkQueuePresentKHR(m_presentQueue, &presentInfo);
 }
 
 void Application::clean()
 {
+	vkDestroySemaphore(m_device, m_renderFinished, nullptr);
+	vkDestroySemaphore(m_device, m_imageAvailable, nullptr);
 	vkDestroyCommandPool(m_device, m_commandPool, nullptr);
 
 	for (auto frameBuffer : m_swapChainFrameBuffer)
@@ -60,6 +108,11 @@ void Application::clean()
 	glfwTerminate();
 }
 
+
+
+/**************************** Init fonctions ****************************************/
+/************************************************************************************/
+
 void Application::initWindow()
 {
 	glfwInit();
@@ -84,7 +137,12 @@ void Application::initVulkan()
 	createFrameBuffer();
 	createCommandPool();
 	createCommandBuffer();
+	createSemaphore();
 }
+
+
+/**************************** Create fonctions ****************************************/
+/**************************************************************************************/
 
 void Application::createSurface()
 {
@@ -277,7 +335,7 @@ void Application::createFrameBuffer()
 
 		VkFramebufferCreateInfo framebufferInfo = {};
 		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass = m_pipeline.getRenderPass;
+		framebufferInfo.renderPass = *m_pipeline.getRenderPass();
 		framebufferInfo.attachmentCount = 1;
 		framebufferInfo.pAttachments = attachement;
 		framebufferInfo.width = m_swapChainExtent.width;
@@ -352,6 +410,22 @@ void Application::createCommandBuffer()
 		}
 	}
 }
+
+void Application::createSemaphore()
+{
+	VkSemaphoreCreateInfo semaphoreInfo = {};
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+	if (vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_imageAvailable) != VK_SUCCESS ||
+		vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_renderFinished) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create semaphore!");
+	}
+}
+
+
+/**************************** Init fonctions ****************************************/
+/************************************************************************************/
 
 void Application::setupCallBack()
 {
