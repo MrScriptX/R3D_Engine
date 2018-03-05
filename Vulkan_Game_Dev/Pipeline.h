@@ -23,6 +23,7 @@ public:
 	//new
 	VkRenderPass* getRenderPass();
 	VkPipeline* getPipeline();
+
 private:
 	VkPipeline m_graphicsPipeline;
 	VkRenderPass m_renderPass;
