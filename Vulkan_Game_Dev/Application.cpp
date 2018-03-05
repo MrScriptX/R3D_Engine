@@ -40,7 +40,7 @@ void Application::drawFrame()
 {
 	//update app state here
 
-	vkQueueWaitIdle(m_presentQueue);
+	vkQueueWaitIdle(m_presentQueue);//not needed if validation layer are disable
 
 	uint32_t imageIndex;
 	vkAcquireNextImageKHR(m_device, m_swapChain, std::numeric_limits<uint64_t>::max(), m_imageAvailable, VK_NULL_HANDLE, &imageIndex);
