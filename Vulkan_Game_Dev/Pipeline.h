@@ -20,6 +20,8 @@ public:
 
 	std::vector<char> loadFromFile(const std::string& filename);
 	
+	//new
+	VkRenderPass* getRenderPass();
 private:
 	VkPipeline m_graphicsPipeline;
 	VkRenderPass m_renderPass;

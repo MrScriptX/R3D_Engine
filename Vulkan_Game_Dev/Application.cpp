@@ -35,6 +35,11 @@ void Application::mainLoop()
 
 void Application::clean()
 {
+	for (auto frameBuffer : m_swapChainFrameBuffer)
+	{
+		vkDestroyFramebuffer(m_device, frameBuffer, nullptr);
+	}
+
 	m_pipeline.clean(m_device);
 
 	for (auto imageView : m_swapChainImageViews)
@@ -74,6 +79,7 @@ void Application::initVulkan()
 	createImageView();
 	m_pipeline.createRenderPass(m_device, m_swapChainImageFormat);
 	m_pipeline.createPipeline(m_device, m_swapChainExtent);
+	createFrameBuffer();
 }
 
 void Application::createSurface()
@@ -523,4 +529,28 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Application::debugCallback(VkDebugReportFlagsEXT 
 	std::cerr << "validation layer: " << msg << std::endl;
 
 	return VK_FALSE;
+}
+
+void Application::createFrameBuffer()
+{
+	m_swapChainFrameBuffer.resize(m_swapChainImageViews.size());//set vector size to hold all images
+
+	for (size_t i = 0; i < m_swapChainImageViews.size(); i++)
+	{
+		VkImageView attachement[] = { m_swapChainImageViews[i] };
+
+		VkFramebufferCreateInfo framebufferInfo = {};
+		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferInfo.renderPass = m_pipeline.getRenderPass;
+		framebufferInfo.attachmentCount = 1;
+		framebufferInfo.pAttachments = attachement;
+		framebufferInfo.width = m_swapChainExtent.width;
+		framebufferInfo.height = m_swapChainExtent.height;
+		framebufferInfo.layers = 1;
+
+		if (vkCreateFramebuffer(m_device, &framebufferInfo, nullptr, &m_swapChainFrameBuffer[i]) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create frame buffer!");
+		}
+	}
 }
