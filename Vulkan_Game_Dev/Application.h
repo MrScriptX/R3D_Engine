@@ -50,8 +50,8 @@ public:
 	void initWindow();
 	void initVulkan();
 
+	void createInstance();//create a vulkan instance
 	void createSurface();
-	void createInstance();
 	void createLogicalDevice();
 	void createSwapChain();
 	void createImageView();
