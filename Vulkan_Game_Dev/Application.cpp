@@ -30,6 +30,8 @@ void Application::mainLoop()
 	while (!glfwWindowShouldClose(m_window))
 	{
 		glfwPollEvents();
+
+		updateUniformBuffer();
 		drawFrame();
 	}
 
@@ -103,6 +105,8 @@ void Application::clean()
 {
 	cleanSwapChain();
 
+	vkDestroyDescriptorSetLayout(m_device, m_descriptorSetLayout, nullptr);
+
 	m_buffer.clean(m_device);
 
 	vkDestroySemaphore(m_device, m_renderFinished, nullptr);
@@ -147,11 +151,13 @@ void Application::initVulkan()
 	createSwapChain();
 	createImageView();
 	m_pipeline.createRenderPass(m_device, m_swapChainImageFormat);
-	m_pipeline.createPipeline(m_device, m_swapChainExtent);
+	createDescriptorSetLayout();
+	m_pipeline.createPipeline(m_device, m_swapChainExtent, m_descriptorSetLayout);
 	createFrameBuffer();
 	createCommandPool();
 	m_buffer.createVertexBuffer(m_device, m_commandPool, m_graphicsQueue, m_physicalDevice);
 	m_buffer.createIndexBuffer(m_device, m_commandPool, m_graphicsQueue, m_physicalDevice);
+	m_buffer.createUniformBuffer(m_device, m_commandPool, m_graphicsQueue, m_physicalDevice);
 	createCommandBuffer();
 	createSemaphore();
 }
@@ -347,7 +353,7 @@ void Application::recreateSwapChain()
 	createSwapChain();
 	createImageView();
 	m_pipeline.createRenderPass(m_device, m_swapChainImageFormat);
-	m_pipeline.createPipeline(m_device, m_swapChainExtent);
+	m_pipeline.createPipeline(m_device, m_swapChainExtent, m_descriptorSetLayout);
 	createFrameBuffer();
 	createCommandBuffer();
 }
@@ -484,6 +490,26 @@ void Application::createSemaphore()
 	}
 }
 
+void Application::createDescriptorSetLayout()
+{
+	VkDescriptorSetLayoutBinding uboBinding = {};
+	uboBinding.binding = 0;
+	uboBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	uboBinding.descriptorCount = 1;
+	uboBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	uboBinding.pImmutableSamplers = nullptr;
+
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = 1;
+	layoutInfo.pBindings = &uboBinding;
+
+	if (vkCreateDescriptorSetLayout(m_device, &layoutInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create descriptor set layout!");
+	}
+}
+
 
 
 /**************************** Init fonctions ****************************************/
@@ -530,6 +556,26 @@ void Application::pickPhysicalDevice()
 	{
 		throw std::runtime_error("Failed to find a suitable GPU!");
 	}
+}
+
+void Application::updateUniformBuffer()
+{
+	static auto startTime = std::chrono::high_resolution_clock::now();
+
+	auto currentTime = std::chrono::high_resolution_clock::now();
+	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+	UniformBufferObject ubo = {};
+	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(existing transform, rotation, axis to apply)
+	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(eye pos, center pos, up axis) 
+	ubo.proj = glm::perspective(glm::radians(45.0f), (float)m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1f, 10.0f);//(view angle, apsect ratio, far plane, near plane)
+
+	ubo.proj[1][1] *= -1;
+
+	void* data;
+	vkMapMemory(m_device, m_buffer.getUniformBufferMemory(), 0, sizeof(ubo), 0, &data);
+	memcpy(data, &ubo, sizeof(ubo));
+	vkUnmapMemory(m_device, m_buffer.getUniformBufferMemory());
 }
 
 bool Application::checkDeviceExtensionSupport(VkPhysicalDevice device)

@@ -23,6 +23,16 @@ VkBuffer Buffer::getIndexBuffer()
 	return m_indexBuffer;
 }
 
+VkBuffer Buffer::getUniformBuffer()
+{
+	return m_uniformBuffer;
+}
+
+VkDeviceMemory Buffer::getUniformBufferMemory()
+{
+	return m_uniformBufferMemory;
+}
+
 void Buffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer & buffer, VkDeviceMemory & bufferMemory, VkDevice & device, VkPhysicalDevice& physicalDevice)
 {
 	VkBufferCreateInfo bufferInfo = {};
@@ -88,6 +98,8 @@ void Buffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize siz
 
 void Buffer::clean(VkDevice& device)
 {
+	vkDestroyBuffer(device, m_uniformBuffer, nullptr);
+	vkFreeMemory(device, m_uniformBufferMemory, nullptr);
 	vkDestroyBuffer(device, m_indexBuffer, nullptr);
 	vkFreeMemory(device, m_indexBufferMemory, nullptr);
 	vkDestroyBuffer(device, m_vertexBuffer, nullptr);
@@ -134,6 +146,13 @@ void Buffer::createIndexBuffer(VkDevice & device, VkCommandPool& commandPool, Vk
 
 	vkDestroyBuffer(device, stagingMem, nullptr);
 	vkFreeMemory(device, stagingBufferMem, nullptr);
+}
+
+void Buffer::createUniformBuffer(VkDevice & device, VkCommandPool & commandPool, VkQueue & graphicsQueue, VkPhysicalDevice & physicalDevice)
+{
+	VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+	createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_uniformBuffer, m_uniformBufferMemory, device, physicalDevice);
 }
 
 uint32_t Buffer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice & physicalDevice)

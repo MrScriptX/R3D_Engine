@@ -62,9 +62,11 @@ public:
 	void createCommandPool();
 	void createCommandBuffer();
 	void createSemaphore();
+	void createDescriptorSetLayout();
 
 	void setupCallBack();
 	void pickPhysicalDevice();
+	void updateUniformBuffer();
 
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool checkValidationLayerSupport();
@@ -100,6 +102,7 @@ private:
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
 
+	Buffer m_buffer;
 	Pipeline m_pipeline;
 
 	//new
@@ -110,6 +113,6 @@ private:
 	VkSemaphore m_imageAvailable;
 	VkSemaphore m_renderFinished;
 
-	Buffer m_buffer;
+	VkDescriptorSetLayout m_descriptorSetLayout;
 };
 

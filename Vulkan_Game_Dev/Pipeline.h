@@ -13,7 +13,7 @@ public:
 
 	void clean(VkDevice& device);
 
-	void createPipeline(VkDevice& device, VkExtent2D& swapChainExtent);
+	void createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkDescriptorSetLayout& descriptorSetLayout);
 	void createRenderPass(VkDevice& device, VkFormat& swapChainImageFormat);
 	VkShaderModule createShaderModule(const std::vector<char>& code, VkDevice& device);
 

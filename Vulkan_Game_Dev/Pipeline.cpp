@@ -18,7 +18,7 @@ void Pipeline::clean(VkDevice & device)
 	vkDestroyRenderPass(device, m_renderPass, nullptr);
 }
 
-void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent)
+void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkDescriptorSetLayout& descriptorSetLayout)
 {
 	auto vertShader = loadFromFile("shader\\vert.spv");
 	auto fragShader = loadFromFile("shader\\frag.spv");
@@ -112,7 +112,8 @@ void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent)
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = 0;
+	pipelineLayoutInfo.setLayoutCount = 1;
+	pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
 
 	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
