@@ -87,7 +87,7 @@ void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkD
 	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 	rasterizer.lineWidth = 1.0f;
 	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-	rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.depthBiasEnable = VK_FALSE;
 
 	VkPipelineMultisampleStateCreateInfo multisampling = {};
@@ -232,4 +232,9 @@ VkRenderPass * Pipeline::getRenderPass()
 VkPipeline * Pipeline::getPipeline()
 {
 	return &m_graphicsPipeline;
+}
+
+VkPipelineLayout * Pipeline::getPipelineLayout()
+{
+	return &m_pipelineLayout;
 }

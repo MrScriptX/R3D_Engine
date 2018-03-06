@@ -105,6 +105,7 @@ void Application::clean()
 {
 	cleanSwapChain();
 
+	vkDestroyDescriptorPool(m_device, m_descriptorPool, nullptr);
 	vkDestroyDescriptorSetLayout(m_device, m_descriptorSetLayout, nullptr);
 
 	m_buffer.clean(m_device);
@@ -158,6 +159,8 @@ void Application::initVulkan()
 	m_buffer.createVertexBuffer(m_device, m_commandPool, m_graphicsQueue, m_physicalDevice);
 	m_buffer.createIndexBuffer(m_device, m_commandPool, m_graphicsQueue, m_physicalDevice);
 	m_buffer.createUniformBuffer(m_device, m_commandPool, m_graphicsQueue, m_physicalDevice);
+	createDescriptorPool();
+	createDescriptorSet();
 	createCommandBuffer();
 	createSemaphore();
 }
@@ -467,6 +470,7 @@ void Application::createCommandBuffer()
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(m_commandBuffer[i], 0, 1, vertexBuffers, offsets);
 		vkCmdBindIndexBuffer(m_commandBuffer[i], m_buffer.getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
+		vkCmdBindDescriptorSets(m_commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS, *m_pipeline.getPipelineLayout(), 0, 1, &m_descriptorSet, 0, nullptr);
 
 		vkCmdDrawIndexed(m_commandBuffer[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		vkCmdEndRenderPass(m_commandBuffer[i]);
@@ -508,6 +512,56 @@ void Application::createDescriptorSetLayout()
 	{
 		throw std::runtime_error("failed to create descriptor set layout!");
 	}
+}
+
+void Application::createDescriptorPool()
+{
+	VkDescriptorPoolSize poolSize = {};
+	poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSize.descriptorCount = 1;
+
+	VkDescriptorPoolCreateInfo poolInfo = {};
+	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = 1;
+	poolInfo.pPoolSizes = &poolSize;
+	poolInfo.maxSets = 1;
+
+	if (vkCreateDescriptorPool(m_device, &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create descriptor pool!");
+	}
+}
+
+void Application::createDescriptorSet()
+{
+	VkDescriptorSetLayout layouts[] = { m_descriptorSetLayout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = m_descriptorPool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts = layouts;
+
+	if (vkAllocateDescriptorSets(m_device, &allocInfo, &m_descriptorSet))
+	{
+		throw std::runtime_error("failed to allocate descriptor set!");
+	}
+
+
+	VkDescriptorBufferInfo bufferInfo = {};
+	bufferInfo.buffer = *m_buffer.getUniformBuffer();
+	bufferInfo.offset = 0;
+	bufferInfo.range = sizeof(UniformBufferObject);
+
+	VkWriteDescriptorSet descriptorWrite = {};
+	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrite.dstSet = m_descriptorSet;
+	descriptorWrite.dstBinding = 0;
+	descriptorWrite.dstArrayElement = 0;
+	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrite.descriptorCount = 1;
+	descriptorWrite.pBufferInfo = &bufferInfo;
+
+	vkUpdateDescriptorSets(m_device, 1, &descriptorWrite, 0, nullptr);
 }
 
 
@@ -573,9 +627,9 @@ void Application::updateUniformBuffer()
 	ubo.proj[1][1] *= -1;
 
 	void* data;
-	vkMapMemory(m_device, m_buffer.getUniformBufferMemory(), 0, sizeof(ubo), 0, &data);
+	vkMapMemory(m_device, *m_buffer.getUniformBufferMemory(), 0, sizeof(ubo), 0, &data);
 	memcpy(data, &ubo, sizeof(ubo));
-	vkUnmapMemory(m_device, m_buffer.getUniformBufferMemory());
+	vkUnmapMemory(m_device, *m_buffer.getUniformBufferMemory());
 }
 
 bool Application::checkDeviceExtensionSupport(VkPhysicalDevice device)

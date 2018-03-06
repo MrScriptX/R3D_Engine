@@ -12,8 +12,8 @@ public:
 
 	VkBuffer getVertexBuffer();
 	VkBuffer getIndexBuffer();
-	VkBuffer getUniformBuffer();
-	VkDeviceMemory getUniformBufferMemory();
+	VkBuffer* getUniformBuffer();
+	VkDeviceMemory* getUniformBufferMemory();
 
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDevice& device, VkPhysicalDevice& physicalDevice);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue);

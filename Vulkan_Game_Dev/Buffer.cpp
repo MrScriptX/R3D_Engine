@@ -23,14 +23,14 @@ VkBuffer Buffer::getIndexBuffer()
 	return m_indexBuffer;
 }
 
-VkBuffer Buffer::getUniformBuffer()
+VkBuffer* Buffer::getUniformBuffer()
 {
-	return m_uniformBuffer;
+	return &m_uniformBuffer;
 }
 
-VkDeviceMemory Buffer::getUniformBufferMemory()
+VkDeviceMemory* Buffer::getUniformBufferMemory()
 {
-	return m_uniformBufferMemory;
+	return &m_uniformBufferMemory;
 }
 
 void Buffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer & buffer, VkDeviceMemory & bufferMemory, VkDevice & device, VkPhysicalDevice& physicalDevice)

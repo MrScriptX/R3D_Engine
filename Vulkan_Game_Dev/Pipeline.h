@@ -22,6 +22,7 @@ public:
 	//new
 	VkRenderPass* getRenderPass();
 	VkPipeline* getPipeline();
+	VkPipelineLayout* getPipelineLayout();
 
 private:
 	VkPipeline m_graphicsPipeline;
