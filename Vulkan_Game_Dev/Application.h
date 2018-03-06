@@ -49,11 +49,13 @@ public:
 	
 	void initWindow();
 	void initVulkan();
+	void cleanSwapChain();
 
 	void createInstance();//create a vulkan instance
 	void createSurface();
 	void createLogicalDevice();
 	void createSwapChain();
+	void recreateSwapChain();
 	void createImageView();
 	void createFrameBuffer();
 	void createCommandPool();
@@ -75,6 +77,7 @@ public:
 	std::vector<const char*> getRequiredExtensions();
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
+	static void onWindowResized(GLFWwindow* window, int width, int height);
 	static VkResult createDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback);
 	static void destroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData);
