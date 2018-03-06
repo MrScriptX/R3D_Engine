@@ -43,7 +43,17 @@ void Application::drawFrame()
 	vkQueueWaitIdle(m_presentQueue);//not needed if validation layer are disable
 
 	uint32_t imageIndex;
-	vkAcquireNextImageKHR(m_device, m_swapChain, std::numeric_limits<uint64_t>::max(), m_imageAvailable, VK_NULL_HANDLE, &imageIndex);
+	VkResult result = vkAcquireNextImageKHR(m_device, m_swapChain, std::numeric_limits<uint64_t>::max(), m_imageAvailable, VK_NULL_HANDLE, &imageIndex);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		recreateSwapChain();
+		return;
+	}
+	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+	{
+		throw std::runtime_error("failed to acquire a swap chain image!");
+	}
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -76,28 +86,27 @@ void Application::drawFrame()
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr;
 
-	vkQueuePresentKHR(m_presentQueue, &presentInfo);
+	result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+	{
+		recreateSwapChain();
+		return;
+	}
+	else if (result != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to present a swap chain image!");
+	}
 }
 
 void Application::clean()
 {
+	cleanSwapChain();
+
 	vkDestroySemaphore(m_device, m_renderFinished, nullptr);
 	vkDestroySemaphore(m_device, m_imageAvailable, nullptr);
 	vkDestroyCommandPool(m_device, m_commandPool, nullptr);
 
-	for (auto frameBuffer : m_swapChainFrameBuffer)
-	{
-		vkDestroyFramebuffer(m_device, frameBuffer, nullptr);
-	}
-
-	m_pipeline.clean(m_device);
-
-	for (auto imageView : m_swapChainImageViews)
-	{
-		vkDestroyImageView(m_device, imageView, nullptr);
-	}
-
-	vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
 	vkDestroyDevice(m_device, nullptr);
 	destroyDebugReportCallbackEXT(m_instance, callback, nullptr);
 	vkDestroySurfaceKHR(m_instance, m_surface, nullptr);//new line
@@ -110,17 +119,20 @@ void Application::clean()
 
 
 
-/**************************** Init fonctions ****************************************/
-/************************************************************************************/
+/**************************** Init  and clean fonctions ****************************************/
+/***********************************************************************************************/
 
 void Application::initWindow()
 {
 	glfwInit();
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 	m_window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+
+	glfwSetWindowUserPointer(m_window, this);
+	glfwSetWindowSizeCallback(m_window, Application::onWindowResized);
 }
 
 void Application::initVulkan()
@@ -138,6 +150,24 @@ void Application::initVulkan()
 	createCommandPool();
 	createCommandBuffer();
 	createSemaphore();
+}
+
+void Application::cleanSwapChain()
+{
+	for (auto frameBuffer : m_swapChainFrameBuffer)
+	{
+		vkDestroyFramebuffer(m_device, frameBuffer, nullptr);
+	}
+
+	vkFreeCommandBuffers(m_device, m_commandPool, static_cast<uint32_t>(m_commandBuffer.size()), m_commandBuffer.data());
+	m_pipeline.clean(m_device);
+
+	for (auto imageView : m_swapChainImageViews)
+	{
+		vkDestroyImageView(m_device, imageView, nullptr);
+	}
+
+	vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
 }
 
 
@@ -295,6 +325,27 @@ void Application::createSwapChain()
 
 	m_swapChainImageFormat = surfaceFormat.format;
 	m_swapChainExtent = extent;
+}
+
+void Application::recreateSwapChain()
+{
+	int width, height;
+	glfwGetWindowSize(m_window, &width, &height);
+	if (width == 0 || height == 0)
+	{
+		return;
+	}
+
+	vkDeviceWaitIdle(m_device);
+
+	cleanSwapChain();
+
+	createSwapChain();
+	createImageView();
+	m_pipeline.createRenderPass(m_device, m_swapChainImageFormat);
+	m_pipeline.createPipeline(m_device, m_swapChainExtent);
+	createFrameBuffer();
+	createCommandBuffer();
 }
 
 void Application::createImageView()
@@ -577,7 +628,10 @@ VkExtent2D Application::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabi
 	}
 	else
 	{
-		VkExtent2D actualExtent = { WIDTH, HEIGHT };
+		int width, height;
+		glfwGetWindowSize(m_window, &width, &height);
+
+		VkExtent2D actualExtent = { (uint32_t)width, (uint32_t)height };
 
 		actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
 		actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
@@ -664,6 +718,12 @@ QueueFamilyIndices Application::findQueueFamilies(VkPhysicalDevice device)
 	}
 
 	return indices;
+}
+
+void Application::onWindowResized(GLFWwindow* window, int width, int height)
+{
+	Application * app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
+	app->recreateSwapChain();
 }
 
 VkResult Application::createDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT * pCreateInfo, const VkAllocationCallbacks * pAllocator, VkDebugReportCallbackEXT * pCallback)
