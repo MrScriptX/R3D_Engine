@@ -1,8 +1,6 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW\glfw3.h>
-
+#include "VkHeader.h"
 #include "vertex.h"
 #include <vector>
 #include <fstream>

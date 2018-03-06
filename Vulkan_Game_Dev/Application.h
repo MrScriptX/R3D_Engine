@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <vector>
 #include <fstream>
+#include "Buffer.h"
 
 
 const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
@@ -61,13 +62,9 @@ public:
 	void createCommandPool();
 	void createCommandBuffer();
 	void createSemaphore();
-	void createVertexBuffer();
-	void createIndexBuffer();
-	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 
 	void setupCallBack();
 	void pickPhysicalDevice();
-	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool checkValidationLayerSupport();
@@ -80,7 +77,6 @@ public:
 	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 	std::vector<const char*> getRequiredExtensions();
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 	static void onWindowResized(GLFWwindow* window, int width, int height);
 	static VkResult createDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback);
@@ -114,9 +110,6 @@ private:
 	VkSemaphore m_imageAvailable;
 	VkSemaphore m_renderFinished;
 
-	VkBuffer m_vertexBuffer;
-	VkDeviceMemory m_vertexBufferMemory;
-	VkBuffer m_indexBuffer;
-	VkDeviceMemory m_indexBufferMemory;
+	Buffer m_buffer;
 };
 
