@@ -6,15 +6,13 @@
 class DescriptorSetLayout
 {
 public:
-	DescriptorSetLayout();
+	DescriptorSetLayout(VkDevice const& device);
 	~DescriptorSetLayout();
 
-	void createDescriptorSetLayout(VkDevice& device);
-	void clean(VkDevice& device);
-
-	VkDescriptorSetLayout& getDescriptor();
+	VkDescriptorSetLayout& get();
 
 private:
+	VkDevice const& m_device;
 	VkDescriptorSetLayout m_descriptorSetLayout;
 };
 

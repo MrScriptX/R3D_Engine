@@ -2,16 +2,7 @@
 
 
 
-DescriptorSetLayout::DescriptorSetLayout()
-{
-}
-
-
-DescriptorSetLayout::~DescriptorSetLayout()
-{
-}
-
-void DescriptorSetLayout::createDescriptorSetLayout(VkDevice& device)
+DescriptorSetLayout::DescriptorSetLayout(VkDevice const& device) : m_device(device)
 {
 	VkDescriptorSetLayoutBinding uboBinding = {};
 	uboBinding.binding = 0;
@@ -25,18 +16,19 @@ void DescriptorSetLayout::createDescriptorSetLayout(VkDevice& device)
 	layoutInfo.bindingCount = 1;
 	layoutInfo.pBindings = &uboBinding;
 
-	if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
+	if (vkCreateDescriptorSetLayout(m_device, &layoutInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create descriptor set layout!");
 	}
 }
 
-void DescriptorSetLayout::clean(VkDevice& device)
+
+DescriptorSetLayout::~DescriptorSetLayout()
 {
-	vkDestroyDescriptorSetLayout(device, m_descriptorSetLayout, nullptr);
+	vkDestroyDescriptorSetLayout(m_device, m_descriptorSetLayout, nullptr);
 }
 
-VkDescriptorSetLayout& DescriptorSetLayout::getDescriptor()
+VkDescriptorSetLayout& DescriptorSetLayout::get()
 {
 	return m_descriptorSetLayout;
 }

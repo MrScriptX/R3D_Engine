@@ -105,8 +105,8 @@ void Application::clean()
 {
 	cleanSwapChain();
 
-	m_descriptorPool.clean(m_device);
-	m_descriptorLayout.clean(m_device);
+	m_descriptorPool.reset();
+	m_descriptorSetLayout.reset();
 
 	m_buffer.clean(m_device);
 
@@ -155,8 +155,8 @@ void Application::initVulkan()
 	createImageView();
 
 	m_pipeline.createRenderPass(m_device, m_swapChainImageFormat);
-	m_descriptorLayout.createDescriptorSetLayout(m_device);
-	m_pipeline.createPipeline(m_device, m_swapChainExtent, m_descriptorLayout.getDescriptor());
+	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device);
+	m_pipeline.createPipeline(m_device, m_swapChainExtent, m_descriptorSetLayout->get());
 
 	createFrameBuffer();
 	m_commandPool.createCommandPool(m_device, m_physicalDevice, m_surface);
@@ -165,10 +165,10 @@ void Application::initVulkan()
 	m_buffer.createIndexBuffer(m_device, m_commandPool.get(), m_graphicsQueue, m_physicalDevice);
 	m_buffer.createUniformBuffer(m_device, m_commandPool.get(), m_graphicsQueue, m_physicalDevice);
 
-	m_descriptorPool.createDescriptorPool(m_device);
-	m_descriptorSet.createDescriptorSet(m_device, m_descriptorLayout.getDescriptor(), m_descriptorPool.getDescriptor(), m_buffer);
+	m_descriptorPool = std::make_unique<DescriptorPool>(m_device);
+	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_buffer);
 
-	m_commandBuffer.createCommandBuffer(m_device, m_commandPool.get(), m_pipeline.getRenderPass(), m_pipeline.getPipeline(), m_buffer.getVertexBuffer(), m_buffer.getIndexBuffer(), m_pipeline.getPipelineLayout(), m_descriptorSet.getDescriptor(), m_swapChainExtent, m_swapChainFrameBuffer);
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool.get(), m_pipeline.getRenderPass(), m_pipeline.getPipeline(), m_buffer.getVertexBuffer(), m_buffer.getIndexBuffer(), m_pipeline.getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_swapChainFrameBuffer);
 
 	createSemaphore();
 }
@@ -364,9 +364,9 @@ void Application::recreateSwapChain()
 	createSwapChain();
 	createImageView();
 	m_pipeline.createRenderPass(m_device, m_swapChainImageFormat);
-	m_pipeline.createPipeline(m_device, m_swapChainExtent, m_descriptorLayout.getDescriptor());
+	m_pipeline.createPipeline(m_device, m_swapChainExtent, m_descriptorSetLayout->get());
 	createFrameBuffer();
-	m_commandBuffer.createCommandBuffer(m_device, m_commandPool.get(), m_pipeline.getRenderPass(), m_pipeline.getPipeline(), m_buffer.getVertexBuffer(), m_buffer.getIndexBuffer(), m_pipeline.getPipelineLayout(), m_descriptorSet.getDescriptor(), m_swapChainExtent, m_swapChainFrameBuffer);
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool.get(), m_pipeline.getRenderPass(), m_pipeline.getPipeline(), m_buffer.getVertexBuffer(), m_buffer.getIndexBuffer(), m_pipeline.getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_swapChainFrameBuffer);
 }
 
 void Application::createImageView()

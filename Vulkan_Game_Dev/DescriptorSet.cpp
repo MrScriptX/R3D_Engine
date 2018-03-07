@@ -2,16 +2,7 @@
 
 
 
-DescriptorSet::DescriptorSet()
-{
-}
-
-
-DescriptorSet::~DescriptorSet()
-{
-}
-
-void DescriptorSet::createDescriptorSet(VkDevice& device, VkDescriptorSetLayout& descriptorSetLayout, VkDescriptorPool& descriptorPool, Buffer& buffer)
+DescriptorSet::DescriptorSet(VkDevice const& device, VkDescriptorSetLayout& descriptorSetLayout, VkDescriptorPool& descriptorPool, Buffer& buffer)
 {
 	VkDescriptorSetLayout layouts[] = { descriptorSetLayout };
 	VkDescriptorSetAllocateInfo allocInfo = {};
@@ -43,7 +34,7 @@ void DescriptorSet::createDescriptorSet(VkDevice& device, VkDescriptorSetLayout&
 	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
 }
 
-VkDescriptorSet& DescriptorSet::getDescriptor()
+VkDescriptorSet& DescriptorSet::get()
 {
 	return m_descriptorSet;
 }

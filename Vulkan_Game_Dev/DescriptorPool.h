@@ -5,14 +5,13 @@
 class DescriptorPool
 {
 public:
-	DescriptorPool();
+	DescriptorPool(VkDevice const& device);
 	~DescriptorPool();
-
-	void createDescriptorPool(VkDevice& device);
-	void clean(VkDevice& device);
 
 	VkDescriptorPool& getDescriptor();
 private:
 	VkDescriptorPool m_descriptorPool;
+	VkDevice const& m_device;
 };
 
+/*passer la description des descripteurs a allouer*/

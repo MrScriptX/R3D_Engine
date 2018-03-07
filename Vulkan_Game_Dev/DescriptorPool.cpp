@@ -3,16 +3,7 @@
 #include <stdexcept>
 
 
-DescriptorPool::DescriptorPool()
-{
-}
-
-
-DescriptorPool::~DescriptorPool()
-{
-}
-
-void DescriptorPool::createDescriptorPool(VkDevice& device)
+DescriptorPool::DescriptorPool(VkDevice const& device) : m_device(device)
 {
 	VkDescriptorPoolSize poolSize = {};
 	poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -30,9 +21,10 @@ void DescriptorPool::createDescriptorPool(VkDevice& device)
 	}
 }
 
-void DescriptorPool::clean(VkDevice & device)
+
+DescriptorPool::~DescriptorPool()
 {
-	vkDestroyDescriptorPool(device, m_descriptorPool, nullptr);
+	vkDestroyDescriptorPool(m_device, m_descriptorPool, nullptr);
 }
 
 VkDescriptorPool & DescriptorPool::getDescriptor()

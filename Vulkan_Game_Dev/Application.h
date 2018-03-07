@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <vector>
 #include <fstream>
+#include <memory>
 
 #include "Buffer.h"
 #include "DescriptorPool.h"
@@ -108,8 +109,8 @@ private:
 	VkSemaphore m_imageAvailable;
 	VkSemaphore m_renderFinished;
 
-	DescriptorPool m_descriptorPool;
-	DescriptorSet m_descriptorSet;
-	DescriptorSetLayout m_descriptorLayout;
+	std::unique_ptr<DescriptorPool> m_descriptorPool;
+	std::unique_ptr<DescriptorSet> m_descriptorSet;
+	std::unique_ptr<DescriptorSetLayout> m_descriptorSetLayout;
 };
 

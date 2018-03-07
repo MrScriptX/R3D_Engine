@@ -7,13 +7,11 @@
 class DescriptorSet
 {
 public:
-	DescriptorSet();
-	~DescriptorSet();
+	DescriptorSet(VkDevice const& device, VkDescriptorSetLayout& descriptorSetLayout, VkDescriptorPool& descriptorPool, Buffer& buffer);
 
-	void createDescriptorSet(VkDevice& device, VkDescriptorSetLayout& descriptorSetLayout, VkDescriptorPool& descriptorPool, Buffer& buffer);
-
-	VkDescriptorSet& getDescriptor();
+	VkDescriptorSet& get();
 private:
+
 	VkDescriptorSet m_descriptorSet;
 };
 

@@ -11,7 +11,7 @@ CommandBuffer::~CommandBuffer()
 {
 }
 
-void CommandBuffer::createCommandBuffer(VkDevice& device, VkCommandPool& commandPool, VkRenderPass& renderPass, VkPipeline& pipeline, VkBuffer& vertexBuffer, VkBuffer& indexBuffer, VkPipelineLayout& pipelineLayout, VkDescriptorSet& descriptorSet, VkExtent2D& swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer)
+void CommandBuffer::allocateCommandBuffer(VkDevice& device, VkCommandPool& commandPool, VkRenderPass& renderPass, VkPipeline& pipeline, VkBuffer& vertexBuffer, VkBuffer& indexBuffer, VkPipelineLayout& pipelineLayout, VkDescriptorSet& descriptorSet, VkExtent2D& swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer)
 {
 	m_commandBuffer.resize(swapChainBuffer.size());
 
