@@ -8,6 +8,10 @@
 *.sln.docstates
 *.idb
 *.tlog
+<<<<<<< HEAD
+
+=======
+>>>>>>> test
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
