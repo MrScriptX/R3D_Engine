@@ -45,7 +45,7 @@ void Application::drawFrame()
 	vkQueueWaitIdle(m_presentQueue);//not needed if validation layer are disable
 
 	uint32_t imageIndex;
-	VkResult result = vkAcquireNextImageKHR(m_device, m_swapChain, std::numeric_limits<uint64_t>::max(), m_imageAvailable, VK_NULL_HANDLE, &imageIndex);
+	VkResult result = vkAcquireNextImageKHR(m_device, m_swapChain, std::numeric_limits<uint64_t>::max(), m_semaphore->getImageAvailable(), VK_NULL_HANDLE, &imageIndex);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
@@ -60,7 +60,7 @@ void Application::drawFrame()
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore waitSemaphore[] = { m_imageAvailable };
+	VkSemaphore waitSemaphore[] = { m_semaphore->getImageAvailable() };
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = waitSemaphore;
@@ -68,7 +68,7 @@ void Application::drawFrame()
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &m_commandBuffer.getCommandBuffer()[imageIndex];
 
-	VkSemaphore signalSemaphore[] = { m_renderFinished };
+	VkSemaphore signalSemaphore[] = { m_semaphore->getRenderFinished() };
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphore;
 
@@ -111,8 +111,7 @@ void Application::clean()
 	m_uniformBuffer.reset();
 	m_buffer.reset();
 
-	vkDestroySemaphore(m_device, m_renderFinished, nullptr);
-	vkDestroySemaphore(m_device, m_imageAvailable, nullptr);
+	m_semaphore.reset();
 	m_commandPool.reset();
 
 	vkDestroyDevice(m_device, nullptr);
@@ -159,7 +158,7 @@ void Application::initVulkan()
 	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device);
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
 
-	createFrameBuffer();
+	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent);
 	m_commandPool = std::make_unique<CommandPool>(m_device, m_physicalDevice, m_surface);
 
 	m_buffer = std::make_unique<Buffer>(m_device, m_commandPool->get(), m_graphicsQueue, m_physicalDevice);
@@ -168,17 +167,14 @@ void Application::initVulkan()
 	m_descriptorPool = std::make_unique<DescriptorPool>(m_device);
 	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_uniformBuffer->getBuffer());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_swapChainFrameBuffer);
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
 
-	createSemaphore();
+	m_semaphore = std::make_unique<Semaphore>(m_device);
 }
 
 void Application::cleanSwapChain()
 {
-	for (auto frameBuffer : m_swapChainFrameBuffer)
-	{
-		vkDestroyFramebuffer(m_device, frameBuffer, nullptr);
-	}
+	m_frameBuffer.reset();
 
 	m_commandBuffer.clean(m_device, m_commandPool->get());
 	m_pipeline.reset();
@@ -364,10 +360,12 @@ void Application::recreateSwapChain()
 
 	createSwapChain();
 	createImageView();
+
 	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
-	createFrameBuffer();
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_swapChainFrameBuffer);
+	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent);
+
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
 }
 
 void Application::createImageView()
@@ -398,41 +396,6 @@ void Application::createImageView()
 	}
 }
 
-void Application::createFrameBuffer()
-{
-	m_swapChainFrameBuffer.resize(m_swapChainImageViews.size());//set vector size to hold all images
-
-	for (size_t i = 0; i < m_swapChainImageViews.size(); i++)
-	{
-		VkImageView attachement[] = { m_swapChainImageViews[i] };
-
-		VkFramebufferCreateInfo framebufferInfo = {};
-		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass = m_renderPass->get();
-		framebufferInfo.attachmentCount = 1;
-		framebufferInfo.pAttachments = attachement;
-		framebufferInfo.width = m_swapChainExtent.width;
-		framebufferInfo.height = m_swapChainExtent.height;
-		framebufferInfo.layers = 1;
-
-		if (vkCreateFramebuffer(m_device, &framebufferInfo, nullptr, &m_swapChainFrameBuffer[i]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create frame buffer!");
-		}
-	}
-}
-
-void Application::createSemaphore()
-{
-	VkSemaphoreCreateInfo semaphoreInfo = {};
-	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-	if (vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_imageAvailable) != VK_SUCCESS ||
-		vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_renderFinished) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to create semaphore!");
-	}
-}
 
 
 

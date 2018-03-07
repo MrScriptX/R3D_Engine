@@ -191,9 +191,11 @@
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="DescriptorSet.cpp" />
     <ClCompile Include="DescriptorSetLayout.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="Queue.cpp" />
     <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
   </ItemGroup>
@@ -205,9 +207,11 @@
     <ClInclude Include="DescriptorPool.h" />
     <ClInclude Include="DescriptorSet.h" />
     <ClInclude Include="DescriptorSetLayout.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="Semaphore.h" />
     <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="VkHeader.h" />

@@ -17,6 +17,8 @@
 #include "Queue.h"
 #include "UniformBuffer.h"
 #include "RenderPass.h"
+#include "FrameBuffer.h"
+#include "Semaphore.h"
 
 
 //use assert for abort and execption for report or recovery
@@ -59,8 +61,6 @@ public:
 	void createSwapChain();
 	void recreateSwapChain();
 	void createImageView();
-	void createFrameBuffer();
-	void createSemaphore();
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -97,7 +97,6 @@ private:
 
 	std::vector<VkImage> m_swapChainImages;
 	std::vector<VkImageView> m_swapChainImageViews;
-	std::vector<VkFramebuffer> m_swapChainFrameBuffer;
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
@@ -105,17 +104,17 @@ private:
 	std::unique_ptr<Buffer> m_buffer;
 	std::unique_ptr<UniformBuffer> m_uniformBuffer;
 
+	std::unique_ptr<FrameBuffer> m_frameBuffer;
 	std::unique_ptr<RenderPass> m_renderPass;
 	std::unique_ptr<Pipeline> m_pipeline;
 
 	CommandBuffer m_commandBuffer;
 	std::unique_ptr<CommandPool> m_commandPool;
 
-	VkSemaphore m_imageAvailable;
-	VkSemaphore m_renderFinished;
-
 	std::unique_ptr<DescriptorPool> m_descriptorPool;
 	std::unique_ptr<DescriptorSet> m_descriptorSet;
 	std::unique_ptr<DescriptorSetLayout> m_descriptorSetLayout;
+
+	std::unique_ptr<Semaphore> m_semaphore;
 };
 

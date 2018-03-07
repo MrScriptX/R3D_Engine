@@ -37,6 +37,18 @@
     <Filter Include="Fichiers sources\Pipeline">
       <UniqueIdentifier>{3a97f4e6-34c9-4e8c-8456-5f29afa9ed65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\RenderPass">
+      <UniqueIdentifier>{dd4d03c2-8f6c-4c5a-94cf-b7f1d8446530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\RenderPass">
+      <UniqueIdentifier>{325d49f8-f777-4cdd-8c88-0ef11c6028cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Sync">
+      <UniqueIdentifier>{b43ce950-edad-4786-9949-037f8b061034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Sync">
+      <UniqueIdentifier>{016af835-f50a-4b48-bc01-4941da650ba5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -73,7 +85,13 @@
       <Filter>Fichiers sources\VkBuffer</Filter>
     </ClCompile>
     <ClCompile Include="RenderPass.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Fichiers sources\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="Semaphore.cpp">
+      <Filter>Fichiers sources\Sync</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -114,7 +132,13 @@
       <Filter>Fichiers d%27en-tête\VkBuffer</Filter>
     </ClInclude>
     <ClInclude Include="RenderPass.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Fichiers d%27en-tête\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Semaphore.h">
+      <Filter>Fichiers d%27en-tête\Sync</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
