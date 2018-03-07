@@ -7,16 +7,14 @@
 class CommandPool
 {
 public:
-	CommandPool();
+	CommandPool(VkDevice const& device, VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface);
 	~CommandPool();
-
-	void createCommandPool(VkDevice& device, VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface);
-	void clean(VkDevice& device);
 
 	VkCommandPool& get();
 
 private:
 
+	VkDevice const& m_device;
 	VkCommandPool m_commandPool;
 };
 

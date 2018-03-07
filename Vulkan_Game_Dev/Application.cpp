@@ -108,11 +108,12 @@ void Application::clean()
 	m_descriptorPool.reset();
 	m_descriptorSetLayout.reset();
 
-	m_buffer.clean(m_device);
+	m_uniformBuffer.reset();
+	m_buffer.reset();
 
 	vkDestroySemaphore(m_device, m_renderFinished, nullptr);
 	vkDestroySemaphore(m_device, m_imageAvailable, nullptr);
-	m_commandPool.clean(m_device);
+	m_commandPool.reset();
 
 	vkDestroyDevice(m_device, nullptr);
 	destroyDebugReportCallbackEXT(m_instance, callback, nullptr);
@@ -154,21 +155,20 @@ void Application::initVulkan()
 	createSwapChain();
 	createImageView();
 
-	m_pipeline.createRenderPass(m_device, m_swapChainImageFormat);
+	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
 	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device);
-	m_pipeline.createPipeline(m_device, m_swapChainExtent, m_descriptorSetLayout->get());
+	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
 
 	createFrameBuffer();
-	m_commandPool.createCommandPool(m_device, m_physicalDevice, m_surface);
+	m_commandPool = std::make_unique<CommandPool>(m_device, m_physicalDevice, m_surface);
 
-	m_buffer.createVertexBuffer(m_device, m_commandPool.get(), m_graphicsQueue, m_physicalDevice);
-	m_buffer.createIndexBuffer(m_device, m_commandPool.get(), m_graphicsQueue, m_physicalDevice);
-	m_buffer.createUniformBuffer(m_device, m_commandPool.get(), m_graphicsQueue, m_physicalDevice);
+	m_buffer = std::make_unique<Buffer>(m_device, m_commandPool->get(), m_graphicsQueue, m_physicalDevice);
+	m_uniformBuffer = std::make_unique<UniformBuffer>(m_device, m_physicalDevice);
 
 	m_descriptorPool = std::make_unique<DescriptorPool>(m_device);
-	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_buffer);
+	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_uniformBuffer->getBuffer());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool.get(), m_pipeline.getRenderPass(), m_pipeline.getPipeline(), m_buffer.getVertexBuffer(), m_buffer.getIndexBuffer(), m_pipeline.getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_swapChainFrameBuffer);
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_swapChainFrameBuffer);
 
 	createSemaphore();
 }
@@ -180,8 +180,9 @@ void Application::cleanSwapChain()
 		vkDestroyFramebuffer(m_device, frameBuffer, nullptr);
 	}
 
-	m_commandBuffer.clean(m_device, m_commandPool.get());
-	m_pipeline.clean(m_device);
+	m_commandBuffer.clean(m_device, m_commandPool->get());
+	m_pipeline.reset();
+	m_renderPass.reset();
 
 	for (auto imageView : m_swapChainImageViews)
 	{
@@ -363,10 +364,10 @@ void Application::recreateSwapChain()
 
 	createSwapChain();
 	createImageView();
-	m_pipeline.createRenderPass(m_device, m_swapChainImageFormat);
-	m_pipeline.createPipeline(m_device, m_swapChainExtent, m_descriptorSetLayout->get());
+	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
+	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
 	createFrameBuffer();
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool.get(), m_pipeline.getRenderPass(), m_pipeline.getPipeline(), m_buffer.getVertexBuffer(), m_buffer.getIndexBuffer(), m_pipeline.getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_swapChainFrameBuffer);
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_swapChainFrameBuffer);
 }
 
 void Application::createImageView()
@@ -407,7 +408,7 @@ void Application::createFrameBuffer()
 
 		VkFramebufferCreateInfo framebufferInfo = {};
 		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass = m_pipeline.getRenderPass();
+		framebufferInfo.renderPass = m_renderPass->get();
 		framebufferInfo.attachmentCount = 1;
 		framebufferInfo.pAttachments = attachement;
 		framebufferInfo.width = m_swapChainExtent.width;
@@ -496,9 +497,9 @@ void Application::updateUniformBuffer()
 	ubo.proj[1][1] *= -1;
 
 	void* data;
-	vkMapMemory(m_device, *m_buffer.getUniformBufferMemory(), 0, sizeof(ubo), 0, &data);
+	vkMapMemory(m_device, m_uniformBuffer->getBufferMemory(), 0, sizeof(ubo), 0, &data);
 	memcpy(data, &ubo, sizeof(ubo));
-	vkUnmapMemory(m_device, *m_buffer.getUniformBufferMemory());
+	vkUnmapMemory(m_device, m_uniformBuffer->getBufferMemory());
 }
 
 bool Application::checkDeviceExtensionSupport(VkPhysicalDevice device)

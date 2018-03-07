@@ -193,7 +193,9 @@
     <ClCompile Include="DescriptorSetLayout.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="Queue.cpp" />
+    <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -205,6 +207,8 @@
     <ClInclude Include="DescriptorSetLayout.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Queue.h" />
+    <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="VkHeader.h" />
   </ItemGroup>

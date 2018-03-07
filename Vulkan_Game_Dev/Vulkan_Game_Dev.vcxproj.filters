@@ -69,6 +69,12 @@
     <ClCompile Include="Pipeline.cpp">
       <Filter>Fichiers sources\Pipeline</Filter>
     </ClCompile>
+    <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Fichiers sources\VkBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPass.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -103,6 +109,12 @@
     </ClInclude>
     <ClInclude Include="Pipeline.h">
       <Filter>Fichiers d%27en-tête\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformBuffer.h">
+      <Filter>Fichiers d%27en-tête\VkBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPass.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

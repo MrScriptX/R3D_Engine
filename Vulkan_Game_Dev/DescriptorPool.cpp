@@ -25,6 +25,8 @@ DescriptorPool::DescriptorPool(VkDevice const& device) : m_device(device)
 DescriptorPool::~DescriptorPool()
 {
 	vkDestroyDescriptorPool(m_device, m_descriptorPool, nullptr);
+
+	std::clog << "DescriptorPool destroyed\n";
 }
 
 VkDescriptorPool & DescriptorPool::getDescriptor()

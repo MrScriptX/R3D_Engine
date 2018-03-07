@@ -26,6 +26,8 @@ DescriptorSetLayout::DescriptorSetLayout(VkDevice const& device) : m_device(devi
 DescriptorSetLayout::~DescriptorSetLayout()
 {
 	vkDestroyDescriptorSetLayout(m_device, m_descriptorSetLayout, nullptr);
+
+	std::clog << "DescriptorSetLayout destroyed\n";
 }
 
 VkDescriptorSetLayout& DescriptorSetLayout::get()

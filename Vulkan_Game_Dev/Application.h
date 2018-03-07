@@ -15,6 +15,8 @@
 #include "CommandPool.h"
 #include "CommandBuffer.h"
 #include "Queue.h"
+#include "UniformBuffer.h"
+#include "RenderPass.h"
 
 
 //use assert for abort and execption for report or recovery
@@ -100,11 +102,14 @@ private:
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
 
-	Buffer m_buffer;
-	Pipeline m_pipeline;
+	std::unique_ptr<Buffer> m_buffer;
+	std::unique_ptr<UniformBuffer> m_uniformBuffer;
+
+	std::unique_ptr<RenderPass> m_renderPass;
+	std::unique_ptr<Pipeline> m_pipeline;
 
 	CommandBuffer m_commandBuffer;
-	CommandPool m_commandPool;
+	std::unique_ptr<CommandPool> m_commandPool;
 
 	VkSemaphore m_imageAvailable;
 	VkSemaphore m_renderFinished;

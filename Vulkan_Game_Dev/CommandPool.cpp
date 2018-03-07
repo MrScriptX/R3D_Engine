@@ -2,16 +2,7 @@
 
 
 
-CommandPool::CommandPool()
-{
-}
-
-
-CommandPool::~CommandPool()
-{
-}
-
-void CommandPool::createCommandPool(VkDevice& device, VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface)
+CommandPool::CommandPool(VkDevice const& device, VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface) : m_device(device)
 {
 	QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice, surface);
 
@@ -20,15 +11,18 @@ void CommandPool::createCommandPool(VkDevice& device, VkPhysicalDevice& physical
 	commandPoolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
 	commandPoolInfo.flags = 0;
 
-	if (vkCreateCommandPool(device, &commandPoolInfo, nullptr, &m_commandPool) != VK_SUCCESS)
+	if (vkCreateCommandPool(m_device, &commandPoolInfo, nullptr, &m_commandPool) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create command pool!");
 	}
 }
 
-void CommandPool::clean(VkDevice & device)
+
+CommandPool::~CommandPool()
 {
-	vkDestroyCommandPool(device, m_commandPool, nullptr);
+	vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+
+	std::clog << "CommandPool destroyed\n";
 }
 
 VkCommandPool & CommandPool::get()

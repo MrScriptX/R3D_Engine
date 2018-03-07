@@ -2,7 +2,7 @@
 
 
 
-DescriptorSet::DescriptorSet(VkDevice const& device, VkDescriptorSetLayout& descriptorSetLayout, VkDescriptorPool& descriptorPool, Buffer& buffer)
+DescriptorSet::DescriptorSet(VkDevice const& device, VkDescriptorSetLayout& descriptorSetLayout, VkDescriptorPool& descriptorPool, VkBuffer& buffer)
 {
 	VkDescriptorSetLayout layouts[] = { descriptorSetLayout };
 	VkDescriptorSetAllocateInfo allocInfo = {};
@@ -18,7 +18,7 @@ DescriptorSet::DescriptorSet(VkDevice const& device, VkDescriptorSetLayout& desc
 
 
 	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = buffer.getUniformBuffer();
+	bufferInfo.buffer = buffer;
 	bufferInfo.offset = 0;
 	bufferInfo.range = sizeof(UniformBufferObject);
 
