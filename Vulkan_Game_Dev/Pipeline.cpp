@@ -224,17 +224,17 @@ std::vector<char> Pipeline::loadFromFile(const std::string & filename)
 	return buffer;
 }
 
-VkRenderPass * Pipeline::getRenderPass()
+VkRenderPass& Pipeline::getRenderPass()
 {
-	return &m_renderPass;
+	return m_renderPass;
 }
 
-VkPipeline * Pipeline::getPipeline()
+VkPipeline& Pipeline::getPipeline()
 {
-	return &m_graphicsPipeline;
+	return m_graphicsPipeline;
 }
 
-VkPipelineLayout * Pipeline::getPipelineLayout()
+VkPipelineLayout& Pipeline::getPipelineLayout()
 {
-	return &m_pipelineLayout;
+	return m_pipelineLayout;
 }

@@ -8,3 +8,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <chrono>
+
+
+struct QueueFamilyIndices
+{
+	int graphicsFamily = -1;
+	int presentationFamily = -1;//added preFamily
+
+	bool isComplete()
+	{
+		return graphicsFamily >= 0 && presentationFamily >= 0;
+	}
+};

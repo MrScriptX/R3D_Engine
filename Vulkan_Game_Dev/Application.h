@@ -6,7 +6,15 @@
 #include <stdexcept>
 #include <vector>
 #include <fstream>
+
 #include "Buffer.h"
+#include "DescriptorPool.h"
+#include "DescriptorSet.h"
+#include "DescriptorSetLayout.h"
+#include "CommandPool.h"
+#include "CommandBuffer.h"
+#include "Queue.h"
+
 
 //use assert for abort and execption for report or recovery
 
@@ -19,17 +27,6 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
-
-struct QueueFamilyIndices
-{
-	int graphicsFamily = -1;
-	int presentationFamily = -1;//added preFamily
-
-	bool isComplete()
-	{
-		return graphicsFamily >= 0 && presentationFamily >= 0;
-	}
-};
 
 struct SwapChainSupportDetails
 {
@@ -60,12 +57,7 @@ public:
 	void recreateSwapChain();
 	void createImageView();
 	void createFrameBuffer();
-	void createCommandPool();
-	void createCommandBuffer();
 	void createSemaphore();
-	void createDescriptorSetLayout();
-	void createDescriptorPool();
-	void createDescriptorSet();
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -81,7 +73,6 @@ public:
 
 	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 	std::vector<const char*> getRequiredExtensions();
-	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 	static void onWindowResized(GLFWwindow* window, int width, int height);
 	static VkResult createDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback);
@@ -92,15 +83,18 @@ public:
 private:
 	VkDebugReportCallbackEXT callback;
 	VkSurfaceKHR m_surface;
-	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
-	VkDevice m_device;
-	VkQueue m_graphicsQueue;
 	VkInstance m_instance;
 	GLFWwindow * m_window;
+
+	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+	VkDevice m_device;
+
+	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
 
 	std::vector<VkImage> m_swapChainImages;
 	std::vector<VkImageView> m_swapChainImageViews;
+	std::vector<VkFramebuffer> m_swapChainFrameBuffer;
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
@@ -108,16 +102,14 @@ private:
 	Buffer m_buffer;
 	Pipeline m_pipeline;
 
-	//new
-	std::vector<VkFramebuffer> m_swapChainFrameBuffer;
-	std::vector<VkCommandBuffer> m_commandBuffer;
-	VkCommandPool m_commandPool;
+	CommandBuffer m_commandBuffer;
+	CommandPool m_commandPool;
 
 	VkSemaphore m_imageAvailable;
 	VkSemaphore m_renderFinished;
 
-	VkDescriptorSetLayout m_descriptorSetLayout;
-	VkDescriptorPool m_descriptorPool;
-	VkDescriptorSet m_descriptorSet;
+	DescriptorPool m_descriptorPool;
+	DescriptorSet m_descriptorSet;
+	DescriptorSetLayout m_descriptorLayout;
 };
 

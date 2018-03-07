@@ -13,19 +13,19 @@ Buffer::~Buffer()
 
 }
 
-VkBuffer Buffer::getVertexBuffer()
+VkBuffer& Buffer::getVertexBuffer()
 {
 	return m_vertexBuffer;
 }
 
-VkBuffer Buffer::getIndexBuffer()
+VkBuffer& Buffer::getIndexBuffer()
 {
 	return m_indexBuffer;
 }
 
-VkBuffer* Buffer::getUniformBuffer()
+VkBuffer& Buffer::getUniformBuffer()
 {
-	return &m_uniformBuffer;
+	return m_uniformBuffer;
 }
 
 VkDeviceMemory* Buffer::getUniformBufferMemory()

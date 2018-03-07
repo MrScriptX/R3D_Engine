@@ -20,9 +20,9 @@ public:
 	std::vector<char> loadFromFile(const std::string& filename);
 	
 	//new
-	VkRenderPass* getRenderPass();
-	VkPipeline* getPipeline();
-	VkPipelineLayout* getPipelineLayout();
+	VkRenderPass& getRenderPass();
+	VkPipeline& getPipeline();
+	VkPipelineLayout& getPipelineLayout();
 
 private:
 	VkPipeline m_graphicsPipeline;

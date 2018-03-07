@@ -10,9 +10,9 @@ public:
 	Buffer();
 	~Buffer();
 
-	VkBuffer getVertexBuffer();
-	VkBuffer getIndexBuffer();
-	VkBuffer* getUniformBuffer();
+	VkBuffer& getVertexBuffer();
+	VkBuffer& getIndexBuffer();
+	VkBuffer& getUniformBuffer();
 	VkDeviceMemory* getUniformBufferMemory();
 
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDevice& device, VkPhysicalDevice& physicalDevice);
