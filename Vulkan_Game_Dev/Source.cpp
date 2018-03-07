@@ -7,5 +7,7 @@ int main()
 	
 	app.run();
 
+	system("pause");
+
 	return 0;
 }

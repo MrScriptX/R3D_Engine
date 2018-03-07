@@ -13,6 +13,42 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\VkBuffer">
+      <UniqueIdentifier>{c183e05e-764b-46f1-b416-f07236ba3870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\VkBuffer">
+      <UniqueIdentifier>{68375d58-3528-4229-bfc8-2c17795e10d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\VkDescriptor">
+      <UniqueIdentifier>{187f1c95-1f52-4edd-9fcd-d83b6897e600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\VkDescriptor">
+      <UniqueIdentifier>{a52cd486-bdc3-4df4-b864-ac07f36be29f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\VkCommand">
+      <UniqueIdentifier>{c6072261-7da6-497f-86b8-460cc4346ce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\VkCommand">
+      <UniqueIdentifier>{b260d6fa-4bfa-40dd-b464-4fb0a0a9fc0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Pipeline">
+      <UniqueIdentifier>{42a09763-9567-4efd-b904-560b4e6571cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Pipeline">
+      <UniqueIdentifier>{3a97f4e6-34c9-4e8c-8456-5f29afa9ed65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\RenderPass">
+      <UniqueIdentifier>{dd4d03c2-8f6c-4c5a-94cf-b7f1d8446530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\RenderPass">
+      <UniqueIdentifier>{325d49f8-f777-4cdd-8c88-0ef11c6028cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Sync">
+      <UniqueIdentifier>{b43ce950-edad-4786-9949-037f8b061034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Sync">
+      <UniqueIdentifier>{016af835-f50a-4b48-bc01-4941da650ba5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -21,28 +57,88 @@
     <ClCompile Include="Application.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Pipeline.cpp">
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Fichiers sources\VkBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorPool.cpp">
+      <Filter>Fichiers sources\VkDescriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorSet.cpp">
+      <Filter>Fichiers sources\VkDescriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorSetLayout.cpp">
+      <Filter>Fichiers sources\VkDescriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandBuffer.cpp">
+      <Filter>Fichiers sources\VkCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandPool.cpp">
+      <Filter>Fichiers sources\VkCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="Queue.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Buffer.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="Pipeline.cpp">
+      <Filter>Fichiers sources\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Fichiers sources\VkBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPass.cpp">
+      <Filter>Fichiers sources\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Fichiers sources\RenderPass</Filter>
+    </ClCompile>
+    <ClCompile Include="Semaphore.cpp">
+      <Filter>Fichiers sources\Sync</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Pipeline.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="vertex.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Buffer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="VkHeader.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Fichiers d%27en-tête\VkBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorPool.h">
+      <Filter>Fichiers d%27en-tête\VkDescriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorSet.h">
+      <Filter>Fichiers d%27en-tête\VkDescriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorSetLayout.h">
+      <Filter>Fichiers d%27en-tête\VkDescriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandPool.h">
+      <Filter>Fichiers d%27en-tête\VkCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandBuffer.h">
+      <Filter>Fichiers d%27en-tête\VkCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="Queue.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipeline.h">
+      <Filter>Fichiers d%27en-tête\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformBuffer.h">
+      <Filter>Fichiers d%27en-tête\VkBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPass.h">
+      <Filter>Fichiers d%27en-tête\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Fichiers d%27en-tête\RenderPass</Filter>
+    </ClInclude>
+    <ClInclude Include="Semaphore.h">
+      <Filter>Fichiers d%27en-tête\Sync</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

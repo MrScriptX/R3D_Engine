@@ -2,63 +2,29 @@
 
 
 
-Buffer::Buffer()
+Buffer::Buffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice) : m_device(device)
 {
-
+	createVertexBuffer(device, commandPool, graphicsQueue, physicalDevice);
+	createIndexBuffer(device, commandPool, graphicsQueue, physicalDevice);
 }
 
 
 Buffer::~Buffer()
 {
-
+	vkDestroyBuffer(m_device, m_indexBuffer, nullptr);
+	vkFreeMemory(m_device, m_indexBufferMemory, nullptr);
+	vkDestroyBuffer(m_device, m_vertexBuffer, nullptr);
+	vkFreeMemory(m_device, m_vertexBufferMemory, nullptr);
 }
 
-VkBuffer Buffer::getVertexBuffer()
+VkBuffer& Buffer::getVertexBuffer()
 {
 	return m_vertexBuffer;
 }
 
-VkBuffer Buffer::getIndexBuffer()
+VkBuffer& Buffer::getIndexBuffer()
 {
 	return m_indexBuffer;
-}
-
-VkBuffer* Buffer::getUniformBuffer()
-{
-	return &m_uniformBuffer;
-}
-
-VkDeviceMemory* Buffer::getUniformBufferMemory()
-{
-	return &m_uniformBufferMemory;
-}
-
-void Buffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer & buffer, VkDeviceMemory & bufferMemory, VkDevice & device, VkPhysicalDevice& physicalDevice)
-{
-	VkBufferCreateInfo bufferInfo = {};
-	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = size;
-	bufferInfo.usage = usage;
-	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create buffer!");
-	}
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
-
-	VkMemoryAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties, physicalDevice);
-
-	if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to allocate buffer memory!");
-	}
-
-	vkBindBufferMemory(device, buffer, bufferMemory, 0);
 }
 
 void Buffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue)
@@ -98,12 +64,7 @@ void Buffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize siz
 
 void Buffer::clean(VkDevice& device)
 {
-	vkDestroyBuffer(device, m_uniformBuffer, nullptr);
-	vkFreeMemory(device, m_uniformBufferMemory, nullptr);
-	vkDestroyBuffer(device, m_indexBuffer, nullptr);
-	vkFreeMemory(device, m_indexBufferMemory, nullptr);
-	vkDestroyBuffer(device, m_vertexBuffer, nullptr);
-	vkFreeMemory(device, m_vertexBufferMemory, nullptr);
+	
 }
 
 void Buffer::createVertexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice)
@@ -148,11 +109,38 @@ void Buffer::createIndexBuffer(VkDevice & device, VkCommandPool& commandPool, Vk
 	vkFreeMemory(device, stagingBufferMem, nullptr);
 }
 
-void Buffer::createUniformBuffer(VkDevice & device, VkCommandPool & commandPool, VkQueue & graphicsQueue, VkPhysicalDevice & physicalDevice)
-{
-	VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
-	createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_uniformBuffer, m_uniformBufferMemory, device, physicalDevice);
+
+
+/**************************************************************Static fonction********************************************************************/
+/*************************************************************************************************************************************************/
+
+void Buffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer & buffer, VkDeviceMemory & bufferMemory, VkDevice & device, VkPhysicalDevice& physicalDevice)
+{
+	VkBufferCreateInfo bufferInfo = {};
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = size;
+	bufferInfo.usage = usage;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create buffer!");
+	}
+
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
+
+	VkMemoryAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties, physicalDevice);
+
+	if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to allocate buffer memory!");
+	}
+
+	vkBindBufferMemory(device, buffer, bufferMemory, 0);
 }
 
 uint32_t Buffer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice & physicalDevice)
