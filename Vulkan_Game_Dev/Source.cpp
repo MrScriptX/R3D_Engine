@@ -1,6 +1,6 @@
 #include "Application.h"
 
-//ok
+
 int main()
 {
 	Application app;
