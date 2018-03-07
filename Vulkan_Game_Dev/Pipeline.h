@@ -1,8 +1,7 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW\glfw3.h>
-
+#include "VkHeader.h"
+#include "vertex.h"
 #include <vector>
 #include <fstream>
 
@@ -14,7 +13,7 @@ public:
 
 	void clean(VkDevice& device);
 
-	void createPipeline(VkDevice& device, VkExtent2D& swapChainExtent);
+	void createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkDescriptorSetLayout& descriptorSetLayout);
 	void createRenderPass(VkDevice& device, VkFormat& swapChainImageFormat);
 	VkShaderModule createShaderModule(const std::vector<char>& code, VkDevice& device);
 
@@ -23,6 +22,7 @@ public:
 	//new
 	VkRenderPass* getRenderPass();
 	VkPipeline* getPipeline();
+	VkPipelineLayout* getPipelineLayout();
 
 private:
 	VkPipeline m_graphicsPipeline;

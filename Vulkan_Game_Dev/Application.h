@@ -6,10 +6,12 @@
 #include <stdexcept>
 #include <vector>
 #include <fstream>
+#include "Buffer.h"
 
+//use assert for abort and execption for report or recovery
 
 const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
-const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };//
+const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -61,9 +63,13 @@ public:
 	void createCommandPool();
 	void createCommandBuffer();
 	void createSemaphore();
+	void createDescriptorSetLayout();
+	void createDescriptorPool();
+	void createDescriptorSet();
 
 	void setupCallBack();
 	void pickPhysicalDevice();
+	void updateUniformBuffer();
 
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool checkValidationLayerSupport();
@@ -99,6 +105,7 @@ private:
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
 
+	Buffer m_buffer;
 	Pipeline m_pipeline;
 
 	//new
@@ -108,5 +115,9 @@ private:
 
 	VkSemaphore m_imageAvailable;
 	VkSemaphore m_renderFinished;
+
+	VkDescriptorSetLayout m_descriptorSetLayout;
+	VkDescriptorPool m_descriptorPool;
+	VkDescriptorSet m_descriptorSet;
 };
 
