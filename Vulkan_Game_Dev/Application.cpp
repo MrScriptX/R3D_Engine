@@ -126,6 +126,8 @@ void Application::clean()
 
 
 
+
+
 /**************************** Init  and clean fonctions ****************************************/
 /***********************************************************************************************/
 
@@ -187,6 +189,9 @@ void Application::cleanSwapChain()
 
 	vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
 }
+
+
+
 
 
 /**************************** Create fonctions ****************************************/
