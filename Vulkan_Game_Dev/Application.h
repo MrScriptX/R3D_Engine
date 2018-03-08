@@ -63,6 +63,7 @@ public:
 	void recreateSwapChain();
 	void createImageView();
 	void createTextureImage();
+	void createTextureImageView();
 	void createImage(uint32_t texWidth, uint32_t texHeight, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 	
 	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
@@ -125,5 +126,6 @@ private:
 
 	VkImage m_textureImage;
 	VkDeviceMemory m_textureImageMemory;
+	VkImageView m_imageView;
 };
 
