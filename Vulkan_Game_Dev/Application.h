@@ -61,6 +61,8 @@ public:
 	void createSwapChain();
 	void recreateSwapChain();
 	void createImageView();
+	void createTextureImage();
+	void createImage(uint32_t texWidth, uint32_t texHeight, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -116,5 +118,8 @@ private:
 	std::unique_ptr<DescriptorSetLayout> m_descriptorSetLayout;
 
 	std::unique_ptr<Semaphore> m_semaphore;
+
+	VkImage m_textureImage;
+	VkDeviceMemory m_textureImageMemory;
 };
 

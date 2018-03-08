@@ -62,11 +62,6 @@ void Buffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize siz
 	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-void Buffer::clean(VkDevice& device)
-{
-	
-}
-
 void Buffer::createVertexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice)
 {
 	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();

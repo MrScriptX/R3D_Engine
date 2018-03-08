@@ -129,7 +129,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;C:\Users\scrip\Documents\Lib\glfw-3.2.1.bin.WIN32\include;C:\Users\scrip\Documents\Lib\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;C:\Users\scrip\Documents\Lib\glfw-3.2.1.bin.WIN32\include;C:\Users\scrip\Documents\Lib\glm;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\VulkanSDK\1.0.65.1\Lib32;C:\Users\scrip\Documents\Lib\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
