@@ -21,6 +21,7 @@
 #include "Semaphore.h"
 
 
+
 //use assert for abort and execption for report or recovery
 
 const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };

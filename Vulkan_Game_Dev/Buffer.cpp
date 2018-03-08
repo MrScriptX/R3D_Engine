@@ -129,5 +129,6 @@ uint32_t Buffer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags prope
 		}
 	}
 
+	std::cerr << "Error";
 	throw std::runtime_error("failed to find suitable memory type!");
 }
