@@ -469,6 +469,39 @@ void Application::createImage(uint32_t texWidth, uint32_t texHeight, VkFormat fo
 	vkBindBufferMemory(m_device, image, imageMemory, 0);
 }
 
+void Application::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+{
+	VkCommandBuffer commandBuffer;
+
+	VkImageMemoryBarrier barrier = {};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout = oldLayout;//can use VK_IMAGE_LAYOUT_UNDEFINED
+	barrier.newLayout = newLayout;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;//if barrier used to transfer ownership of queue family use indice of queue family
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image = image;
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	barrier.subresourceRange.baseMipLevel = 0;
+	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.baseArrayLayer = 0;
+	barrier.subresourceRange.layerCount = 1;
+	barrier.srcAccessMask = 0;
+	barrier.dstAccessMask = 0;
+
+	vkCmdPipelineBarrier(commandBuffer, 0, 0, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+
+	CommandBuffer::endSingleTimeCommands(m_device, m_commandPool->get(), m_graphicsQueue, commandBuffer);
+}
+
+void Application::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
+{
+	VkCommandBuffer commandBuffer = CommandBuffer::beginSingleTimeCommands(m_device, m_commandPool->get());
+
+
+
+	CommandBuffer::endSingleTimeCommands(m_device, m_commandPool->get(), m_graphicsQueue, commandBuffer);
+}
+
 
 
 
