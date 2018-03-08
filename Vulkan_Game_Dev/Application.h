@@ -61,7 +61,8 @@ public:
 	void createLogicalDevice();
 	void createSwapChain();
 	void recreateSwapChain();
-	void createImageView();
+	void createImageViews();//need a rename
+	VkImageView createImageView(VkImage image, VkFormat format);
 	void createTextureImage();
 	void createTextureImageView();
 	void createImage(uint32_t texWidth, uint32_t texHeight, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);

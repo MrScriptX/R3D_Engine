@@ -109,6 +109,8 @@ void Application::clean()
 {
 	cleanSwapChain();
 
+	vkDestroyImageView(m_device, m_imageView, nullptr);
+
 	vkDestroyImage(m_device, m_textureImage, nullptr);
 	vkFreeMemory(m_device, m_textureImageMemory, nullptr);
 
@@ -161,7 +163,7 @@ void Application::initVulkan()
 	createLogicalDevice();
 
 	createSwapChain();
-	createImageView();
+	createImageViews();
 
 	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
 	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device);
@@ -372,7 +374,7 @@ void Application::recreateSwapChain()
 	cleanSwapChain();
 
 	createSwapChain();
-	createImageView();
+	createImageViews();
 
 	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
@@ -381,32 +383,36 @@ void Application::recreateSwapChain()
 	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
 }
 
-void Application::createImageView()
+void Application::createImageViews()
 {
 	m_swapChainImageViews.resize(m_swapChainImages.size());
 
 	for (size_t i = 0; i < m_swapChainImages.size(); i++)
 	{
-		VkImageViewCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		createInfo.image = m_swapChainImages[i];
-		createInfo.format = m_swapChainImageFormat;
-		createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-		createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-		createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-		createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-		createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		createInfo.subresourceRange.baseMipLevel = 0;
-		createInfo.subresourceRange.levelCount = 1;
-		createInfo.subresourceRange.baseArrayLayer = 0;
-		createInfo.subresourceRange.layerCount = 1;
-
-		if (vkCreateImageView(m_device, &createInfo, nullptr, &m_swapChainImageViews[i]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create image views!");
-		}
+		m_swapChainImageViews[i] = createImageView(m_swapChainImages[i], m_swapChainImageFormat);
 	}
+}
+
+VkImageView Application::createImageView(VkImage image, VkFormat format)
+{
+	VkImageViewCreateInfo viewInfo = {};
+	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.image = image;
+	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.format = format;
+	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	viewInfo.subresourceRange.baseMipLevel = 0;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.baseArrayLayer = 0;
+	viewInfo.subresourceRange.layerCount = 1;
+
+	VkImageView imageView;
+	if (vkCreateImageView(m_device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create texture image view!");
+	}
+
+	return imageView;
 }
 
 void Application::createTextureImage()
@@ -445,18 +451,7 @@ void Application::createTextureImage()
 
 void Application::createTextureImageView()
 {
-	/*VkImageViewCreateInfo viewInfo = {};
-	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	viewInfo.image = m_textureImage;
-	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	viewInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
-	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	viewInfo.subresourceRange.baseMipLevel = 0;
-	viewInfo.subresourceRange.levelCount = 1;
-	viewInfo.subresourceRange.baseArrayLayer = 0;
-	viewInfo.subresourceRange.layerCount = 1;
-
-	if()*/
+	m_imageView = createImageView(m_textureImage, VK_FORMAT_R8G8B8A8_UNORM);
 }
 
 void Application::createImage(uint32_t texWidth, uint32_t texHeight, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
