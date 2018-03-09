@@ -7,7 +7,7 @@
 class DescriptorSet
 {
 public:
-	DescriptorSet(VkDevice const& device, VkDescriptorSetLayout& descriptorSetLayout, VkDescriptorPool& descriptorPool, VkBuffer& buffer);
+	DescriptorSet(VkDevice const& device, VkDescriptorSetLayout& descriptorSetLayout, VkDescriptorPool& descriptorPool, VkBuffer& buffer, VkImageView& texImageView, VkSampler& sampler);
 
 	VkDescriptorSet& get();
 private:

@@ -21,6 +21,7 @@
 #include "Semaphore.h"
 
 
+
 //use assert for abort and execption for report or recovery
 
 const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
@@ -60,7 +61,15 @@ public:
 	void createLogicalDevice();
 	void createSwapChain();
 	void recreateSwapChain();
-	void createImageView();
+	void createImageViews();//need a rename
+	VkImageView createImageView(VkImage image, VkFormat format);
+	void createTextureImage();
+	void createTextureImageView();
+	void createTextureSampler();
+	void createImage(uint32_t texWidth, uint32_t texHeight, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+	
+	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -116,5 +125,10 @@ private:
 	std::unique_ptr<DescriptorSetLayout> m_descriptorSetLayout;
 
 	std::unique_ptr<Semaphore> m_semaphore;
+
+	VkImage m_textureImage;
+	VkDeviceMemory m_textureImageMemory;
+	VkImageView m_imageView;
+	VkSampler m_textureSampler;
 };
 
