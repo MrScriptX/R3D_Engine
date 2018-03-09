@@ -162,12 +162,14 @@ void Application::initVulkan()
 	createSwapChain();
 	createImageViews();
 
-	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
+	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, findDepthFormat());
 	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device);
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
 
-	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent);
 	m_commandPool = std::make_unique<CommandPool>(m_device, m_physicalDevice, m_surface);
+
+	createDepthRessources();
+	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthImageView);
 
 	m_textureImage = std::make_unique<Texture>(m_device, m_physicalDevice, m_graphicsQueue, m_commandPool->get());
 	m_imageView = std::make_unique<TextureView>(m_device, m_textureImage->getTextureImage());
@@ -377,9 +379,9 @@ void Application::recreateSwapChain()
 	createSwapChain();
 	createImageViews();
 
-	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
+	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, findDepthFormat());
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
-	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent);
+	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthImageView);
 
 	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
 }
@@ -390,8 +392,52 @@ void Application::createImageViews()
 
 	for (size_t i = 0; i < m_swapChainImages.size(); i++)
 	{
-		m_swapChainImageViews[i] = TextureView::createImageView(m_device, m_swapChainImages[i], m_swapChainImageFormat);
+		m_swapChainImageViews[i] = TextureView::createImageView(m_device, m_swapChainImages[i], m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
+}
+
+void Application::createDepthRessources()
+{
+	VkFormat depthFormat = findDepthFormat();
+	Texture::createImage(m_swapChainExtent.width, m_swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_depthImage, m_depthImageMemory, m_physicalDevice, m_device);
+
+	m_depthImageView = TextureView::createImageView(m_device, m_depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+	Barrier::transitionImageLayout(m_depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, m_device, m_commandPool->get(), m_graphicsQueue, hasStencilComponent(depthFormat));
+}
+
+VkFormat Application::findSupportedFormat(const std::vector<VkFormat>& canditates, VkImageTiling tiling, VkFormatFeatureFlags features)
+{
+	for (VkFormat format : canditates)
+	{
+		VkFormatProperties props;
+		vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format, &props);
+
+		if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
+		{
+			return format;
+		}
+		else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
+		{
+			return format;
+		}
+		else
+		{
+			continue;
+		}
+	}
+
+	throw std::runtime_error("failed to find supported format!");
+}
+
+VkFormat Application::findDepthFormat()
+{
+	return findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+					VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+}
+
+bool Application::hasStencilComponent(VkFormat format)
+{
+	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
 

@@ -105,11 +105,11 @@
     <ClCompile Include="Sampler.cpp">
       <Filter>Fichiers sources\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Barrier.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Fichiers sources\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,11 +164,11 @@
     <ClInclude Include="Sampler.h">
       <Filter>Fichiers d%27en-tête\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Barrier.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Fichiers d%27en-tête\Texture</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

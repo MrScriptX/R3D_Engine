@@ -64,7 +64,12 @@ public:
 	void createLogicalDevice();
 	void createSwapChain();
 	void recreateSwapChain();
-	void createImageViews();//need a rename
+	void createImageViews();
+
+	void createDepthRessources();
+	VkFormat findSupportedFormat(const std::vector<VkFormat>& canditates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	VkFormat findDepthFormat();
+	bool hasStencilComponent(VkFormat format);
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -124,5 +129,9 @@ private:
 	std::unique_ptr<TextureView> m_imageView;
 	std::unique_ptr<Sampler> m_sampler;
 	std::unique_ptr<Texture> m_textureImage;
+
+	VkImage m_depthImage;
+	VkDeviceMemory m_depthImageMemory;
+	VkImageView m_depthImageView;
 };
 
