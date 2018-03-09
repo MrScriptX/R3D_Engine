@@ -129,7 +129,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;C:\Users\scrip\Documents\Lib\glfw-3.2.1.bin.WIN32\include;C:\Users\scrip\Documents\Lib\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;C:\Users\scrip\Documents\Lib\glfw-3.2.1.bin.WIN32\include;C:\Users\scrip\Documents\Lib\glm;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\VulkanSDK\1.0.65.1\Lib32;C:\Users\scrip\Documents\Lib\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -185,14 +185,42 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Barrier.cpp" />
     <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="CommandBuffer.cpp" />
+    <ClCompile Include="CommandPool.cpp" />
+    <ClCompile Include="DescriptorPool.cpp" />
+    <ClCompile Include="DescriptorSet.cpp" />
+    <ClCompile Include="DescriptorSetLayout.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="Pipeline.cpp" />
+    <ClCompile Include="Queue.cpp" />
+    <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="Sampler.cpp" />
+    <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureView.cpp" />
+    <ClCompile Include="UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Barrier.h" />
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="CommandBuffer.h" />
+    <ClInclude Include="CommandPool.h" />
+    <ClInclude Include="DescriptorPool.h" />
+    <ClInclude Include="DescriptorSet.h" />
+    <ClInclude Include="DescriptorSetLayout.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Pipeline.h" />
+    <ClInclude Include="Queue.h" />
+    <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="Sampler.h" />
+    <ClInclude Include="Semaphore.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureView.h" />
+    <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="VkHeader.h" />
   </ItemGroup>

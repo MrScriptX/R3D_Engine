@@ -6,7 +6,24 @@
 #include <stdexcept>
 #include <vector>
 #include <fstream>
+#include <memory>
+
 #include "Buffer.h"
+#include "DescriptorPool.h"
+#include "DescriptorSet.h"
+#include "DescriptorSetLayout.h"
+#include "CommandPool.h"
+#include "CommandBuffer.h"
+#include "Queue.h"
+#include "UniformBuffer.h"
+#include "RenderPass.h"
+#include "FrameBuffer.h"
+#include "Semaphore.h"
+#include "TextureView.h"
+#include "Sampler.h"
+#include "Texture.h"
+
+
 
 //use assert for abort and execption for report or recovery
 
@@ -19,17 +36,6 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
-
-struct QueueFamilyIndices
-{
-	int graphicsFamily = -1;
-	int presentationFamily = -1;//added preFamily
-
-	bool isComplete()
-	{
-		return graphicsFamily >= 0 && presentationFamily >= 0;
-	}
-};
 
 struct SwapChainSupportDetails
 {
@@ -58,14 +64,7 @@ public:
 	void createLogicalDevice();
 	void createSwapChain();
 	void recreateSwapChain();
-	void createImageView();
-	void createFrameBuffer();
-	void createCommandPool();
-	void createCommandBuffer();
-	void createSemaphore();
-	void createDescriptorSetLayout();
-	void createDescriptorPool();
-	void createDescriptorSet();
+	void createImageViews();//need a rename
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -81,7 +80,6 @@ public:
 
 	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 	std::vector<const char*> getRequiredExtensions();
-	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 	static void onWindowResized(GLFWwindow* window, int width, int height);
 	static VkResult createDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback);
@@ -92,11 +90,13 @@ public:
 private:
 	VkDebugReportCallbackEXT callback;
 	VkSurfaceKHR m_surface;
-	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
-	VkDevice m_device;
-	VkQueue m_graphicsQueue;
 	VkInstance m_instance;
 	GLFWwindow * m_window;
+
+	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+	VkDevice m_device;
+
+	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;
 
 	std::vector<VkImage> m_swapChainImages;
@@ -105,19 +105,24 @@ private:
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
 
-	Buffer m_buffer;
-	Pipeline m_pipeline;
+	std::unique_ptr<Buffer> m_buffer;
+	std::unique_ptr<UniformBuffer> m_uniformBuffer;
 
-	//new
-	std::vector<VkFramebuffer> m_swapChainFrameBuffer;
-	std::vector<VkCommandBuffer> m_commandBuffer;
-	VkCommandPool m_commandPool;
+	std::unique_ptr<FrameBuffer> m_frameBuffer;
+	std::unique_ptr<RenderPass> m_renderPass;
+	std::unique_ptr<Pipeline> m_pipeline;
 
-	VkSemaphore m_imageAvailable;
-	VkSemaphore m_renderFinished;
+	CommandBuffer m_commandBuffer;
+	std::unique_ptr<CommandPool> m_commandPool;
 
-	VkDescriptorSetLayout m_descriptorSetLayout;
-	VkDescriptorPool m_descriptorPool;
-	VkDescriptorSet m_descriptorSet;
+	std::unique_ptr<DescriptorPool> m_descriptorPool;
+	std::unique_ptr<DescriptorSet> m_descriptorSet;
+	std::unique_ptr<DescriptorSetLayout> m_descriptorSetLayout;
+
+	std::unique_ptr<Semaphore> m_semaphore;
+
+	std::unique_ptr<TextureView> m_imageView;
+	std::unique_ptr<Sampler> m_sampler;
+	std::unique_ptr<Texture> m_textureImage;
 };
 
