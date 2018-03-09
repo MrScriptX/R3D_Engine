@@ -173,6 +173,9 @@ void Application::initVulkan()
 	m_commandPool = std::make_unique<CommandPool>(m_device, m_physicalDevice, m_surface);
 
 	createTextureImage();
+	createTextureImageView();
+	createTextureSampler();
+
 	m_buffer = std::make_unique<Buffer>(m_device, m_commandPool->get(), m_graphicsQueue, m_physicalDevice);
 	m_uniformBuffer = std::make_unique<UniformBuffer>(m_device, m_physicalDevice);
 
@@ -452,6 +455,14 @@ void Application::createTextureImage()
 void Application::createTextureImageView()
 {
 	m_imageView = createImageView(m_textureImage, VK_FORMAT_R8G8B8A8_UNORM);
+}
+
+void Application::createTextureSampler()
+{
+	VkSamplerCreateInfo samplerInfo = {};
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = VK_FILTER_LINEAR;
+	samplerInfo.minFilter = VK_FILTER_LINEAR;//
 }
 
 void Application::createImage(uint32_t texWidth, uint32_t texHeight, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
