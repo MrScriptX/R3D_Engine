@@ -19,6 +19,9 @@
 #include "RenderPass.h"
 #include "FrameBuffer.h"
 #include "Semaphore.h"
+#include "TextureView.h"
+#include "Sampler.h"
+#include "Texture.h"
 
 
 
@@ -62,14 +65,6 @@ public:
 	void createSwapChain();
 	void recreateSwapChain();
 	void createImageViews();//need a rename
-	VkImageView createImageView(VkImage image, VkFormat format);
-	void createTextureImage();
-	void createTextureImageView();
-	void createTextureSampler();
-	void createImage(uint32_t texWidth, uint32_t texHeight, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-	
-	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -126,9 +121,8 @@ private:
 
 	std::unique_ptr<Semaphore> m_semaphore;
 
-	VkImage m_textureImage;
-	VkDeviceMemory m_textureImageMemory;
-	VkImageView m_imageView;
-	VkSampler m_textureSampler;
+	std::unique_ptr<TextureView> m_imageView;
+	std::unique_ptr<Sampler> m_sampler;
+	std::unique_ptr<Texture> m_textureImage;
 };
 

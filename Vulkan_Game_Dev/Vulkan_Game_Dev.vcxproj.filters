@@ -49,6 +49,12 @@
     <Filter Include="Fichiers sources\Sync">
       <UniqueIdentifier>{016af835-f50a-4b48-bc01-4941da650ba5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Texture">
+      <UniqueIdentifier>{69010ba2-f291-4683-80ba-9d9ce427a34b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Texture">
+      <UniqueIdentifier>{99712747-abcd-4bba-815a-4c246178e057}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -92,6 +98,18 @@
     </ClCompile>
     <ClCompile Include="Semaphore.cpp">
       <Filter>Fichiers sources\Sync</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureView.cpp">
+      <Filter>Fichiers sources\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Sampler.cpp">
+      <Filter>Fichiers sources\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Barrier.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +157,18 @@
     </ClInclude>
     <ClInclude Include="Semaphore.h">
       <Filter>Fichiers d%27en-tête\Sync</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureView.h">
+      <Filter>Fichiers d%27en-tête\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Sampler.h">
+      <Filter>Fichiers d%27en-tête\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Barrier.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
