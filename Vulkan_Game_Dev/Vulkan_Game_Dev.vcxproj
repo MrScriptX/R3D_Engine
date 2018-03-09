@@ -185,6 +185,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Barrier.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
     <ClCompile Include="CommandPool.cpp" />
@@ -195,12 +196,16 @@
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="Queue.cpp" />
     <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureView.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Barrier.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="CommandBuffer.h" />
     <ClInclude Include="CommandPool.h" />
@@ -211,7 +216,10 @@
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="Sampler.h" />
     <ClInclude Include="Semaphore.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureView.h" />
     <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="VkHeader.h" />
