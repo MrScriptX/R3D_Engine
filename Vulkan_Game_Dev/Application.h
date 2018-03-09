@@ -129,5 +129,6 @@ private:
 	VkImage m_textureImage;
 	VkDeviceMemory m_textureImageMemory;
 	VkImageView m_imageView;
+	VkSampler m_textureSampler;
 };
 
