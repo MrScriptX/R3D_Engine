@@ -22,6 +22,8 @@
 #include "TextureView.h"
 #include "Sampler.h"
 #include "Texture.h"
+#include "LoadModel.h"
+#include "DepthRessources.h"
 
 
 
@@ -65,13 +67,6 @@ public:
 	void createSwapChain();
 	void recreateSwapChain();
 	void createImageViews();
-
-	void loadModel();
-
-	void createDepthRessources();
-	VkFormat findSupportedFormat(const std::vector<VkFormat>& canditates, VkImageTiling tiling, VkFormatFeatureFlags features);
-	VkFormat findDepthFormat();
-	bool hasStencilComponent(VkFormat format);
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -132,11 +127,8 @@ private:
 	std::unique_ptr<Sampler> m_sampler;
 	std::unique_ptr<Texture> m_textureImage;
 
-	VkImage m_depthImage;
-	VkDeviceMemory m_depthImageMemory;
-	VkImageView m_depthImageView;
+	std::unique_ptr<DepthRessources> m_depthRessource;
 
-	std::vector<Vertex> m_vertices;
-	std::vector<uint32_t> m_indices;
+	LoadModel m_model;
 };
 

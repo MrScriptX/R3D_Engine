@@ -3,16 +3,9 @@
 #include <assert.h>
 #include <set>
 #include <algorithm>
-#include <unordered_map>
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
 
 #define WIDTH 1260
 #define HEIGHT 720
-
-const std::string MODEL_PATH = "model\\chalet.obj";
-const std::string TEXTURE_PATH = "texture\\chalet.jpg";
 
 
 Application::Application()
@@ -168,36 +161,34 @@ void Application::initVulkan()
 	createSwapChain();
 	createImageViews();
 
-	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, findDepthFormat());
+	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, DepthRessources::findDepthFormat(m_physicalDevice));
 	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device);
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
 
 	m_commandPool = std::make_unique<CommandPool>(m_device, m_physicalDevice, m_surface);
 
-	createDepthRessources();
-	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthImageView);
+	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device, m_physicalDevice, m_commandPool->get(), m_graphicsQueue);
+	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 
 	m_textureImage = std::make_unique<Texture>(m_device, m_physicalDevice, m_graphicsQueue, m_commandPool->get());
 	m_imageView = std::make_unique<TextureView>(m_device, m_textureImage->getTextureImage());
 	m_sampler = std::make_unique<Sampler>(m_device);
 
-	loadModel();
-	m_buffer = std::make_unique<Buffer>(m_device, m_commandPool->get(), m_graphicsQueue, m_physicalDevice, m_vertices, m_indices);
+	m_model.loadModel("model\\chalet.obj", "texture\\chalet.jpg");
+	m_buffer = std::make_unique<Buffer>(m_device, m_commandPool->get(), m_graphicsQueue, m_physicalDevice, m_model.getVertex(), m_model.getIndex());
 	m_uniformBuffer = std::make_unique<UniformBuffer>(m_device, m_physicalDevice);
 
 	m_descriptorPool = std::make_unique<DescriptorPool>(m_device);
 	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_uniformBuffer->getBuffer(), m_imageView->getImageView(), m_sampler->getSampler());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_indices);
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
 
 	m_semaphore = std::make_unique<Semaphore>(m_device);
 }
 
 void Application::cleanSwapChain()
 {
-	vkDestroyImageView(m_device, m_depthImageView, nullptr);
-	vkDestroyImage(m_device, m_depthImage, nullptr);
-	vkFreeMemory(m_device, m_depthImageMemory, nullptr);
+	m_depthRessource.reset();
 
 	m_frameBuffer.reset();
 
@@ -390,12 +381,12 @@ void Application::recreateSwapChain()
 	createSwapChain();
 	createImageViews();
 
-	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, findDepthFormat());
+	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, DepthRessources::findDepthFormat(m_physicalDevice));
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
-	createDepthRessources();
-	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthImageView);
+	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device, m_physicalDevice, m_commandPool->get(), m_graphicsQueue);
+	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_indices);
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
 }
 
 void Application::createImageViews()
@@ -407,95 +398,6 @@ void Application::createImageViews()
 		m_swapChainImageViews[i] = TextureView::createImageView(m_device, m_swapChainImages[i], m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 }
-
-void Application::loadModel()
-{
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-	std::string err;
-
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, MODEL_PATH.c_str()))
-	{
-		throw std::runtime_error(err);
-	}
-
-	std::unordered_map<Vertex, uint32_t> uniqueVertices = {};
-
-	for (const auto& shape : shapes)
-	{
-		for (const auto& index : shape.mesh.indices)
-		{
-			Vertex vertex = {};
-
-			vertex.pos =
-			{
-				attrib.vertices[3 * index.vertex_index + 0],
-				attrib.vertices[3 * index.vertex_index + 1],
-				attrib.vertices[3 * index.vertex_index + 2]
-			};
-
-			vertex.texCoord = {
-				attrib.texcoords[2 * index.texcoord_index + 0],
-				1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-			};
-
-			vertex.color = { 1.0f, 1.0f, 1.0f };
-
-			if (uniqueVertices.count(vertex) == 0) {
-				uniqueVertices[vertex] = static_cast<uint32_t>(m_vertices.size());
-				m_vertices.push_back(vertex);
-			}
-
-			m_indices.push_back(uniqueVertices[vertex]);
-		}
-	}
-}
-
-void Application::createDepthRessources()
-{
-	VkFormat depthFormat = findDepthFormat();
-	Texture::createImage(m_swapChainExtent.width, m_swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_depthImage, m_depthImageMemory, m_physicalDevice, m_device);
-
-	m_depthImageView = TextureView::createImageView(m_device, m_depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
-	Barrier::transitionImageLayout(m_depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, m_device, m_commandPool->get(), m_graphicsQueue, hasStencilComponent(depthFormat));
-}
-
-VkFormat Application::findSupportedFormat(const std::vector<VkFormat>& canditates, VkImageTiling tiling, VkFormatFeatureFlags features)
-{
-	for (VkFormat format : canditates)
-	{
-		VkFormatProperties props;
-		vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format, &props);
-
-		if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
-		{
-			return format;
-		}
-		else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
-		{
-			return format;
-		}
-		else
-		{
-			continue;
-		}
-	}
-
-	throw std::runtime_error("failed to find supported format!");
-}
-
-VkFormat Application::findDepthFormat()
-{
-	return findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
-					VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-}
-
-bool Application::hasStencilComponent(VkFormat format)
-{
-	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
-}
-
 
 
 

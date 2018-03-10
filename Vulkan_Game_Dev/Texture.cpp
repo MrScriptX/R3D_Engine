@@ -5,7 +5,7 @@
 #include <stb_image.h>
 
 
-Texture::Texture(VkDevice& device, VkPhysicalDevice& physicalDevice, VkQueue& graphicsQueue, VkCommandPool& commandPool) : m_device(device)
+Texture::Texture(VkDevice& device, VkPhysicalDevice& physicalDevice, VkQueue& graphicsQueue, VkCommandPool& commandPool) : m_device(device), m_physicalDevice(physicalDevice)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingMem;
