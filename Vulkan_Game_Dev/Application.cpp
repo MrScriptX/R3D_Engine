@@ -188,6 +188,10 @@ void Application::initVulkan()
 
 void Application::cleanSwapChain()
 {
+	vkDestroyImageView(m_device, m_depthImageView, nullptr);
+	vkDestroyImage(m_device, m_depthImage, nullptr);
+	vkFreeMemory(m_device, m_depthImageMemory, nullptr);
+
 	m_frameBuffer.reset();
 
 	m_commandBuffer.clean(m_device, m_commandPool->get());
@@ -381,6 +385,7 @@ void Application::recreateSwapChain()
 
 	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, findDepthFormat());
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
+	createDepthRessources();
 	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthImageView);
 
 	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
