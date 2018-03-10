@@ -66,6 +66,8 @@ public:
 	void recreateSwapChain();
 	void createImageViews();
 
+	void loadModel();
+
 	void createDepthRessources();
 	VkFormat findSupportedFormat(const std::vector<VkFormat>& canditates, VkImageTiling tiling, VkFormatFeatureFlags features);
 	VkFormat findDepthFormat();
@@ -133,5 +135,8 @@ private:
 	VkImage m_depthImage;
 	VkDeviceMemory m_depthImageMemory;
 	VkImageView m_depthImageView;
+
+	std::vector<Vertex> m_vertices;
+	std::vector<uint32_t> m_indices;
 };
 
