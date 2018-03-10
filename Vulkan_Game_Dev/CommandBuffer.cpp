@@ -1,6 +1,8 @@
 #include "CommandBuffer.h"
 
 
+#include <array>
+
 
 CommandBuffer::CommandBuffer()
 {
@@ -11,7 +13,7 @@ CommandBuffer::~CommandBuffer()
 {
 }
 
-void CommandBuffer::allocateCommandBuffer(VkDevice& device, VkCommandPool& commandPool, VkRenderPass& renderPass, VkPipeline& pipeline, VkBuffer& vertexBuffer, VkBuffer& indexBuffer, VkPipelineLayout& pipelineLayout, VkDescriptorSet& descriptorSet, VkExtent2D& swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer)
+void CommandBuffer::allocateCommandBuffer(VkDevice& device, VkCommandPool& commandPool, VkRenderPass& renderPass, VkPipeline& pipeline, VkBuffer& vertexBuffer, VkBuffer& indexBuffer, VkPipelineLayout& pipelineLayout, VkDescriptorSet& descriptorSet, VkExtent2D& swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer, std::vector<uint32_t>& indices)
 {
 	m_commandBuffer.resize(swapChainBuffer.size());
 
@@ -42,9 +44,12 @@ void CommandBuffer::allocateCommandBuffer(VkDevice& device, VkCommandPool& comma
 		renderPassInfo.renderArea.offset = { 0, 0 };
 		renderPassInfo.renderArea.extent = swapChainExtent;
 
-		VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-		renderPassInfo.clearValueCount = 1;
-		renderPassInfo.pClearValues = &clearColor;
+		std::array<VkClearValue, 2> clearValues = {};
+		clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+		clearValues[1].depthStencil = { 1.0f, 0 };
+
+		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassInfo.pClearValues = clearValues.data();
 
 		vkCmdBeginRenderPass(m_commandBuffer[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vkCmdBindPipeline(m_commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -52,7 +57,7 @@ void CommandBuffer::allocateCommandBuffer(VkDevice& device, VkCommandPool& comma
 		VkBuffer vertexBuffers[] = { vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(m_commandBuffer[i], 0, 1, vertexBuffers, offsets);
-		vkCmdBindIndexBuffer(m_commandBuffer[i], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+		vkCmdBindIndexBuffer(m_commandBuffer[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 		vkCmdBindDescriptorSets(m_commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 
 		vkCmdDrawIndexed(m_commandBuffer[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);

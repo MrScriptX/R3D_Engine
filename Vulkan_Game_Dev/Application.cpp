@@ -4,7 +4,6 @@
 #include <set>
 #include <algorithm>
 
-
 #define WIDTH 1260
 #define HEIGHT 720
 
@@ -162,30 +161,35 @@ void Application::initVulkan()
 	createSwapChain();
 	createImageViews();
 
-	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
+	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, DepthRessources::findDepthFormat(m_physicalDevice));
 	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device);
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
 
-	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent);
 	m_commandPool = std::make_unique<CommandPool>(m_device, m_physicalDevice, m_surface);
+
+	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device, m_physicalDevice, m_commandPool->get(), m_graphicsQueue);
+	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 
 	m_textureImage = std::make_unique<Texture>(m_device, m_physicalDevice, m_graphicsQueue, m_commandPool->get());
 	m_imageView = std::make_unique<TextureView>(m_device, m_textureImage->getTextureImage());
 	m_sampler = std::make_unique<Sampler>(m_device);
 
-	m_buffer = std::make_unique<Buffer>(m_device, m_commandPool->get(), m_graphicsQueue, m_physicalDevice);
+	m_model.loadModel("model\\chalet.obj", "texture\\chalet.jpg");
+	m_buffer = std::make_unique<Buffer>(m_device, m_commandPool->get(), m_graphicsQueue, m_physicalDevice, m_model.getVertex(), m_model.getIndex());
 	m_uniformBuffer = std::make_unique<UniformBuffer>(m_device, m_physicalDevice);
 
 	m_descriptorPool = std::make_unique<DescriptorPool>(m_device);
 	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_uniformBuffer->getBuffer(), m_imageView->getImageView(), m_sampler->getSampler());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
 
 	m_semaphore = std::make_unique<Semaphore>(m_device);
 }
 
 void Application::cleanSwapChain()
 {
+	m_depthRessource.reset();
+
 	m_frameBuffer.reset();
 
 	m_commandBuffer.clean(m_device, m_commandPool->get());
@@ -377,11 +381,12 @@ void Application::recreateSwapChain()
 	createSwapChain();
 	createImageViews();
 
-	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat);
+	m_renderPass = std::make_unique<RenderPass>(m_device, m_swapChainImageFormat, DepthRessources::findDepthFormat(m_physicalDevice));
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
-	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent);
+	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device, m_physicalDevice, m_commandPool->get(), m_graphicsQueue);
+	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
 }
 
 void Application::createImageViews()
@@ -390,10 +395,9 @@ void Application::createImageViews()
 
 	for (size_t i = 0; i < m_swapChainImages.size(); i++)
 	{
-		m_swapChainImageViews[i] = TextureView::createImageView(m_device, m_swapChainImages[i], m_swapChainImageFormat);
+		m_swapChainImageViews[i] = TextureView::createImageView(m_device, m_swapChainImages[i], m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 }
-
 
 
 
@@ -453,7 +457,7 @@ void Application::updateUniformBuffer()
 	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 	UniformBufferObject ubo = {};
-	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(existing transform, rotation, axis to apply)
+	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(existing transform, rotation, axis to apply)
 	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(eye pos, center pos, up axis) 
 	ubo.proj = glm::perspective(glm::radians(45.0f), (float)m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1f, 10.0f);//(view angle, apsect ratio, far plane, near plane)
 

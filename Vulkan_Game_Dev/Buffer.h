@@ -8,7 +8,7 @@
 class Buffer
 {
 public:
-	Buffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice);
+	Buffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 	~Buffer();
 
 	VkBuffer& getVertexBuffer();
@@ -20,8 +20,8 @@ public:
 	static uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice& physicalDevice);
 private:
 
-	void createVertexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice);
-	void createIndexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice);
+	void createVertexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<Vertex>& vertices);
+	void createIndexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<uint32_t>& indices);
 
 
 	VkDevice& m_device;

@@ -8,7 +8,7 @@ public:
 	TextureView(VkDevice& device, VkImage& texture);
 	~TextureView();
 
-	static VkImageView createImageView(VkDevice& device, VkImage image, VkFormat format);
+	static VkImageView createImageView(VkDevice& device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 
 	VkImageView& getImageView();
 private:

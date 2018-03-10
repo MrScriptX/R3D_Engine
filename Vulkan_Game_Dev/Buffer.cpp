@@ -2,10 +2,10 @@
 
 
 
-Buffer::Buffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice) : m_device(device)
+Buffer::Buffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices) : m_device(device)
 {
-	createVertexBuffer(device, commandPool, graphicsQueue, physicalDevice);
-	createIndexBuffer(device, commandPool, graphicsQueue, physicalDevice);
+	createVertexBuffer(device, commandPool, graphicsQueue, physicalDevice, vertices);
+	createIndexBuffer(device, commandPool, graphicsQueue, physicalDevice, indices);
 }
 
 
@@ -40,7 +40,7 @@ void Buffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize siz
 	CommandBuffer::endSingleTimeCommands(device, commandPool, graphicsQueue, commandBuffer);
 }
 
-void Buffer::createVertexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice)
+void Buffer::createVertexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<Vertex>& vertices)
 {
 	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
@@ -61,7 +61,7 @@ void Buffer::createVertexBuffer(VkDevice& device, VkCommandPool& commandPool, Vk
 	vkFreeMemory(device, stagingBufferMem, nullptr);
 }
 
-void Buffer::createIndexBuffer(VkDevice & device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice)
+void Buffer::createIndexBuffer(VkDevice & device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<uint32_t>& indices)
 {
 	VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
 

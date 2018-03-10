@@ -116,7 +116,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;D:\Librairy\glfw-3.2.1.bin.WIN32\include;D:\Librairy\glm-0.9.9-a2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;D:\Librairy\glfw-3.2.1.bin.WIN32\include;D:\Librairy\glm-0.9.9-a2;D:\Librairy\Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\VulkanSDK\1.0.65.1\Lib32;D:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -160,7 +160,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;D:\Librairy\glfw-3.2.1.bin.WIN32\include;D:\Librairy\glm-0.9.9-a2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;D:\Librairy\glfw-3.2.1.bin.WIN32\include;D:\Librairy\glm-0.9.9-a2;D:\Librairy\Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -189,10 +189,12 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="CommandBuffer.cpp" />
     <ClCompile Include="CommandPool.cpp" />
+    <ClCompile Include="DepthRessources.cpp" />
     <ClCompile Include="DescriptorPool.cpp" />
     <ClCompile Include="DescriptorSet.cpp" />
     <ClCompile Include="DescriptorSetLayout.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="LoadModel.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="Queue.cpp" />
     <ClCompile Include="RenderPass.cpp" />
@@ -209,10 +211,12 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="CommandBuffer.h" />
     <ClInclude Include="CommandPool.h" />
+    <ClInclude Include="DepthRessources.h" />
     <ClInclude Include="DescriptorPool.h" />
     <ClInclude Include="DescriptorSet.h" />
     <ClInclude Include="DescriptorSetLayout.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="LoadModel.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="RenderPass.h" />

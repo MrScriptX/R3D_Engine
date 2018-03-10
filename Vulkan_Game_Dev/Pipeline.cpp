@@ -44,6 +44,7 @@ void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkD
 
 
 
+
 	auto bindingDesc = Vertex::getBindingDescription();
 	auto attributeDesc = Vertex::getAttributeDescriptions();
 
@@ -93,6 +94,18 @@ void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkD
 	multisampling.sampleShadingEnable = VK_FALSE;
 	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
+	VkPipelineDepthStencilStateCreateInfo depthInfo = {};
+	depthInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	depthInfo.depthTestEnable = VK_TRUE;
+	depthInfo.depthWriteEnable = VK_TRUE;
+	depthInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+	depthInfo.depthBoundsTestEnable = VK_FALSE;
+	depthInfo.minDepthBounds = 0.0f; // Optional
+	depthInfo.maxDepthBounds = 1.0f; // Optional
+	depthInfo.stencilTestEnable = VK_FALSE;
+	depthInfo.front = {}; // Optional
+	depthInfo.back = {}; // Optional
+
 	VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
 	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
@@ -128,6 +141,7 @@ void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkD
 	pipelineInfo.pViewportState = &viewportState;
 	pipelineInfo.pRasterizationState = &rasterizer;
 	pipelineInfo.pMultisampleState = &multisampling;
+	pipelineInfo.pDepthStencilState = &depthInfo;
 	pipelineInfo.pColorBlendState = &colorBlending;
 	pipelineInfo.layout = m_pipelineLayout;
 	pipelineInfo.renderPass = renderPass;
