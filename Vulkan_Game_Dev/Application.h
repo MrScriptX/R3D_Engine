@@ -22,6 +22,8 @@
 #include "TextureView.h"
 #include "Sampler.h"
 #include "Texture.h"
+#include "LoadModel.h"
+#include "DepthRessources.h"
 
 
 
@@ -64,7 +66,7 @@ public:
 	void createLogicalDevice();
 	void createSwapChain();
 	void recreateSwapChain();
-	void createImageViews();//need a rename
+	void createImageViews();
 
 	void setupCallBack();
 	void pickPhysicalDevice();
@@ -124,5 +126,9 @@ private:
 	std::unique_ptr<TextureView> m_imageView;
 	std::unique_ptr<Sampler> m_sampler;
 	std::unique_ptr<Texture> m_textureImage;
+
+	std::unique_ptr<DepthRessources> m_depthRessource;
+
+	LoadModel m_model;
 };
 

@@ -6,7 +6,7 @@
 class FrameBuffer
 {
 public:
-	FrameBuffer(VkDevice& device, VkRenderPass& renderPass, std::vector<VkImageView>& m_swapChainImageViews, VkExtent2D& m_swapChainExtent);
+	FrameBuffer(VkDevice& device, VkRenderPass& renderPass, std::vector<VkImageView>& m_swapChainImageViews, VkExtent2D& m_swapChainExtent, VkImageView& depthImageView);
 	~FrameBuffer();
 
 	std::vector<VkFramebuffer>& getFrameBuffer();

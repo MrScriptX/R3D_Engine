@@ -106,9 +106,15 @@
       <Filter>Fichiers sources\Texture</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Texture</Filter>
     </ClCompile>
     <ClCompile Include="Barrier.cpp">
+      <Filter>Fichiers sources\Sync</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadModel.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthRessources.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -165,9 +171,15 @@
       <Filter>Fichiers d%27en-tête\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Barrier.h">
+      <Filter>Fichiers d%27en-tête\Sync</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadModel.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthRessources.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
