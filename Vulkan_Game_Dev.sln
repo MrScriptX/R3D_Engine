@@ -9,6 +9,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		release_2|x64 = release_2|x64
+		release_2|x86 = release_2|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 		Vulkan_elman_pc|x64 = Vulkan_elman_pc|x64
@@ -19,6 +21,10 @@ Global
 		{4401C86B-984C-4184-A0A5-33586F893073}.Debug|x64.Build.0 = Debug|x64
 		{4401C86B-984C-4184-A0A5-33586F893073}.Debug|x86.ActiveCfg = Debug|Win32
 		{4401C86B-984C-4184-A0A5-33586F893073}.Debug|x86.Build.0 = Debug|Win32
+		{4401C86B-984C-4184-A0A5-33586F893073}.release_2|x64.ActiveCfg = release_2|x64
+		{4401C86B-984C-4184-A0A5-33586F893073}.release_2|x64.Build.0 = release_2|x64
+		{4401C86B-984C-4184-A0A5-33586F893073}.release_2|x86.ActiveCfg = release_2|Win32
+		{4401C86B-984C-4184-A0A5-33586F893073}.release_2|x86.Build.0 = release_2|Win32
 		{4401C86B-984C-4184-A0A5-33586F893073}.Release|x64.ActiveCfg = Release|x64
 		{4401C86B-984C-4184-A0A5-33586F893073}.Release|x64.Build.0 = Release|x64
 		{4401C86B-984C-4184-A0A5-33586F893073}.Release|x86.ActiveCfg = Release|Win32
