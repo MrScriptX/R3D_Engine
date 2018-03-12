@@ -181,7 +181,8 @@ void Application::initVulkan()
 	m_descriptorPool = std::make_unique<DescriptorPool>(m_device);
 	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_uniformBuffer->getBuffer(), m_imageView->getImageView(), m_sampler->getSampler());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_frameBuffer->getFrameBuffer());
+	m_commandBuffer.beginCommandBuffer(m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
 
 	m_semaphore = std::make_unique<Semaphore>(m_device);
 }
@@ -386,7 +387,16 @@ void Application::recreateSwapChain()
 	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device, m_physicalDevice, m_commandPool->get(), m_graphicsQueue);
 	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_frameBuffer->getFrameBuffer());
+	m_commandBuffer.beginCommandBuffer(m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	//bind pipeline
+	//bind vertex buffer
+	//bind index buffer
+	//bind descriptor
+	//draw index
+	//begin render pass check
+	//end render pass check maybe seperate the two?
+	//end command buffer
 }
 
 void Application::createImageViews()

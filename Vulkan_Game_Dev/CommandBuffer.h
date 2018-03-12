@@ -10,7 +10,10 @@ public:
 	CommandBuffer();
 	~CommandBuffer();
 
-	void allocateCommandBuffer(VkDevice& device, VkCommandPool& commandPool, VkRenderPass& renderPass, VkPipeline& pipeline, VkBuffer& vertexBuffer, VkBuffer& indexBuffer, VkPipelineLayout& pipelineLayout, VkDescriptorSet& descriptorSet, VkExtent2D& swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer, std::vector<uint32_t>& indices);
+	void allocateCommandBuffer(VkDevice& device, VkCommandPool& commandPool, std::vector<VkFramebuffer>& swapChainBuffer);
+	void beginCommandBuffer(VkRenderPass& renderPass, VkPipeline& pipeline, VkBuffer& vertexBuffer, VkBuffer& indexBuffer, VkPipelineLayout& pipelineLayout, VkDescriptorSet& descriptorSet, VkExtent2D& swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer, std::vector<uint32_t>& indices);
+
+
 	void clean(VkDevice& device, VkCommandPool& commandPool);
 
 	static VkCommandBuffer beginSingleTimeCommands(VkDevice& device, VkCommandPool& commandPool);
