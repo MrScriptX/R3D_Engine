@@ -478,7 +478,7 @@ void Application::updateUniformBuffer()
 
 	UniformBufferObject ubo = {};
 	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(existing transform, rotation, axis to apply)
-	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(eye pos, center pos, up axis) 
+	ubo.view = glm::lookAt(glm::vec3(1.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(eye pos, center pos, up axis) 
 	ubo.proj = glm::perspective(glm::radians(45.0f), (float)m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1f, 10.0f);//(view angle, apsect ratio, far plane, near plane)
 
 	ubo.proj[1][1] *= -1;
