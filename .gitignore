@@ -8,6 +8,10 @@
 *.sln.docstates
 *.idb
 *.tlog
+*.iobj
+*.ipdb
+*.exe
+*.iobj
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
