@@ -182,7 +182,16 @@ void Application::initVulkan()
 	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_uniformBuffer->getBuffer(), m_imageView->getImageView(), m_sampler->getSampler());
 
 	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_frameBuffer->getFrameBuffer());
+	
 	m_commandBuffer.beginCommandBuffer(m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	m_renderPass->beginRenderPass(m_commandBuffer.getCommandBuffer(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
+	m_pipeline->bindPipeline(m_commandBuffer.getCommandBuffer());
+	m_buffer->bindVertexBuffer(m_commandBuffer.getCommandBuffer());
+	m_buffer->bindIndexBuffer(m_commandBuffer.getCommandBuffer());
+	m_descriptorSet->bindDescriptorSet(m_commandBuffer.getCommandBuffer(), m_pipeline->getPipelineLayout());
+	m_model.drawIndexed(m_commandBuffer.getCommandBuffer());
+	m_renderPass->endRenderPass(m_commandBuffer.getCommandBuffer());
+	m_commandBuffer.endCommandBuffer();
 
 	m_semaphore = std::make_unique<Semaphore>(m_device);
 }
@@ -388,15 +397,16 @@ void Application::recreateSwapChain()
 	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 
 	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_frameBuffer->getFrameBuffer());
+	
 	m_commandBuffer.beginCommandBuffer(m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
-	//begin render pass check
-	//bind pipeline check
-	//bind vertex buffer check
-	//bind index buffer check
-	//bind descriptor check
-	//draw index check
-	//end render pass check
-	//end command buffer check
+	m_renderPass->beginRenderPass(m_commandBuffer.getCommandBuffer(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
+	m_pipeline->bindPipeline(m_commandBuffer.getCommandBuffer());
+	m_buffer->bindVertexBuffer(m_commandBuffer.getCommandBuffer());
+	m_buffer->bindIndexBuffer(m_commandBuffer.getCommandBuffer());
+	m_descriptorSet->bindDescriptorSet(m_commandBuffer.getCommandBuffer(), m_pipeline->getPipelineLayout());
+	m_model.drawIndexed(m_commandBuffer.getCommandBuffer());
+	m_renderPass->endRenderPass(m_commandBuffer.getCommandBuffer());
+	m_commandBuffer.endCommandBuffer();
 }
 
 void Application::createImageViews()

@@ -40,7 +40,7 @@ void CommandBuffer::beginCommandBuffer(VkRenderPass& renderPass, VkPipeline& pip
 
 		vkBeginCommandBuffer(m_commandBuffer[i], &beginInfo);
 
-		VkRenderPassBeginInfo renderPassInfo = {};
+		/*VkRenderPassBeginInfo renderPassInfo = {};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass = renderPass;
 		renderPassInfo.framebuffer = swapChainBuffer[i];
@@ -70,7 +70,7 @@ void CommandBuffer::beginCommandBuffer(VkRenderPass& renderPass, VkPipeline& pip
 		if (vkEndCommandBuffer(m_commandBuffer[i]) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to record command buffer!");
-		}
+		}*/
 	}
 }
 
