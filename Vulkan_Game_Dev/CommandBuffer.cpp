@@ -74,6 +74,17 @@ void CommandBuffer::beginCommandBuffer(VkRenderPass& renderPass, VkPipeline& pip
 	}
 }
 
+void CommandBuffer::endCommandBuffer()
+{
+	for (size_t i = 0; i < m_commandBuffer.size(); i++)
+	{
+		if (vkEndCommandBuffer(m_commandBuffer[i]) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to record command buffer!");
+		}
+	}
+}
+
 void CommandBuffer::clean(VkDevice & device, VkCommandPool & commandPool)
 {
 	vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(m_commandBuffer.size()), m_commandBuffer.data());
