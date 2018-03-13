@@ -12,6 +12,8 @@
 *.ipdb
 *.exe
 *.iobj
+!model/*
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
