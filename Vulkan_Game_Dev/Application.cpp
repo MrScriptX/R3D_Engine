@@ -181,7 +181,17 @@ void Application::initVulkan()
 	m_descriptorPool = std::make_unique<DescriptorPool>(m_device);
 	m_descriptorSet = std::make_unique<DescriptorSet>(m_device, m_descriptorSetLayout->get(), m_descriptorPool->getDescriptor(), m_uniformBuffer->getBuffer(), m_imageView->getImageView(), m_sampler->getSampler());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_frameBuffer->getFrameBuffer());
+	
+	m_commandBuffer.beginCommandBuffer(m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	m_renderPass->beginRenderPass(m_commandBuffer.getCommandBuffer(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
+	m_pipeline->bindPipeline(m_commandBuffer.getCommandBuffer());
+	m_buffer->bindVertexBuffer(m_commandBuffer.getCommandBuffer());
+	m_buffer->bindIndexBuffer(m_commandBuffer.getCommandBuffer());
+	m_descriptorSet->bindDescriptorSet(m_commandBuffer.getCommandBuffer(), m_pipeline->getPipelineLayout());
+	m_model.drawIndexed(m_commandBuffer.getCommandBuffer());
+	m_renderPass->endRenderPass(m_commandBuffer.getCommandBuffer());
+	m_commandBuffer.endCommandBuffer();
 
 	m_semaphore = std::make_unique<Semaphore>(m_device);
 }
@@ -386,7 +396,17 @@ void Application::recreateSwapChain()
 	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device, m_physicalDevice, m_commandPool->get(), m_graphicsQueue);
 	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 
-	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_frameBuffer->getFrameBuffer());
+	
+	m_commandBuffer.beginCommandBuffer(m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	m_renderPass->beginRenderPass(m_commandBuffer.getCommandBuffer(), m_swapChainExtent, m_frameBuffer->getFrameBuffer());
+	m_pipeline->bindPipeline(m_commandBuffer.getCommandBuffer());
+	m_buffer->bindVertexBuffer(m_commandBuffer.getCommandBuffer());
+	m_buffer->bindIndexBuffer(m_commandBuffer.getCommandBuffer());
+	m_descriptorSet->bindDescriptorSet(m_commandBuffer.getCommandBuffer(), m_pipeline->getPipelineLayout());
+	m_model.drawIndexed(m_commandBuffer.getCommandBuffer());
+	m_renderPass->endRenderPass(m_commandBuffer.getCommandBuffer());
+	m_commandBuffer.endCommandBuffer();
 }
 
 void Application::createImageViews()
@@ -458,7 +478,7 @@ void Application::updateUniformBuffer()
 
 	UniformBufferObject ubo = {};
 	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(existing transform, rotation, axis to apply)
-	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(eye pos, center pos, up axis) 
+	ubo.view = glm::lookAt(glm::vec3(1.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));//(eye pos, center pos, up axis) 
 	ubo.proj = glm::perspective(glm::radians(45.0f), (float)m_swapChainExtent.width / (float)m_swapChainExtent.height, 0.1f, 10.0f);//(view angle, apsect ratio, far plane, near plane)
 
 	ubo.proj[1][1] *= -1;

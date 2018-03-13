@@ -46,6 +46,14 @@ DescriptorSet::DescriptorSet(VkDevice const& device, VkDescriptorSetLayout& desc
 	vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
 }
 
+void DescriptorSet::bindDescriptorSet(std::vector<VkCommandBuffer>& commandBuffer, VkPipelineLayout & pipelineLayout)
+{
+	for (size_t i = 0; i < commandBuffer.size(); i++)
+	{
+		vkCmdBindDescriptorSets(commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &m_descriptorSet, 0, nullptr);
+	}
+}
+
 VkDescriptorSet& DescriptorSet::get()
 {
 	return m_descriptorSet;
