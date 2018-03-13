@@ -389,13 +389,13 @@ void Application::recreateSwapChain()
 
 	m_commandBuffer.allocateCommandBuffer(m_device, m_commandPool->get(), m_frameBuffer->getFrameBuffer());
 	m_commandBuffer.beginCommandBuffer(m_renderPass->get(), m_pipeline->getPipeline(), m_buffer->getVertexBuffer(), m_buffer->getIndexBuffer(), m_pipeline->getPipelineLayout(), m_descriptorSet->get(), m_swapChainExtent, m_frameBuffer->getFrameBuffer(), m_model.getIndex());
+	//begin render pass check
 	//bind pipeline
 	//bind vertex buffer
 	//bind index buffer
 	//bind descriptor
 	//draw index
-	//begin render pass check
-	//end render pass check maybe seperate the two?
+	//end render pass
 	//end command buffer
 }
 

@@ -10,7 +10,8 @@ public:
 	RenderPass(VkDevice& device, VkFormat& swapChainImageFormat, VkFormat depthFormat);
 	~RenderPass();
 
-	void beginRenderPass(std::vector<VkCommandBuffer> commandBuffer, VkExtent2D& swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer);
+	void beginRenderPass(std::vector<VkCommandBuffer>& commandBuffer, VkExtent2D& swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer);
+	void endRenderPass(std::vector<VkCommandBuffer>& commandBuffer);
 
 	VkRenderPass& get();
 

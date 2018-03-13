@@ -54,6 +54,7 @@ void CommandBuffer::beginCommandBuffer(VkRenderPass& renderPass, VkPipeline& pip
 		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
 
+		vkCmdBeginRenderPass(m_commandBuffer[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vkCmdBindPipeline(m_commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
 		VkBuffer vertexBuffers[] = { vertexBuffer };
@@ -64,7 +65,6 @@ void CommandBuffer::beginCommandBuffer(VkRenderPass& renderPass, VkPipeline& pip
 
 		vkCmdDrawIndexed(m_commandBuffer[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
-		vkCmdBeginRenderPass(m_commandBuffer[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vkCmdEndRenderPass(m_commandBuffer[i]);
 
 		if (vkEndCommandBuffer(m_commandBuffer[i]) != VK_SUCCESS)

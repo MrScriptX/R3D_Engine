@@ -71,7 +71,7 @@ RenderPass::~RenderPass()
 	std::clog << "RenderPass destroyed\n";
 }
 
-void RenderPass::beginRenderPass(std::vector<VkCommandBuffer> commandBuffer, VkExtent2D & swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer)
+void RenderPass::beginRenderPass(std::vector<VkCommandBuffer>& commandBuffer, VkExtent2D & swapChainExtent, std::vector<VkFramebuffer>& swapChainBuffer)
 {
 	for (size_t i = 0; i < commandBuffer.size(); i++)
 	{
@@ -90,7 +90,13 @@ void RenderPass::beginRenderPass(std::vector<VkCommandBuffer> commandBuffer, VkE
 		renderPassInfo.pClearValues = clearValues.data();
 
 		vkCmdBeginRenderPass(commandBuffer[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	}
+}
 
+void RenderPass::endRenderPass(std::vector<VkCommandBuffer>& commandBuffer)
+{
+	for (size_t i = 0; i < commandBuffer.size(); i++)
+	{
 		vkCmdEndRenderPass(commandBuffer[i]);
 	}
 }
