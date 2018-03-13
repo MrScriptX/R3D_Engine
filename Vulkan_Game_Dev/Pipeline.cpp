@@ -173,6 +173,14 @@ VkShaderModule Pipeline::createShaderModule(const std::vector<char>& code, VkDev
 	return shaderModule;
 }
 
+void Pipeline::bindPipeline(std::vector<VkCommandBuffer> & commandBuffer)
+{
+	for (size_t i = 0; i < commandBuffer.size(); i++)
+	{
+		vkCmdBindPipeline(commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
+	}
+}
+
 std::vector<char> Pipeline::loadFromFile(const std::string & filename)
 {
 	std::ifstream file(filename, std::ios::ate | std::ios::binary);

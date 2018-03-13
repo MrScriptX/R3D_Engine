@@ -10,6 +10,7 @@ public:
 	~LoadModel();
 
 	void loadModel(const std::string& modelPath, const std::string& texturePath);
+	void drawIndexed(std::vector<VkCommandBuffer>& commandBuffer);
 
 	std::vector<Vertex>& getVertex();
 	std::vector<uint32_t>& getIndex();

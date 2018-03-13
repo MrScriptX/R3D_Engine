@@ -14,6 +14,7 @@ public:
 
 	void createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkDescriptorSetLayout& descriptorSetLayout, VkRenderPass& renderPass);
 	VkShaderModule createShaderModule(const std::vector<char>& code, VkDevice& device);
+	void bindPipeline(std::vector<VkCommandBuffer>& commandBuffer);
 
 	std::vector<char> loadFromFile(const std::string& filename);
 	

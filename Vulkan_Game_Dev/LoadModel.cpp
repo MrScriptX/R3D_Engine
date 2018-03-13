@@ -60,6 +60,14 @@ void LoadModel::loadModel(const std::string& modelPath, const std::string& textu
 	}
 }
 
+void LoadModel::drawIndexed(std::vector<VkCommandBuffer>& commandBuffer)
+{
+	for (size_t i = 0; i < commandBuffer.size(); i++)
+	{
+		vkCmdDrawIndexed(commandBuffer[i], static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
+	}
+}
+
 
 
 /**********************************get fonctions********************************/

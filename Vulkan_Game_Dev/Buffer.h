@@ -11,6 +11,9 @@ public:
 	Buffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 	~Buffer();
 
+	void bindVertexBuffer(std::vector<VkCommandBuffer>& commandBuffer);
+	void bindIndexBuffer(std::vector<VkCommandBuffer>& commandBuffer);
+
 	VkBuffer& getVertexBuffer();
 	VkBuffer& getIndexBuffer();
 
@@ -20,11 +23,12 @@ public:
 	static uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice& physicalDevice);
 private:
 
-	void createVertexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<Vertex>& vertices);
-	void createIndexBuffer(VkDevice& device, VkCommandPool& commandPool, VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<uint32_t>& indices);
+	void createVertexBuffer(VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<Vertex>& vertices);
+	void createIndexBuffer(VkQueue& graphicsQueue, VkPhysicalDevice& physicalDevice, std::vector<uint32_t>& indices);
 
 
 	VkDevice& m_device;
+	VkCommandPool& m_commandPool;
 
 	VkBuffer m_vertexBuffer;
 	VkDeviceMemory m_vertexBufferMemory;
