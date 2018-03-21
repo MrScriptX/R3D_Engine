@@ -23,6 +23,7 @@
 #include "Sampler.h"
 #include "Texture.h"
 #include "LoadModel.h"
+#include "VkSurface.h"
 #include "DepthRessources.h"
 
 
@@ -62,19 +63,21 @@ public:
 	void cleanSwapChain();
 
 	void createInstance();//create a vulkan instance
-	void createSurface();
+
 	void createLogicalDevice();
+	void pickPhysicalDevice();
+	bool isDeviceSuitable(VkPhysicalDevice device);
+
 	void createSwapChain();
 	void recreateSwapChain();
 	void createImageViews();
 
 	void setupCallBack();
-	void pickPhysicalDevice();
+	
 	void updateUniformBuffer();
 
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool checkValidationLayerSupport();
-	bool isDeviceSuitable(VkPhysicalDevice device);
 
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -91,7 +94,6 @@ public:
 
 private:
 	VkDebugReportCallbackEXT callback;
-	VkSurfaceKHR m_surface;
 	VkInstance m_instance;
 	GLFWwindow * m_window;
 
@@ -106,6 +108,8 @@ private:
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
+
+	std::unique_ptr<VkSurface> m_surface;
 
 	std::unique_ptr<Buffer> m_buffer;
 	std::unique_ptr<UniformBuffer> m_uniformBuffer;

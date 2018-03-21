@@ -121,7 +121,7 @@ void Application::clean()
 
 	vkDestroyDevice(m_device, nullptr);
 	destroyDebugReportCallbackEXT(m_instance, callback, nullptr);
-	vkDestroySurfaceKHR(m_instance, m_surface, nullptr);//new line
+	m_surface.reset();
 	vkDestroyInstance(m_instance, nullptr);
 
 	glfwDestroyWindow(m_window);
@@ -153,7 +153,7 @@ void Application::initVulkan()
 {
 	createInstance();
 	setupCallBack();
-	createSurface();
+	m_surface = std::make_unique<VkSurface>(m_instance, *m_window);
 
 	pickPhysicalDevice();
 	createLogicalDevice();
@@ -165,7 +165,7 @@ void Application::initVulkan()
 	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device);
 	m_pipeline = std::make_unique<Pipeline>(m_device, m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
 
-	m_commandPool = std::make_unique<CommandPool>(m_device, m_physicalDevice, m_surface);
+	m_commandPool = std::make_unique<CommandPool>(m_device, m_physicalDevice, m_surface->getSurface());
 
 	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device, m_physicalDevice, m_commandPool->get(), m_graphicsQueue);
 	m_frameBuffer = std::make_unique<FrameBuffer>(m_device, m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
@@ -221,13 +221,6 @@ void Application::cleanSwapChain()
 /**************************** Create fonctions ****************************************/
 /**************************************************************************************/
 
-void Application::createSurface()
-{
-	if (glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface) != VK_SUCCESS) 
-	{
-		throw std::runtime_error("failed to create window surface!");
-	}
-}
 
 void Application::createInstance()
 {
@@ -269,7 +262,7 @@ void Application::createInstance()
 
 void Application::createLogicalDevice()
 {
-	QueueFamilyIndices indices = findQueueFamilies(m_physicalDevice, m_surface);
+	QueueFamilyIndices indices = findQueueFamilies(m_physicalDevice, m_surface->getSurface());
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 	std::set<int> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentationFamily };
@@ -334,7 +327,7 @@ void Application::createSwapChain()
 
 	VkSwapchainCreateInfoKHR createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	createInfo.surface = m_surface;
+	createInfo.surface = m_surface->getSurface();
 	createInfo.minImageCount = imageCount;
 	createInfo.imageFormat = surfaceFormat.format;
 	createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -342,7 +335,7 @@ void Application::createSwapChain()
 	createInfo.imageArrayLayers = 1;
 	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-	QueueFamilyIndices indices = findQueueFamilies(m_physicalDevice, m_surface);
+	QueueFamilyIndices indices = findQueueFamilies(m_physicalDevice, m_surface->getSurface());
 	uint32_t queueFamilyIndices[] = { (uint32_t)indices.graphicsFamily, (uint32_t)indices.presentationFamily };
 
 	if (indices.graphicsFamily != indices.presentationFamily) {
@@ -539,7 +532,7 @@ bool Application::checkValidationLayerSupport()
 
 bool Application::isDeviceSuitable(VkPhysicalDevice device)
 {
-	QueueFamilyIndices indices = findQueueFamilies(device, m_surface);
+	QueueFamilyIndices indices = findQueueFamilies(device, m_surface->getSurface());
 
 	bool extensionsSupported = checkDeviceExtensionSupport(device);
 
@@ -615,24 +608,24 @@ SwapChainSupportDetails Application::querySwapChainSupport(VkPhysicalDevice devi
 {
 	SwapChainSupportDetails details;
 
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &details.capabilities);
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface->getSurface(), &details.capabilities);
 
 	uint32_t formatCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, nullptr);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface->getSurface(), &formatCount, nullptr);
 
 	if (formatCount != 0)
 	{
 		details.formats.resize(formatCount);
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, details.formats.data());
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface->getSurface(), &formatCount, details.formats.data());
 	}
 
 	uint32_t presentModeCount;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, nullptr);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface->getSurface(), &presentModeCount, nullptr);
 
 	if (presentModeCount != 0)
 	{
 		details.presentModes.resize(presentModeCount);
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, details.presentModes.data());
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface->getSurface(), &presentModeCount, details.presentModes.data());
 	}
 
 	return details;
