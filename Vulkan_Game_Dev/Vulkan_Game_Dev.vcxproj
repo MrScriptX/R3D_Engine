@@ -264,6 +264,8 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureView.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
+    <ClCompile Include="ValidationLayer.cpp" />
+    <ClCompile Include="VkDevice.cpp" />
     <ClCompile Include="VkSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -286,7 +288,9 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureView.h" />
     <ClInclude Include="UniformBuffer.h" />
+    <ClInclude Include="ValidationLayer.h" />
     <ClInclude Include="vertex.h" />
+    <ClInclude Include="VkDevice.h" />
     <ClInclude Include="VkHeader.h" />
     <ClInclude Include="VkSurface.h" />
   </ItemGroup>

@@ -25,19 +25,12 @@
 #include "LoadModel.h"
 #include "VkSurface.h"
 #include "DepthRessources.h"
-
+#include "ValidationLayer.h"
+#include "VkDevice.h"
 
 
 //use assert for abort and execption for report or recovery
 
-const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
-const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
-#else
-const bool enableValidationLayers = true;
-#endif
 
 
 struct SwapChainSupportDetails
@@ -63,8 +56,6 @@ public:
 	void cleanSwapChain();
 
 	void createInstance();//create a vulkan instance
-
-	void createLogicalDevice();
 	void pickPhysicalDevice();
 	bool isDeviceSuitable(VkPhysicalDevice device);
 
@@ -98,10 +89,10 @@ private:
 	GLFWwindow * m_window;
 
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
-	VkDevice m_device;
+	//VkDevice m_device;
 
-	VkQueue m_graphicsQueue;
-	VkQueue m_presentQueue;
+	/*VkQueue m_graphicsQueue;
+	VkQueue m_presentQueue;*/
 
 	std::vector<VkImage> m_swapChainImages;
 	std::vector<VkImageView> m_swapChainImageViews;
@@ -109,6 +100,7 @@ private:
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
 
+	std::unique_ptr<Device> m_device;
 	std::unique_ptr<VkSurface> m_surface;
 
 	std::unique_ptr<Buffer> m_buffer;
