@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <set>
 #include <algorithm>
+#include <string>
 
 #define WIDTH 1260
 #define HEIGHT 720
@@ -280,6 +281,9 @@ void Application::createLogicalDevice()
 
 
 	VkPhysicalDeviceFeatures deviceFeatures = {};
+	deviceFeatures.shaderClipDistance = VK_TRUE;
+	deviceFeatures.shaderCullDistance = VK_TRUE;
+	deviceFeatures.geometryShader = VK_TRUE;
 	deviceFeatures.samplerAnisotropy = VK_TRUE;
 
 	VkDeviceCreateInfo createInfo = {};
@@ -436,6 +440,8 @@ void Application::setupCallBack()
 
 void Application::pickPhysicalDevice()
 {
+	VkResult result = VK_SUCCESS;
+
 	uint32_t deviceCount = 0;
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
@@ -445,13 +451,20 @@ void Application::pickPhysicalDevice()
 	}
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
-	vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
 
-	for (const VkPhysicalDevice& device : devices)
+	result = vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
+
+	if (result != VK_SUCCESS)
 	{
-		if (isDeviceSuitable(device))
+		throw std::runtime_error("Could not load the GPUs!");
+	}
+
+
+	for (uint32_t i = 0; i < devices.size(); i++)
+	{
+		if (isDeviceSuitable(devices[i]))
 		{
-			m_physicalDevice = device;
+			m_physicalDevice = devices[i];
 			break;
 		}
 	}
@@ -460,6 +473,11 @@ void Application::pickPhysicalDevice()
 	{
 		throw std::runtime_error("Failed to find a suitable GPU!");
 	}
+
+	VkPhysicalDeviceProperties deviceProperties;
+	vkGetPhysicalDeviceProperties(m_physicalDevice, &deviceProperties);
+
+	std::clog << "Physical Device : " + std::string(deviceProperties.deviceName) << std::endl;
 }
 
 void Application::updateUniformBuffer()
