@@ -14,6 +14,7 @@ VkSurface::VkSurface(VkInstance& instance, GLFWwindow& window) : m_instance(inst
 VkSurface::~VkSurface()
 {
 	vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+	std::clog << "Surface destroyed!" << std::endl;
 }
 
 VkSurfaceKHR& VkSurface::getSurface()

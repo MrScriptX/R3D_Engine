@@ -61,6 +61,7 @@ Device::Device(VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface)
 Device::~Device()
 {
 	vkDestroyDevice(m_device, nullptr);
+	std::clog << "Logical device destroyed!" << std::endl;
 }
 
 VkDevice& Device::getDevice()

@@ -264,7 +264,6 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureView.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
-    <ClCompile Include="ValidationLayer.cpp" />
     <ClCompile Include="VkDevice.cpp" />
     <ClCompile Include="VkSurface.cpp" />
   </ItemGroup>
