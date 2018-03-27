@@ -23,20 +23,14 @@
 #include "Sampler.h"
 #include "Texture.h"
 #include "LoadModel.h"
+#include "VkSurface.h"
 #include "DepthRessources.h"
-
+#include "ValidationLayer.h"
+#include "VkDevice.h"
 
 
 //use assert for abort and execption for report or recovery
 
-const std::vector<const char*> validationLayers = { "VK_LAYER_LUNARG_standard_validation" };
-const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
-#else
-const bool enableValidationLayers = true;
-#endif
 
 
 struct SwapChainSupportDetails
@@ -62,19 +56,19 @@ public:
 	void cleanSwapChain();
 
 	void createInstance();//create a vulkan instance
-	void createSurface();
-	void createLogicalDevice();
+	void pickPhysicalDevice();
+	bool isDeviceSuitable(VkPhysicalDevice device);
+
 	void createSwapChain();
 	void recreateSwapChain();
 	void createImageViews();
 
 	void setupCallBack();
-	void pickPhysicalDevice();
+	
 	void updateUniformBuffer();
 
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool checkValidationLayerSupport();
-	bool isDeviceSuitable(VkPhysicalDevice device);
 
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -91,21 +85,23 @@ public:
 
 private:
 	VkDebugReportCallbackEXT callback;
-	VkSurfaceKHR m_surface;
 	VkInstance m_instance;
 	GLFWwindow * m_window;
 
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
-	VkDevice m_device;
+	//VkDevice m_device;
 
-	VkQueue m_graphicsQueue;
-	VkQueue m_presentQueue;
+	/*VkQueue m_graphicsQueue;
+	VkQueue m_presentQueue;*/
 
 	std::vector<VkImage> m_swapChainImages;
 	std::vector<VkImageView> m_swapChainImageViews;
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
+
+	std::unique_ptr<Device> m_device;
+	std::unique_ptr<VkSurface> m_surface;
 
 	std::unique_ptr<Buffer> m_buffer;
 	std::unique_ptr<UniformBuffer> m_uniformBuffer;
