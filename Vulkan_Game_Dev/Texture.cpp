@@ -5,13 +5,13 @@
 #include <stb_image.h>
 
 
-Texture::Texture(VkDevice& device, VkPhysicalDevice& physicalDevice, VkQueue& graphicsQueue, VkCommandPool& commandPool) : m_device(device), m_physicalDevice(physicalDevice)
+Texture::Texture(VkDevice& device, VkPhysicalDevice& physicalDevice, VkQueue& graphicsQueue, VkCommandPool& commandPool, const char texPath[]) : m_device(device), m_physicalDevice(physicalDevice)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingMem;
 
 	int texWidth, texHeight, texChannels;
-	stbi_uc* pixels = stbi_load("texture\\chalet.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load(texPath, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
 	VkDeviceSize imageSize = texWidth * texHeight * 4;
 

@@ -89,19 +89,14 @@ private:
 	GLFWwindow * m_window;
 
 	VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
-	//VkDevice m_device;
-
-	/*VkQueue m_graphicsQueue;
-	VkQueue m_presentQueue;*/
+	std::unique_ptr<Device> m_device;
+	std::unique_ptr<VkSurface> m_surface;
 
 	std::vector<VkImage> m_swapChainImages;
 	std::vector<VkImageView> m_swapChainImageViews;
 	VkFormat m_swapChainImageFormat;
 	VkExtent2D m_swapChainExtent;
 	VkSwapchainKHR m_swapChain;
-
-	std::unique_ptr<Device> m_device;
-	std::unique_ptr<VkSurface> m_surface;
 
 	std::unique_ptr<Buffer> m_buffer;
 	std::unique_ptr<UniformBuffer> m_uniformBuffer;

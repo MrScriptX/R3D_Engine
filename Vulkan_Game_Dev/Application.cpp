@@ -32,6 +32,7 @@ void Application::mainLoop()
 	{
 		glfwPollEvents();
 
+		//input stage
 		updateUniformBuffer();
 		drawFrame();
 	}
@@ -157,22 +158,21 @@ void Application::initVulkan()
 	m_surface = std::make_unique<VkSurface>(m_instance, *m_window);
 
 	pickPhysicalDevice();
-	//createLogicalDevice();
 	m_device = std::make_unique<Device>(m_physicalDevice, m_surface->getSurface());
 
 	createSwapChain();
 	createImageViews();
 
-	m_renderPass = std::make_unique<RenderPass>(m_device->getDevice(), m_swapChainImageFormat, DepthRessources::findDepthFormat(m_physicalDevice));
+	m_renderPass = std::make_unique<RenderPass>(m_device->getDevice(), m_swapChainImageFormat, DepthRessources::findDepthFormat(m_physicalDevice));//RenderPass n'est pas du tout configurable
 	m_descriptorSetLayout = std::make_unique<DescriptorSetLayout>(m_device->getDevice());
-	m_pipeline = std::make_unique<Pipeline>(m_device->getDevice(), m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
+	m_pipeline = std::make_unique<Pipeline>(m_device->getDevice(), m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get(), "shader\\vert.spv", "shader\\frag.spv");
 
 	m_commandPool = std::make_unique<CommandPool>(m_device->getDevice(), m_physicalDevice, m_surface->getSurface());
 
 	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device->getDevice(), m_physicalDevice, m_commandPool->get(), m_device->getGraphicsQueue());
 	m_frameBuffer = std::make_unique<FrameBuffer>(m_device->getDevice(), m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 
-	m_textureImage = std::make_unique<Texture>(m_device->getDevice(), m_physicalDevice, m_device->getGraphicsQueue(), m_commandPool->get());
+	m_textureImage = std::make_unique<Texture>(m_device->getDevice(), m_physicalDevice, m_device->getGraphicsQueue(), m_commandPool->get(), "texture\\chalet.jpg");
 	m_imageView = std::make_unique<TextureView>(m_device->getDevice(), m_textureImage->getTextureImage());
 	m_sampler = std::make_unique<Sampler>(m_device->getDevice());
 
@@ -337,7 +337,7 @@ void Application::recreateSwapChain()
 	createImageViews();
 
 	m_renderPass = std::make_unique<RenderPass>(m_device->getDevice(), m_swapChainImageFormat, DepthRessources::findDepthFormat(m_physicalDevice));
-	m_pipeline = std::make_unique<Pipeline>(m_device->getDevice(), m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get());
+	m_pipeline = std::make_unique<Pipeline>(m_device->getDevice(), m_swapChainExtent, m_descriptorSetLayout->get(), m_renderPass->get(), "shader\\vert.spv", "shader\\frag.spv");
 	m_depthRessource = std::make_unique<DepthRessources>(m_swapChainExtent.width, m_swapChainExtent.height, m_device->getDevice(), m_physicalDevice, m_commandPool->get(), m_device->getGraphicsQueue());
 	m_frameBuffer = std::make_unique<FrameBuffer>(m_device->getDevice(), m_renderPass->get(), m_swapChainImageViews, m_swapChainExtent, m_depthRessource->getImageView());
 

@@ -2,9 +2,9 @@
 
 
 
-Pipeline::Pipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkDescriptorSetLayout& descriptorSetLayout, VkRenderPass& renderPass) : m_device(device)
+Pipeline::Pipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkDescriptorSetLayout& descriptorSetLayout, VkRenderPass& renderPass, std::string vertShader, std::string fragShader) : m_device(device), m_vertShaderPath(vertShader), m_fragShaderPath(fragShader)
 {
-	createPipeline(device, swapChainExtent, descriptorSetLayout, renderPass);
+	createPipeline(swapChainExtent, descriptorSetLayout, renderPass);
 }
 
 
@@ -16,16 +16,16 @@ Pipeline::~Pipeline()
 	std::clog << "Pipeline destroyed\n";
 }
 
-void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkDescriptorSetLayout& descriptorSetLayout, VkRenderPass& renderPass)
+void Pipeline::createPipeline(VkExtent2D& swapChainExtent, VkDescriptorSetLayout& descriptorSetLayout, VkRenderPass& renderPass)
 {
-	auto vertShader = loadFromFile("shader\\vert.spv");
-	auto fragShader = loadFromFile("shader\\frag.spv");
+	auto vertShader = loadFromFile(m_vertShaderPath);
+	auto fragShader = loadFromFile(m_fragShaderPath);
 
 	VkShaderModule vertShaderModule;
 	VkShaderModule fragShaderModule;
 
-	vertShaderModule = createShaderModule(vertShader, device);
-	fragShaderModule = createShaderModule(fragShader, device);
+	vertShaderModule = createShaderModule(vertShader);
+	fragShaderModule = createShaderModule(fragShader);
 
 
 	VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
@@ -127,7 +127,7 @@ void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkD
 	pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
 
-	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(m_device, &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create pipeline layout!");
 	}
@@ -148,16 +148,16 @@ void Pipeline::createPipeline(VkDevice& device, VkExtent2D& swapChainExtent, VkD
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create graphics pipeline!");
 	}
 
-	vkDestroyShaderModule(device, vertShaderModule, nullptr);
-	vkDestroyShaderModule(device, fragShaderModule, nullptr);
+	vkDestroyShaderModule(m_device, vertShaderModule, nullptr);
+	vkDestroyShaderModule(m_device, fragShaderModule, nullptr);
 }
 
-VkShaderModule Pipeline::createShaderModule(const std::vector<char>& code, VkDevice& device)
+VkShaderModule Pipeline::createShaderModule(const std::vector<char>& code)
 {
 	VkShaderModuleCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -165,7 +165,7 @@ VkShaderModule Pipeline::createShaderModule(const std::vector<char>& code, VkDev
 	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
 	VkShaderModule shaderModule;
-	if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+	if (vkCreateShaderModule(m_device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Failed to create shader module!");
 	}
