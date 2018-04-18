@@ -243,56 +243,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Barrier.cpp" />
-    <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="CommandBuffer.cpp" />
-    <ClCompile Include="CommandPool.cpp" />
-    <ClCompile Include="DepthRessources.cpp" />
-    <ClCompile Include="DescriptorPool.cpp" />
-    <ClCompile Include="DescriptorSet.cpp" />
-    <ClCompile Include="DescriptorSetLayout.cpp" />
-    <ClCompile Include="FrameBuffer.cpp" />
-    <ClCompile Include="LoadModel.cpp" />
-    <ClCompile Include="Pipeline.cpp" />
-    <ClCompile Include="Queue.cpp" />
-    <ClCompile Include="RenderPass.cpp" />
-    <ClCompile Include="Sampler.cpp" />
-    <ClCompile Include="Semaphore.cpp" />
-    <ClCompile Include="Source.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureView.cpp" />
-    <ClCompile Include="UniformBuffer.cpp" />
-    <ClCompile Include="VkDevice.cpp" />
-    <ClCompile Include="VkSurface.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="Barrier.h" />
-    <ClInclude Include="Buffer.h" />
-    <ClInclude Include="CommandBuffer.h" />
-    <ClInclude Include="CommandPool.h" />
-    <ClInclude Include="DepthRessources.h" />
-    <ClInclude Include="DescriptorPool.h" />
-    <ClInclude Include="DescriptorSet.h" />
-    <ClInclude Include="DescriptorSetLayout.h" />
-    <ClInclude Include="FrameBuffer.h" />
-    <ClInclude Include="LoadModel.h" />
-    <ClInclude Include="Pipeline.h" />
-    <ClInclude Include="Queue.h" />
-    <ClInclude Include="RenderPass.h" />
-    <ClInclude Include="Sampler.h" />
-    <ClInclude Include="Semaphore.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureView.h" />
-    <ClInclude Include="UniformBuffer.h" />
-    <ClInclude Include="ValidationLayer.h" />
-    <ClInclude Include="vertex.h" />
-    <ClInclude Include="VkDevice.h" />
-    <ClInclude Include="VkHeader.h" />
-    <ClInclude Include="VkSurface.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
