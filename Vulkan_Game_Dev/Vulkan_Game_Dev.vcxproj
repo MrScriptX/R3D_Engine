@@ -44,11 +44,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="Instance.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="ValidationLayers.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Device.h" />
+    <ClInclude Include="Instance.h" />
+    <ClInclude Include="ValidationLayers.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

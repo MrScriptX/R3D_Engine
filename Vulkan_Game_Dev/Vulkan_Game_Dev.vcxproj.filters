@@ -18,12 +18,29 @@
     <ClCompile Include="Window.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ValidationLayers.cpp" />
+    <ClCompile Include="Instance.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="Window.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Instance.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ValidationLayers.h" />
+    <ClInclude Include="Device.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>
