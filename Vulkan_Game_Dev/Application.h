@@ -15,6 +15,7 @@ private:
 
 	void setup();
 	void gameLoop();
+	void quit();
 
 	Renderer::Vulkan m_vulkan;
 	std::unique_ptr<Window> m_cWindow;

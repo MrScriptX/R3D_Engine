@@ -21,8 +21,10 @@
     <ClCompile Include="Device.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="ValidationLayers.cpp" />
     <ClCompile Include="Instance.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ValidationLayers.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -39,8 +41,10 @@
     <ClInclude Include="Instance.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="ValidationLayers.h" />
     <ClInclude Include="Device.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ValidationLayers.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

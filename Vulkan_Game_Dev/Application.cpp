@@ -15,6 +15,7 @@ void Application::run()
 {
 	setup();
 	gameLoop();
+	quit();
 }
 
 void Application::setup()
@@ -29,4 +30,18 @@ void Application::gameLoop()
 	{
 		glfwPollEvents();
 	}
+}
+
+void Application::quit()
+{
+		if (enableValidationLayers)
+		{
+			m_cInstance->DestroyDebugReportCallbackEXT(m_vulkan.instance, m_cInstance->getCallback(), nullptr);
+		}
+
+		vkDestroyInstance(m_vulkan.instance, nullptr);
+
+		glfwDestroyWindow(m_vulkan.window);
+
+		glfwTerminate();
 }
