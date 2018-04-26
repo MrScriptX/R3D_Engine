@@ -47,6 +47,7 @@
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Surface.cpp" />
     <ClCompile Include="ValidationLayers.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -55,6 +56,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="Instance.h" />
+    <ClInclude Include="Surface.h" />
     <ClInclude Include="ValidationLayers.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -223,6 +225,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;C:\Librairy\glfw-3.2.1.bin.WIN32\include;C:\Librairy\glm-0.9.9-a2;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
