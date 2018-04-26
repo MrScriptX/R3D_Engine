@@ -34,14 +34,17 @@ void Application::gameLoop()
 
 void Application::quit()
 {
-		if (enableValidationLayers)
-		{
-			m_cInstance->DestroyDebugReportCallbackEXT(m_vulkan.instance, m_cInstance->getCallback(), nullptr);
-		}
+	vkDestroyDevice(m_vulkan.device, nullptr);
 
-		vkDestroyInstance(m_vulkan.instance, nullptr);
+	if (enableValidationLayers)
+	{
+		m_cInstance->DestroyDebugReportCallbackEXT(m_vulkan.instance, m_cInstance->getCallback(), nullptr);
+	}
+	vkDestroySurfaceKHR(m_vulkan.instance, m_vulkan.surface, nullptr);
 
-		glfwDestroyWindow(m_vulkan.window);
+	vkDestroyInstance(m_vulkan.instance, nullptr);
 
-		glfwTerminate();
+	glfwDestroyWindow(m_vulkan.window);
+
+	glfwTerminate();
 }

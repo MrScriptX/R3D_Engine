@@ -28,6 +28,8 @@
     <ClCompile Include="Surface.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Semaphores.cpp" />
+    <ClCompile Include="Swapchain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -49,5 +51,7 @@
     <ClInclude Include="Surface.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="Semaphores.h" />
+    <ClInclude Include="Swapchain.h" />
   </ItemGroup>
 </Project>

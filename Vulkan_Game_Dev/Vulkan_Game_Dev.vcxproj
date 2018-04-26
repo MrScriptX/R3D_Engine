@@ -46,8 +46,10 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="Instance.cpp" />
+    <ClCompile Include="Semaphores.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="Swapchain.cpp" />
     <ClCompile Include="ValidationLayers.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -56,7 +58,9 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="Instance.h" />
+    <ClInclude Include="Semaphores.h" />
     <ClInclude Include="Surface.h" />
+    <ClInclude Include="Swapchain.h" />
     <ClInclude Include="ValidationLayers.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -163,10 +167,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;D:\Librairy\glfw-3.2.1.bin.WIN32\include;D:\Librairy\glm-0.9.9-a2;D:\Librairy\Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;C:\Librairy\glfw-3.2.1.bin.WIN32\include;C:\Librairy\glm-0.9.9-a2;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.0.65.1\Lib32;D:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.0.65.1\Lib32;C:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

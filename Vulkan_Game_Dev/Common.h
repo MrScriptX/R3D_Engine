@@ -1,7 +1,7 @@
 #pragma once
 
 
-#define GLFW_INCLUDED_VULKAN
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW\glfw3.h>
 
 #include <vulkan\vulkan.h>
@@ -24,6 +24,9 @@ namespace Renderer
 		uint32_t present_queue_family_index = 0;
 		VkQueue graphics_queue = VK_NULL_HANDLE;
 		VkQueue present_queue = VK_NULL_HANDLE;
+
+		VkSemaphore image_available_semaphore = VK_NULL_HANDLE;
+		VkSemaphore finished_render_semaphore = VK_NULL_HANDLE;
 	};
 
 	struct ValidationLayer

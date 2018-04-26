@@ -23,7 +23,8 @@ Device::Device(Renderer::Vulkan& vulkan) : m_vulkan(vulkan)
 
 	for (uint32_t i = 0; i < nbDevices; ++i)
 	{
-		if (checkPhysicalDeviceProperties(physicalDevices[i], selected_graphics_queue_family_index, selected_present_queue_family_index)) {
+		if (checkPhysicalDeviceProperties(physicalDevices[i], selected_graphics_queue_family_index, selected_present_queue_family_index))
+		{
 			selected_physical_device = physicalDevices[i];
 		}
 	}
@@ -93,6 +94,9 @@ Device::Device(Renderer::Vulkan& vulkan) : m_vulkan(vulkan)
 
 	m_vulkan.graphics_queue_family_index = selected_graphics_queue_family_index;
 	m_vulkan.present_queue_family_index = selected_present_queue_family_index;
+
+	vkGetDeviceQueue(m_vulkan.device, m_vulkan.graphics_queue_family_index, 0, &m_vulkan.graphics_queue);
+	vkGetDeviceQueue(m_vulkan.device, m_vulkan.present_queue_family_index, 0, &m_vulkan.present_queue);
 }
 
 
