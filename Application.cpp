@@ -12,7 +12,6 @@ Application::Application()
 	m_config = std::make_unique<Config>();
 	m_window = std::make_unique<Window>(m_config, m_pPlayer->getCamera());
 	m_pRenderer = std::make_shared<Renderer>(m_window->getHandle(), m_config->width, m_config->height);
-	m_pChunkManager = std::make_unique<ChunkManager>(m_pRenderer, m_pPlayer);
 
 
 	m_pRenderer->createNewPipeline(base_pipeline);
@@ -25,8 +24,6 @@ Application::Application()
 
 	m_pRenderer->createDescriptorPool();
 
-	m_pChunkManager->createChunks();
-	m_pChunkManager->loadChunks();
 	m_pRenderer->createUBO();
 
 	m_pRenderer->allocateCommandBuffers();
@@ -37,8 +34,6 @@ Application::Application()
 
 Application::~Application()
 {
-	m_pChunkManager.reset();
-
 	m_pRenderer->cleanSwapchain(std::make_shared<Pipeline>(base_pipeline));
 	m_pRenderer->destroyTextures();
 	m_pRenderer->destroyDescriptors();
@@ -56,11 +51,6 @@ void Application::run()
 		glfwPollEvents();
 		input();
 		update();
-
-		if (m_pRenderer->draw(base_pipeline) != 0)
-		{
-			m_pChunkManager->setRebuild(true);
-		}
 	}
 
 	vkDeviceWaitIdle(m_pRenderer->getDevice());
@@ -68,20 +58,6 @@ void Application::run()
 
 void Application::update()
 {
-	m_pChunkManager->update();
-
-	if (m_pChunkManager->needRebuild())
-	{
-		for (uint16_t i = 0; i < m_pRenderer->getGraphic().command_buffers.size(); i++)
-		{
-			m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
-			m_pChunkManager->renderChunks(m_pRenderer->getGraphic().command_buffers[i], base_pipeline);
-			m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
-		}
-
-		m_pChunkManager->setRebuild(false);
-	}
-
 	m_pPlayer->updateUBO(static_cast<float>(m_config->width), static_cast<float>(m_config->height));
 
 	void* data;

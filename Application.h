@@ -5,7 +5,6 @@
 
 #include "Window.h"
 #include "Renderer.h"
-#include "ChunkManager.h"
 #include "Player.h"
 
 class Application
@@ -27,7 +26,6 @@ private:
 	std::unique_ptr<Window> m_window;
 	std::shared_ptr<Renderer> m_pRenderer;
 
-	std::unique_ptr<ChunkManager> m_pChunkManager;
 	std::shared_ptr<Player> m_pPlayer;
 
 	Pipeline base_pipeline;
