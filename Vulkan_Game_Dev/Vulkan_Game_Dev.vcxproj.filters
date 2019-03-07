@@ -1,201 +1,149 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Source">
+      <UniqueIdentifier>{9f9e0cd2-18d0-4e94-aa12-c68990452897}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Header">
+      <UniqueIdentifier>{40e94656-0cb3-42d0-ba41-7ed14c8f9d02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{be767481-ce1d-4bad-a5f3-4aeae38d9b7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête\VkBuffer">
-      <UniqueIdentifier>{c183e05e-764b-46f1-b416-f07236ba3870}</UniqueIdentifier>
+    <Filter Include="Engine\shaders">
+      <UniqueIdentifier>{e06a0a1d-1845-47d4-806a-03cbfb95abf7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers sources\VkBuffer">
-      <UniqueIdentifier>{68375d58-3528-4229-bfc8-2c17795e10d5}</UniqueIdentifier>
+    <Filter Include="Engine\Renderer">
+      <UniqueIdentifier>{fc06610a-7ac2-4f0f-b638-951b5eff3bd8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête\VkDescriptor">
-      <UniqueIdentifier>{187f1c95-1f52-4edd-9fcd-d83b6897e600}</UniqueIdentifier>
+    <Filter Include="Engine\Renderer\Source">
+      <UniqueIdentifier>{b986bf13-9bde-4c6f-9e95-64d327af707f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers sources\VkDescriptor">
-      <UniqueIdentifier>{a52cd486-bdc3-4df4-b864-ac07f36be29f}</UniqueIdentifier>
+    <Filter Include="Engine\Renderer\Header">
+      <UniqueIdentifier>{0d1af4c2-15bc-44da-b00c-5e037acde0d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête\VkCommand">
-      <UniqueIdentifier>{c6072261-7da6-497f-86b8-460cc4346ce0}</UniqueIdentifier>
+    <Filter Include="Engine\Graphics">
+      <UniqueIdentifier>{c8467a9d-cccc-486f-814e-ac1fa2cce737}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers sources\VkCommand">
-      <UniqueIdentifier>{b260d6fa-4bfa-40dd-b464-4fb0a0a9fc0b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\Pipeline">
-      <UniqueIdentifier>{42a09763-9567-4efd-b904-560b4e6571cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\Pipeline">
-      <UniqueIdentifier>{3a97f4e6-34c9-4e8c-8456-5f29afa9ed65}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\RenderPass">
-      <UniqueIdentifier>{dd4d03c2-8f6c-4c5a-94cf-b7f1d8446530}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\RenderPass">
-      <UniqueIdentifier>{325d49f8-f777-4cdd-8c88-0ef11c6028cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\Sync">
-      <UniqueIdentifier>{b43ce950-edad-4786-9949-037f8b061034}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\Sync">
-      <UniqueIdentifier>{016af835-f50a-4b48-bc01-4941da650ba5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\Texture">
-      <UniqueIdentifier>{69010ba2-f291-4683-80ba-9d9ce427a34b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\Texture">
-      <UniqueIdentifier>{99712747-abcd-4bba-815a-4c246178e057}</UniqueIdentifier>
+    <Filter Include="Engine\Graphics\Headers">
+      <UniqueIdentifier>{0773a226-0a6e-44bb-997b-0848af431efa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="..\Source.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="..\Application.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Buffer.cpp">
-      <Filter>Fichiers sources\VkBuffer</Filter>
+    <ClCompile Include="..\Logger.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="DescriptorPool.cpp">
-      <Filter>Fichiers sources\VkDescriptor</Filter>
+    <ClCompile Include="..\VulkanBuffer.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="DescriptorSet.cpp">
-      <Filter>Fichiers sources\VkDescriptor</Filter>
+    <ClCompile Include="..\VulkanCommandBuffer.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="DescriptorSetLayout.cpp">
-      <Filter>Fichiers sources\VkDescriptor</Filter>
+    <ClCompile Include="..\VulkanCommandPool.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="CommandBuffer.cpp">
-      <Filter>Fichiers sources\VkCommand</Filter>
+    <ClCompile Include="..\VulkanDescriptor.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="CommandPool.cpp">
-      <Filter>Fichiers sources\VkCommand</Filter>
+    <ClCompile Include="..\VulkanDevice.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="Queue.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="..\VulkanInstance.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="Pipeline.cpp">
-      <Filter>Fichiers sources\Pipeline</Filter>
+    <ClCompile Include="..\VulkanPipeline.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="UniformBuffer.cpp">
-      <Filter>Fichiers sources\VkBuffer</Filter>
+    <ClCompile Include="..\VulkanRenderPass.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="RenderPass.cpp">
-      <Filter>Fichiers sources\RenderPass</Filter>
+    <ClCompile Include="..\VulkanSwapchain.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="FrameBuffer.cpp">
-      <Filter>Fichiers sources\RenderPass</Filter>
+    <ClCompile Include="..\Renderer.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
-    <ClCompile Include="Semaphore.cpp">
-      <Filter>Fichiers sources\Sync</Filter>
+    <ClCompile Include="..\Camera.cpp">
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="TextureView.cpp">
-      <Filter>Fichiers sources\Texture</Filter>
+    <ClCompile Include="..\Player.cpp">
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Sampler.cpp">
-      <Filter>Fichiers sources\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Fichiers sources\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="Barrier.cpp">
-      <Filter>Fichiers sources\Sync</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadModel.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="DepthRessources.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VkSurface.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VkDevice.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="..\Window.cpp">
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="..\VulkanBuffer.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="vertex.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="..\VulkanCommandBuffer.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="VkHeader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="..\VulkanCommandPool.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>Fichiers d%27en-tête\VkBuffer</Filter>
+    <ClInclude Include="..\VulkanDescriptor.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="DescriptorPool.h">
-      <Filter>Fichiers d%27en-tête\VkDescriptor</Filter>
+    <ClInclude Include="..\VulkanDevice.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="DescriptorSet.h">
-      <Filter>Fichiers d%27en-tête\VkDescriptor</Filter>
+    <ClInclude Include="..\VulkanInstance.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="DescriptorSetLayout.h">
-      <Filter>Fichiers d%27en-tête\VkDescriptor</Filter>
+    <ClInclude Include="..\VulkanPipeline.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="CommandPool.h">
-      <Filter>Fichiers d%27en-tête\VkCommand</Filter>
+    <ClInclude Include="..\VulkanRenderPass.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="CommandBuffer.h">
-      <Filter>Fichiers d%27en-tête\VkCommand</Filter>
+    <ClInclude Include="..\VulkanSwapchain.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Queue.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="..\Renderer.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Pipeline.h">
-      <Filter>Fichiers d%27en-tête\Pipeline</Filter>
+    <ClInclude Include="..\Graphics.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
-    <ClInclude Include="UniformBuffer.h">
-      <Filter>Fichiers d%27en-tête\VkBuffer</Filter>
+    <ClInclude Include="..\Application.h">
+      <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="RenderPass.h">
-      <Filter>Fichiers d%27en-tête\RenderPass</Filter>
+    <ClInclude Include="..\Logger.h">
+      <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="FrameBuffer.h">
-      <Filter>Fichiers d%27en-tête\RenderPass</Filter>
+    <ClInclude Include="..\Math.h">
+      <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="Semaphore.h">
-      <Filter>Fichiers d%27en-tête\Sync</Filter>
+    <ClInclude Include="..\Vertex.h">
+      <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="TextureView.h">
-      <Filter>Fichiers d%27en-tête\Texture</Filter>
+    <ClInclude Include="..\Camera.h">
+      <Filter>Engine\Graphics\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sampler.h">
-      <Filter>Fichiers d%27en-tête\Texture</Filter>
+    <ClInclude Include="..\Config.h">
+      <Filter>Engine\Graphics\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Fichiers d%27en-tête\Texture</Filter>
+    <ClInclude Include="..\Player.h">
+      <Filter>Engine\Graphics\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Barrier.h">
-      <Filter>Fichiers d%27en-tête\Sync</Filter>
+    <ClInclude Include="..\Window.h">
+      <Filter>Engine\Graphics\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="LoadModel.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthRessources.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="VkSurface.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="VkDevice.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="ValidationLayer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\shader.vert">
+      <Filter>Engine\shaders</Filter>
+    </None>
+    <None Include="..\shaders\shader.frag">
+      <Filter>Engine\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -42,6 +42,49 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Application.cpp" />
+    <ClCompile Include="..\Camera.cpp" />
+    <ClCompile Include="..\Logger.cpp" />
+    <ClCompile Include="..\Player.cpp" />
+    <ClCompile Include="..\Renderer.cpp" />
+    <ClCompile Include="..\Source.cpp" />
+    <ClCompile Include="..\VulkanBuffer.cpp" />
+    <ClCompile Include="..\VulkanCommandBuffer.cpp" />
+    <ClCompile Include="..\VulkanCommandPool.cpp" />
+    <ClCompile Include="..\VulkanDescriptor.cpp" />
+    <ClCompile Include="..\VulkanDevice.cpp" />
+    <ClCompile Include="..\VulkanInstance.cpp" />
+    <ClCompile Include="..\VulkanPipeline.cpp" />
+    <ClCompile Include="..\VulkanRenderPass.cpp" />
+    <ClCompile Include="..\VulkanSwapchain.cpp" />
+    <ClCompile Include="..\Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Application.h" />
+    <ClInclude Include="..\Camera.h" />
+    <ClInclude Include="..\Config.h" />
+    <ClInclude Include="..\Graphics.h" />
+    <ClInclude Include="..\Logger.h" />
+    <ClInclude Include="..\Math.h" />
+    <ClInclude Include="..\Player.h" />
+    <ClInclude Include="..\Renderer.h" />
+    <ClInclude Include="..\Vertex.h" />
+    <ClInclude Include="..\VulkanBuffer.h" />
+    <ClInclude Include="..\VulkanCommandBuffer.h" />
+    <ClInclude Include="..\VulkanCommandPool.h" />
+    <ClInclude Include="..\VulkanDescriptor.h" />
+    <ClInclude Include="..\VulkanDevice.h" />
+    <ClInclude Include="..\VulkanInstance.h" />
+    <ClInclude Include="..\VulkanPipeline.h" />
+    <ClInclude Include="..\VulkanRenderPass.h" />
+    <ClInclude Include="..\VulkanSwapchain.h" />
+    <ClInclude Include="..\Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\shader.frag" />
+    <None Include="..\shaders\shader.vert" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{4401C86B-984C-4184-A0A5-33586F893073}</ProjectGuid>
@@ -145,10 +188,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;D:\Librairy\glfw-3.2.1.bin.WIN32\include;D:\Librairy\glm-0.9.9-a2;D:\Librairy\Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.82.1\Include;C:\Librairy\glfw-3.2.1.bin.WIN32\include;C:\Librairy\glm-0.9.9-a2;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.0.65.1\Lib32;D:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.82.1\Lib32;C:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -207,6 +251,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;C:\Librairy\glfw-3.2.1.bin.WIN32\include;C:\Librairy\glm-0.9.9-a2;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -243,56 +288,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Barrier.cpp" />
-    <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="CommandBuffer.cpp" />
-    <ClCompile Include="CommandPool.cpp" />
-    <ClCompile Include="DepthRessources.cpp" />
-    <ClCompile Include="DescriptorPool.cpp" />
-    <ClCompile Include="DescriptorSet.cpp" />
-    <ClCompile Include="DescriptorSetLayout.cpp" />
-    <ClCompile Include="FrameBuffer.cpp" />
-    <ClCompile Include="LoadModel.cpp" />
-    <ClCompile Include="Pipeline.cpp" />
-    <ClCompile Include="Queue.cpp" />
-    <ClCompile Include="RenderPass.cpp" />
-    <ClCompile Include="Sampler.cpp" />
-    <ClCompile Include="Semaphore.cpp" />
-    <ClCompile Include="Source.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureView.cpp" />
-    <ClCompile Include="UniformBuffer.cpp" />
-    <ClCompile Include="VkDevice.cpp" />
-    <ClCompile Include="VkSurface.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="Barrier.h" />
-    <ClInclude Include="Buffer.h" />
-    <ClInclude Include="CommandBuffer.h" />
-    <ClInclude Include="CommandPool.h" />
-    <ClInclude Include="DepthRessources.h" />
-    <ClInclude Include="DescriptorPool.h" />
-    <ClInclude Include="DescriptorSet.h" />
-    <ClInclude Include="DescriptorSetLayout.h" />
-    <ClInclude Include="FrameBuffer.h" />
-    <ClInclude Include="LoadModel.h" />
-    <ClInclude Include="Pipeline.h" />
-    <ClInclude Include="Queue.h" />
-    <ClInclude Include="RenderPass.h" />
-    <ClInclude Include="Sampler.h" />
-    <ClInclude Include="Semaphore.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureView.h" />
-    <ClInclude Include="UniformBuffer.h" />
-    <ClInclude Include="ValidationLayer.h" />
-    <ClInclude Include="vertex.h" />
-    <ClInclude Include="VkDevice.h" />
-    <ClInclude Include="VkHeader.h" />
-    <ClInclude Include="VkSurface.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
