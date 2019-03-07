@@ -7,51 +7,173 @@
     <Filter Include="Header">
       <UniqueIdentifier>{40e94656-0cb3-42d0-ba41-7ed14c8f9d02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{be767481-ce1d-4bad-a5f3-4aeae38d9b7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Source">
+      <UniqueIdentifier>{b986bf13-9bde-4c6f-9e95-64d327af707f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header">
+      <UniqueIdentifier>{0d1af4c2-15bc-44da-b00c-5e037acde0d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\shaders">
+      <UniqueIdentifier>{e06a0a1d-1845-47d4-806a-03cbfb95abf7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
+    <ClCompile Include="..\Source.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
+    <ClCompile Include="..\TerrainGenerator.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
+    <ClCompile Include="..\Window.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Device.cpp">
+    <ClCompile Include="..\Application.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="ValidationLayers.cpp" />
-    <ClCompile Include="Instance.cpp">
+    <ClCompile Include="..\Camera.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Surface.cpp">
+    <ClCompile Include="..\Chunk.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Semaphores.cpp" />
-    <ClCompile Include="Swapchain.cpp" />
+    <ClCompile Include="..\ChunkManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ChunkStorageLoader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logger.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PerlinNoise.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Player.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanBuffer.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanCommandBuffer.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanCommandPool.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanDescriptor.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanDevice.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanInstance.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanPipeline.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanRenderPass.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VulkanSwapchain.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Renderer.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h">
+    <ClInclude Include="..\TerrainGenerator.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Vertex.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Voxel.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Window.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Chunk.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ChunkManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ChunkStorageLoader.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Config.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameState.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logger.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PerlinNoise.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Player.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanBuffer.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanCommandBuffer.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanCommandPool.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanDescriptor.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanDevice.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanInstance.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanPipeline.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanRenderPass.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VulkanSwapchain.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Renderer.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Graphics.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Application.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="..\Camera.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Instance.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="ValidationLayers.h" />
-    <ClInclude Include="Device.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Semaphores.h" />
-    <ClInclude Include="Swapchain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\shader.vert">
+      <Filter>Engine\shaders</Filter>
+    </None>
+    <None Include="..\shaders\shader.frag">
+      <Filter>Engine\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

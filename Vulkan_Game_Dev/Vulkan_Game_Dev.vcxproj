@@ -43,26 +43,60 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Device.cpp" />
-    <ClCompile Include="Instance.cpp" />
-    <ClCompile Include="Semaphores.cpp" />
-    <ClCompile Include="Source.cpp" />
-    <ClCompile Include="Surface.cpp" />
-    <ClCompile Include="Swapchain.cpp" />
-    <ClCompile Include="ValidationLayers.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="..\Application.cpp" />
+    <ClCompile Include="..\Camera.cpp" />
+    <ClCompile Include="..\Chunk.cpp" />
+    <ClCompile Include="..\ChunkManager.cpp" />
+    <ClCompile Include="..\ChunkStorageLoader.cpp" />
+    <ClCompile Include="..\GameState.cpp" />
+    <ClCompile Include="..\Logger.cpp" />
+    <ClCompile Include="..\PerlinNoise.cpp" />
+    <ClCompile Include="..\Player.cpp" />
+    <ClCompile Include="..\Renderer.cpp" />
+    <ClCompile Include="..\Source.cpp" />
+    <ClCompile Include="..\TerrainGenerator.cpp" />
+    <ClCompile Include="..\VulkanBuffer.cpp" />
+    <ClCompile Include="..\VulkanCommandBuffer.cpp" />
+    <ClCompile Include="..\VulkanCommandPool.cpp" />
+    <ClCompile Include="..\VulkanDescriptor.cpp" />
+    <ClCompile Include="..\VulkanDevice.cpp" />
+    <ClCompile Include="..\VulkanInstance.cpp" />
+    <ClCompile Include="..\VulkanPipeline.cpp" />
+    <ClCompile Include="..\VulkanRenderPass.cpp" />
+    <ClCompile Include="..\VulkanSwapchain.cpp" />
+    <ClCompile Include="..\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="Device.h" />
-    <ClInclude Include="Instance.h" />
-    <ClInclude Include="Semaphores.h" />
-    <ClInclude Include="Surface.h" />
-    <ClInclude Include="Swapchain.h" />
-    <ClInclude Include="ValidationLayers.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="..\Application.h" />
+    <ClInclude Include="..\Camera.h" />
+    <ClInclude Include="..\Chunk.h" />
+    <ClInclude Include="..\ChunkManager.h" />
+    <ClInclude Include="..\ChunkStorageLoader.h" />
+    <ClInclude Include="..\Config.h" />
+    <ClInclude Include="..\GameState.h" />
+    <ClInclude Include="..\Graphics.h" />
+    <ClInclude Include="..\Logger.h" />
+    <ClInclude Include="..\Math.h" />
+    <ClInclude Include="..\PerlinNoise.h" />
+    <ClInclude Include="..\Player.h" />
+    <ClInclude Include="..\Renderer.h" />
+    <ClInclude Include="..\TerrainGenerator.h" />
+    <ClInclude Include="..\Vertex.h" />
+    <ClInclude Include="..\Voxel.h" />
+    <ClInclude Include="..\VulkanBuffer.h" />
+    <ClInclude Include="..\VulkanCommandBuffer.h" />
+    <ClInclude Include="..\VulkanCommandPool.h" />
+    <ClInclude Include="..\VulkanDescriptor.h" />
+    <ClInclude Include="..\VulkanDevice.h" />
+    <ClInclude Include="..\VulkanInstance.h" />
+    <ClInclude Include="..\VulkanPipeline.h" />
+    <ClInclude Include="..\VulkanRenderPass.h" />
+    <ClInclude Include="..\VulkanSwapchain.h" />
+    <ClInclude Include="..\Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\shader.frag" />
+    <None Include="..\shaders\shader.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -167,10 +201,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.65.1\Include;C:\Librairy\glfw-3.2.1.bin.WIN32\include;C:\Librairy\glm-0.9.9-a2;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.82.1\Include;C:\Librairy\glfw-3.2.1.bin.WIN32\include;C:\Librairy\glm-0.9.9-a2;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.0.65.1\Lib32;C:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.82.1\Lib32;C:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
