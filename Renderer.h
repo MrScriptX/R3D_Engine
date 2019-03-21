@@ -14,8 +14,6 @@
 #include <memory>
 #include <algorithm>
 
-#include "Voxel.h"
-
 #include "VulkanInstance.h"
 #include "VulkanDevice.h"
 #include "VulkanSwapchain.h"
@@ -54,8 +52,8 @@ public:
 
 	//rendering
 
-	void createVerticesBuffer(std::shared_ptr<std::vector<Voxel::Block>> vertices, Buffer& buffer);
-	void createIndicesBuffer(std::shared_ptr<std::vector<uint16_t>> indices, Buffer& buffer);
+	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
+	void createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer);
 	void createUBO();
 
 	void allocateCommandBuffers();
