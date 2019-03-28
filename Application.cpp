@@ -146,7 +146,7 @@ void Application::run()
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
 	}
-
+	
 	while (!glfwWindowShouldClose(&m_window->getHandle()))
 	{
 		glfwPollEvents();

@@ -295,7 +295,7 @@ void Renderer::recordDrawCommands(VkCommandBuffer & commandBuffer, Pipeline& pip
 	VkDeviceSize offsets[] = { 0 };
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(commandBuffer, buffer.index, 0, VK_INDEX_TYPE_UINT16);
+	vkCmdBindIndexBuffer(commandBuffer, buffer.index, 0, VK_INDEX_TYPE_UINT32);
 
 	m_descriptor->bindDescriptorSet(commandBuffer, pipeline.layout, m_graphic.descriptor_set);
 
