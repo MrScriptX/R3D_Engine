@@ -46,6 +46,7 @@
     <ClCompile Include="..\Application.cpp" />
     <ClCompile Include="..\Camera.cpp" />
     <ClCompile Include="..\Logger.cpp" />
+    <ClCompile Include="..\Model.cpp" />
     <ClCompile Include="..\Player.cpp" />
     <ClCompile Include="..\Renderer.cpp" />
     <ClCompile Include="..\Source.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="..\Graphics.h" />
     <ClInclude Include="..\Logger.h" />
     <ClInclude Include="..\Math.h" />
+    <ClInclude Include="..\Model.h" />
     <ClInclude Include="..\Player.h" />
     <ClInclude Include="..\Renderer.h" />
     <ClInclude Include="..\Vertex.h" />

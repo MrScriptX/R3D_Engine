@@ -6,6 +6,7 @@
 #include "Window.h"
 #include "Renderer.h"
 #include "Player.h"
+#include "ModelLoader.h"
 
 
 class Application
@@ -31,6 +32,8 @@ private:
 
 	Pipeline base_pipeline;
 	Camera m_camera;
+	ModelLoader model_loader;
+	Model model;
 
 	std::chrono::steady_clock::time_point m_last_time = std::chrono::high_resolution_clock::now();
 };

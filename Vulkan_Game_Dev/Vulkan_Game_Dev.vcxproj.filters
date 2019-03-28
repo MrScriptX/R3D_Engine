@@ -25,8 +25,11 @@
     <Filter Include="Engine\Graphics">
       <UniqueIdentifier>{c8467a9d-cccc-486f-814e-ac1fa2cce737}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Graphics\Headers">
+    <Filter Include="Engine\Graphics\Header">
       <UniqueIdentifier>{0773a226-0a6e-44bb-997b-0848af431efa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics\Source">
+      <UniqueIdentifier>{2e3255ef-0cc2-44cf-9e70-64ccc5b203bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,13 +73,16 @@
       <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Camera.cpp">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>Engine\Graphics\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Player.cpp">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>Engine\Graphics\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Window.cpp">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>Engine\Graphics\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Model.cpp">
+      <Filter>Engine\Graphics\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,16 +132,19 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Camera.h">
-      <Filter>Engine\Graphics\Headers</Filter>
+      <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Config.h">
-      <Filter>Engine\Graphics\Headers</Filter>
+      <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Player.h">
-      <Filter>Engine\Graphics\Headers</Filter>
+      <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Window.h">
-      <Filter>Engine\Graphics\Headers</Filter>
+      <Filter>Engine\Graphics\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Model.h">
+      <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
