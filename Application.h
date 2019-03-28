@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _APPLICATION_H
+#define _APPLICATION_H
 
 #include <memory>
 #include <chrono>
@@ -6,7 +7,7 @@
 #include "Window.h"
 #include "Renderer.h"
 #include "Player.h"
-#include "ModelLoader.h"
+#include "Model.h"
 
 
 class Application
@@ -32,9 +33,9 @@ private:
 
 	Pipeline base_pipeline;
 	Camera m_camera;
-	ModelLoader model_loader;
 	Model model;
 
 	std::chrono::steady_clock::time_point m_last_time = std::chrono::high_resolution_clock::now();
 };
 
+#endif//!_APPLICATION_H

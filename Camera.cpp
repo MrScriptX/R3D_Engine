@@ -4,10 +4,10 @@
 
 Camera::Camera()
 {
-	m_yaw = 0;
-	m_pitch = 0;
-	last_mouse_pos = glm::vec2(0, 0);
-	delta_time = 0;
+	m_yaw = .0f;
+	m_pitch = .0f;
+	last_mouse_pos = glm::vec2(.0f, .0f);
+	delta_time = .0f;
 
 	m_keyboard_press = { false };
 
@@ -49,8 +49,8 @@ void Camera::updatePos()
 
 	if (m_keyboard_press[GLFW_KEY_W] == true)
 	{
-		change.x -= -glm::cos(glm::radians(m_yaw)) * speed;//rotation still not working
-		change.z -= -glm::sin(glm::radians(m_yaw)) * speed;
+		change.x -= -glm::cos(glm::radians(m_rotation.y)) * speed;//rotation still not working
+		change.z -= -glm::sin(glm::radians(m_rotation.y)) * speed;
 	}
 
 	if (m_keyboard_press[GLFW_KEY_S] == true)
@@ -61,14 +61,14 @@ void Camera::updatePos()
 
 	if (m_keyboard_press[GLFW_KEY_A] == true)
 	{
-		change.x += -glm::cos(glm::radians(m_rotation.y + 90)) * speed;
-		change.z += -glm::sin(glm::radians(m_rotation.y + 90)) * speed;
+		change.x += -glm::cos(glm::radians(m_rotation.y + 90.0f)) * speed;
+		change.z += -glm::sin(glm::radians(m_rotation.y + 90.0f)) * speed;
 	}
 
 	if (m_keyboard_press[GLFW_KEY_D] == true)
 	{
-		change.x -= -glm::cos(glm::radians(m_rotation.y + 90)) * speed;
-		change.z -= -glm::sin(glm::radians(m_rotation.y + 90)) * speed;
+		change.x -= -glm::cos(glm::radians(m_rotation.y + 90.0f)) * speed;
+		change.z -= -glm::sin(glm::radians(m_rotation.y + 90.0f)) * speed;
 	}
 
 	if (m_keyboard_press[GLFW_KEY_LEFT_SHIFT] == true)
