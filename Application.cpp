@@ -1,10 +1,11 @@
 #include "Application.h"
 
-
-//#include "Math.h"
-
-
 #include <thread>
+
+
+
+const std::string MODEL_PATH = "models/chalet.obj";
+const std::string TEXTURE_PATH = "textures/chalet.jpg";
 
 Application::Application()
 {
@@ -21,6 +22,13 @@ Application::Application()
 	m_pRenderer->createTextureImage();
 	m_pRenderer->createTextureImageView();
 	m_pRenderer->createTextureSampler();
+
+	//------------------------------------------------------------------------------------------
+
+	model.loadModel("models/chalet.obj");
+	model.createBuffer(m_pRenderer);
+
+	//-------------------------------------------------------------------------------
 
 	m_pRenderer->createDescriptorPool();
 
@@ -46,11 +54,21 @@ Application::~Application()
 
 void Application::run()
 {
+	for (uint16_t i = 0; i < m_pRenderer->getGraphic().command_buffers.size(); i++)
+	{
+		m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
+
+		m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, model.get_buffer(), model.get_indices().size());
+
+		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
+	}
+	
 	while (!glfwWindowShouldClose(&m_window->getHandle()))
 	{
 		glfwPollEvents();
 		input();
 		update();
+		m_pRenderer->draw(base_pipeline);
 	}
 
 	vkDeviceWaitIdle(m_pRenderer->getDevice());

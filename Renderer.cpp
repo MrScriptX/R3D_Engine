@@ -196,13 +196,13 @@ void Renderer::destroyBuffers(Buffer & buffer)
 	vkFreeMemory(m_graphic.device, buffer.vertex_memory, nullptr);
 }
 
-void Renderer::createVerticesBuffer(std::shared_ptr<std::vector<Voxel::Block>> vertices, Buffer& buffer)
+void Renderer::createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer)
 {
 	VkDeviceSize buffer_size = sizeof(vertices->at(0)) * vertices->size();
 
 	VkBuffer staging_buffer;
 	VkDeviceMemory staging_buffer_memory;
-	m_pBufferFactory->createBuffer(staging_buffer, staging_buffer_memory, buffer_size, VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	m_pBufferFactory->createBuffer(staging_buffer, staging_buffer_memory, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	void* data;
 	vkMapMemory(m_graphic.device, staging_buffer_memory, 0, buffer_size, 0, &data);
@@ -216,7 +216,7 @@ void Renderer::createVerticesBuffer(std::shared_ptr<std::vector<Voxel::Block>> v
 	vkFreeMemory(m_graphic.device, staging_buffer_memory, nullptr);
 }
 
-void Renderer::createIndicesBuffer(std::shared_ptr<std::vector<uint16_t>> indices, Buffer& buffer)
+void Renderer::createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer)
 {
 	VkDeviceSize buffer_size = sizeof(indices->at(0)) * indices->size();
 
@@ -295,7 +295,7 @@ void Renderer::recordDrawCommands(VkCommandBuffer & commandBuffer, Pipeline& pip
 	VkDeviceSize offsets[] = { 0 };
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(commandBuffer, buffer.index, 0, VK_INDEX_TYPE_UINT16);
+	vkCmdBindIndexBuffer(commandBuffer, buffer.index, 0, VK_INDEX_TYPE_UINT32);
 
 	m_descriptor->bindDescriptorSet(commandBuffer, pipeline.layout, m_graphic.descriptor_set);
 
@@ -501,7 +501,7 @@ void Renderer::createDescriptorSet()
 void Renderer::createTextureImage()
 {
 	int tex_width, tex_height, tex_channel;
-	stbi_uc* pixels = stbi_load("textures/texture.jpg", &tex_width, &tex_height, &tex_channel, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load("textures/chalet.jpg", &tex_width, &tex_height, &tex_channel, STBI_rgb_alpha);
 	VkDeviceSize imageSize = tex_width * tex_height * 4;
 
 	if (!pixels)

@@ -46,6 +46,7 @@
     <ClCompile Include="..\Application.cpp" />
     <ClCompile Include="..\Camera.cpp" />
     <ClCompile Include="..\Logger.cpp" />
+    <ClCompile Include="..\Model.cpp" />
     <ClCompile Include="..\Player.cpp" />
     <ClCompile Include="..\Renderer.cpp" />
     <ClCompile Include="..\Source.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="..\Graphics.h" />
     <ClInclude Include="..\Logger.h" />
     <ClInclude Include="..\Math.h" />
+    <ClInclude Include="..\Model.h" />
     <ClInclude Include="..\Player.h" />
     <ClInclude Include="..\Renderer.h" />
     <ClInclude Include="..\Vertex.h" />
@@ -188,11 +190,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.82.1\Include;C:\Librairy\glfw-3.2.1.bin.WIN32\include;C:\Librairy\glm-0.9.9-a2;C:\Librairy\Header_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.1.82.1\Include;C:\Librairy\glfw-3.2.1.bin.WIN32\include;C:\Librairy\glm-0.9.9-a2;C:\Librairy\Header_Lib;C:\Program Files\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.82.1\Lib32;C:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.82.1\Lib32;C:\Librairy\glfw-3.2.1.bin.WIN32\lib-vc2015;C:\Program Files\Assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -215,7 +217,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Librairy\Header_Lib;C:\VulkanSDK\1.1.101.0\Include;C:\Librairy\glfw-3.2.1.bin.WIN64\include;C:\Librairy\glm-0.9.9-a2;C:\Program Files\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\VulkanSDK\1.1.101.0\Lib;C:\Librairy\glfw-3.2.1.bin.WIN64\lib-vc2015;C:\Librairy\glew-2.1.0\lib;C:\Program Files\Assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Vulkan_elman_pc|x64'">
     <ClCompile>
