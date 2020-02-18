@@ -24,6 +24,11 @@ de stb_image.h.
 
 stb_image sera ammené a être implementer directement dans le projet.
 
+#### tiny object loader
+Téléchargez la dernière version disponible de [tiny object loader](https://github.com/syoyo/tinyobjloader) depuis github.
+
+tiny object loader sera ammené a être remplacé.
+
 ### Configuration du projet
 
 Le projet a été développé et testé par Visual Studio uniquement. Il est donc recommander d'utiliser cet IDE.
@@ -31,7 +36,7 @@ Pour commencer à configurer le projet, fait un clique droit dans l'explorateur d
 puis allez dans propriétés.
 
 Dans C/C++ -> Général -> Autre répertoire, ajoutez les liens vers le dossier include de Vulkan, et GLFW. Aujoutez également tout le dossier
-de GLM ainsi que sbt_image.h.
+de GLM ainsi que sbt_image.h et tiny_object_loader.h.
 
 Dans Editeur de liens -> Général -> Répertoire de bibliothèques supplémentaires,  ajoutez le dossier Lib32 de Vulkan et lib-vc2015 de GLFW.
 
