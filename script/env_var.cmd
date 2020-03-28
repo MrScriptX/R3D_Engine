@@ -1,0 +1,4 @@
+setx GLM_PATH 0
+setx GLFW_PATH 0
+setx R3DLIB_PATH 0
+setx ASSIMP_PATH 0
