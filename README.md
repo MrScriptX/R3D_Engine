@@ -32,12 +32,11 @@ tiny object loader sera ammené a être remplacé.
 ### Configuration du projet
 
 Le projet a été développé et testé par Visual Studio uniquement. Il est donc recommander d'utiliser cet IDE.
-Pour commencer à configurer le projet, fait un clique droit dans l'explorateur de solution sur R3D_Vulkan_Engine, 
-puis allez dans propriétés.
+Dans le dossier script/, lancez setup.bat à l'aide d'un terminal.
 
-Dans C/C++ -> Général -> Autre répertoire, ajoutez les liens vers le dossier include de Vulkan, et GLFW. Aujoutez également tout le dossier
-de GLM ainsi que sbt_image.h et tiny_object_loader.h.
+Trois nouvelles variables environnements que vous devrez modifié.
 
-Dans Editeur de liens -> Général -> Répertoire de bibliothèques supplémentaires,  ajoutez le dossier Lib32 de Vulkan et lib-vc2015 de GLFW.
-
-Dans Editeur de liens -> entrée -> Dépendences supplémentaires, entrez vulkan-1.lib, glfw3.lib
+GLM_PATH	: chemin vers votre installation de GLM
+GLFW_PATH	: chemin vers votre installation de GLFW
+R3DLIB_PATH	: chemin vers votre installation de vos include supplémentaire
+ASSIMP_PATH	: chemin vers votre installation de ASSIMP
