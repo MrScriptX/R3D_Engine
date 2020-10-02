@@ -70,6 +70,7 @@ public:
 	void createDescriptorLayout();
 	void createDescriptorPool();
 	void createDescriptorSet();
+	void updateDescriptorSet();
 	void createTextureImage();
 	void createTextureImageView();
 	void createTextureSampler();

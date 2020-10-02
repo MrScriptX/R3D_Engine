@@ -466,7 +466,10 @@ void Renderer::createDescriptorSet()
 	{
 		throw std::runtime_error("failed to allocate descriptor set!");
 	}
+}
 
+void Renderer::updateDescriptorSet()
+{
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = m_graphic.uniform_buffer;
 	bufferInfo.offset = 0;
