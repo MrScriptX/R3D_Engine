@@ -45,7 +45,7 @@ void Camera::mouse(double xpos, double ypos)
 void Camera::updatePos()
 {
 	glm::vec3 change = { 0.0f, 0.0f, 0.0f };
-	float speed = 10.0f;
+	const float speed = 2.0f;
 
 	if (m_keyboard_press[GLFW_KEY_W] == true)
 	{
