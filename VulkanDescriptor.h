@@ -2,6 +2,7 @@
 #define _VULKAN_DESCRIPTOR_H
 
 #include <array>
+#include <stdexcept>
 
 #include "Vertex.h"
 #include "Graphics.h"

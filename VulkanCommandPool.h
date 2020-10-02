@@ -1,7 +1,10 @@
 #ifndef _VULKAN_COMMANDPOOL_H
 #define _VULKAN_COMMANDPOOL_H
 
+#include <stdexcept>
+
 #include "Graphics.h"
+
 
 class VulkanCommandPool
 {

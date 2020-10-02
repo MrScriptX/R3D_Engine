@@ -1,10 +1,9 @@
 #include "Model.h"
 
-
 #ifndef TINYOBJLOADER_IMPLEMENTATION
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
+#include "tiny_obj_loader.h"
 
 #endif // !TINYOBJLOADER_IMPLEMENTATION
 
@@ -21,11 +20,11 @@ void Model::loadModel(const std::string& file)
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
-	std::string warn, err;
+	std::string err;
 
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, file.c_str()))
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, file.c_str()))
 	{
-		throw std::runtime_error(warn + err);
+		throw std::runtime_error(err);
 	}
 
 	std::unordered_map<Vertex, uint32_t> uniqueVertices = {};

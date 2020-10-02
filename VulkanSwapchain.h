@@ -2,6 +2,7 @@
 #define _VULKAN_SWAPCHAIN_H
 
 #include <algorithm>
+#include <stdexcept>
 
 #include "Config.h"
 #include "Graphics.h"

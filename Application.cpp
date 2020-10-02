@@ -5,7 +5,7 @@
 
 
 const std::string MODEL_PATH = "models/chalet.obj";
-const std::string TEXTURE_PATH = "textures/chalet.jpg";
+const std::string TEXTURE_PATH = "textures/viking_room.png";
 
 Application::Application()
 {
@@ -25,7 +25,7 @@ Application::Application()
 
 	//------------------------------------------------------------------------------------------
 
-	model.loadModel("models/chalet.obj");
+	model.loadModel("models/viking_room.obj");
 	model.createBuffer(m_pRenderer);
 
 	//-------------------------------------------------------------------------------

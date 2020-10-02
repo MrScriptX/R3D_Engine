@@ -2,6 +2,7 @@
 #define _VULKAN_COMMANDBUFFER_H
 
 #include "Graphics.h"
+#include <stdexcept>
 
 class VulkanCommandBuffer
 {

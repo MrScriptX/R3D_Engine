@@ -501,7 +501,7 @@ void Renderer::createDescriptorSet()
 void Renderer::createTextureImage()
 {
 	int tex_width, tex_height, tex_channel;
-	stbi_uc* pixels = stbi_load("textures/chalet.jpg", &tex_width, &tex_height, &tex_channel, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load("textures/viking_room.png", &tex_width, &tex_height, &tex_channel, STBI_rgb_alpha);
 	VkDeviceSize imageSize = tex_width * tex_height * 4;
 
 	if (!pixels)
