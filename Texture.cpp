@@ -1,12 +1,7 @@
 #include "Texture.h"
 
 
-#ifndef STB_IMAGE_IMPLEMENTATION
-
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
-#endif // !STB_IMAGE_IMPLEMENTATION
 
 
 Texture::Texture(const std::string& texture_path) : m_texture_path(texture_path)
@@ -40,12 +35,12 @@ void Texture::createTextureImage(std::shared_ptr<Renderer> renderer)
 
 	stbi_image_free(pixels);
 
-	renderer->createImage(tex_width, tex_height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_graphic.texture_image, m_graphic.texture_memory);
+	renderer->createImage(tex_width, tex_height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_texture_image, m_texture_memory);
 
 	renderer->transitionImageLayout(m_texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	renderer->copyBufferToImage(stagingBuffer, m_texture_image, static_cast<uint32_t>(tex_width), static_cast<uint32_t>(tex_height));
 
-	renderer->transitionImageLayout(m_graphic.texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	renderer->transitionImageLayout(m_texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	vkDestroyBuffer(renderer->getGraphic().device, stagingBuffer, nullptr);
 	vkFreeMemory(renderer->getGraphic().device, stagingBufferMemory, nullptr);
@@ -85,6 +80,23 @@ void Texture::createTextureSampler(std::shared_ptr<Renderer> renderer)
 		throw std::runtime_error("failed to create texture sampler!");
 	}
 }
+
+void Texture::AllocateDescriptorSet()
+{
+	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = m_graphic.descriptor_pool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts = layouts;
+
+	if (vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &m_graphic.descriptor_set) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to allocate descriptor set!");
+	}
+}
+
+
 
 const VkImageView& Texture::getImageView()
 {

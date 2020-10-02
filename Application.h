@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "Player.h"
 #include "Mesh.h"
+#include "Texture.h"
 
 
 class Application
@@ -35,6 +36,8 @@ private:
 	Camera m_camera;
 	std::unique_ptr<Mesh> room;
 	std::unique_ptr<Mesh> gun;
+	std::unique_ptr<Texture> room_txt;
+	std::unique_ptr<Texture> gun_txt;
 
 	std::chrono::steady_clock::time_point m_last_time = std::chrono::high_resolution_clock::now();
 };

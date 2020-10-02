@@ -69,7 +69,7 @@ public:
 	void createDescriptorLayout();
 	void createDescriptorPool();
 	void createDescriptorSet();
-	void updateDescriptorSet();
+	void updateDescriptorSet(const VkImageView& image_view, const VkSampler& image_sampler);
 	void createTextureImage(const std::string& texture_path);
 	void createTextureImageView();
 	void createTextureSampler();

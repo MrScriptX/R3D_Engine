@@ -473,7 +473,7 @@ void Renderer::createDescriptorSet()
 	}
 }
 
-void Renderer::updateDescriptorSet()
+void Renderer::updateDescriptorSet(const VkImageView& image_view, const VkSampler& image_sampler)
 {
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = m_graphic.uniform_buffer;
@@ -482,8 +482,8 @@ void Renderer::updateDescriptorSet()
 
 	VkDescriptorImageInfo imageInfo = {};
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	imageInfo.imageView = m_graphic.texture_view;
-	imageInfo.sampler = m_graphic.texture_sampler;
+	imageInfo.imageView = image_view;
+	imageInfo.sampler = image_sampler;
 
 
 	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};

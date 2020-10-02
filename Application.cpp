@@ -24,6 +24,15 @@ Application::Application()
 	m_pRenderer->createTextureSampler();
 
 	//------------------------------------------------------------------------------------------
+	room_txt = std::make_unique<Texture>("textures/viking_room.png");
+	room_txt->createTextureImage(m_pRenderer);
+	room_txt->createTextureImageView(m_pRenderer);
+	room_txt->createTextureSampler(m_pRenderer);
+
+	gun_txt = std::make_unique<Texture>("textures/texture.jpg");
+	gun_txt->createTextureImage(m_pRenderer);
+	gun_txt->createTextureImageView(m_pRenderer);
+	gun_txt->createTextureSampler(m_pRenderer);
 
 	gun = std::make_unique<Mesh>("models/ak-47.obj");
 	gun->loadModel();
@@ -42,7 +51,8 @@ Application::Application()
 	m_pRenderer->allocateCommandBuffers();
 	
 	m_pRenderer->createDescriptorSet();
-	m_pRenderer->updateDescriptorSet();
+
+	//m_pRenderer->updateDescriptorSet(room_txt->getImageView(), room_txt->getSampler());
 }
 
 
@@ -67,12 +77,17 @@ void Application::run()
 		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun->get_buffer(), gun->get_indices().size());
 		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room->get_buffer(), room->get_indices().size());
 
+		m_pRenderer->updateDescriptorSet(gun_txt->getImageView(), gun_txt->getSampler());
 		gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, m_pRenderer->getGraphic().descriptor_set);
+
+		m_pRenderer->updateDescriptorSet(room_txt->getImageView(), room_txt->getSampler());
 		room->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, m_pRenderer->getGraphic().descriptor_set);
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
 	}
 	
+	std::cout << "here" << std::endl;
+
 	while (!glfwWindowShouldClose(&m_window->getHandle()))
 	{
 		glfwPollEvents();
