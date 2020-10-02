@@ -8,21 +8,25 @@
 #include "Renderer.h"
 
 
-class Model
+class Mesh
 {
 public:
-	Model();
-	~Model();
+	Mesh(const std::string& obj_path);
+	~Mesh();
 
-	void loadModel(const std::string& file);
+	void draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline, const VkDescriptorSet& descriptor_set);
+	void loadModel();
 	void createBuffer(std::shared_ptr<Renderer> engine);
 
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
 	Buffer& get_buffer();
+
 private:
 	std::vector<Vertex> m_vertices;
 	std::vector<uint32_t> m_indices;
+
+	const std::string m_obj_path;
 
 	Buffer m_buffer;
 };

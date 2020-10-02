@@ -2,9 +2,9 @@
 #define _VULKANBUFFER_H
 
 #include <memory>
+#include <stdexcept>
 
 #include "Graphics.h"
-#include "Voxel.h"
 
 class VulkanBuffer
 {

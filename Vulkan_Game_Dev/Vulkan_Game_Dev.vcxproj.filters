@@ -81,7 +81,7 @@
     <ClCompile Include="..\Window.cpp">
       <Filter>Engine\Graphics\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\Model.cpp">
+    <ClCompile Include="..\Mesh.cpp">
       <Filter>Engine\Graphics\Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -143,7 +143,7 @@
     <ClInclude Include="..\Window.h">
       <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\Model.h">
+    <ClInclude Include="..\Mesh.h">
       <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
   </ItemGroup>

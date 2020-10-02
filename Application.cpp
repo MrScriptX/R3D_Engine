@@ -4,7 +4,7 @@
 
 
 
-const std::string MODEL_PATH = "models/chalet.obj";
+const std::string MODEL_PATH = "models/viking_room.obj";
 const std::string TEXTURE_PATH = "textures/viking_room.png";
 
 Application::Application()
@@ -25,8 +25,13 @@ Application::Application()
 
 	//------------------------------------------------------------------------------------------
 
-	model.loadModel("models/viking_room.obj");
-	model.createBuffer(m_pRenderer);
+	gun = std::make_unique<Mesh>("models/ak-47.obj");
+	gun->loadModel();
+	gun->createBuffer(m_pRenderer);
+
+	room = std::make_unique<Mesh>("models/viking_room.obj");
+	room->loadModel();
+	room->createBuffer(m_pRenderer);
 
 	//-------------------------------------------------------------------------------
 
@@ -58,7 +63,11 @@ void Application::run()
 	{
 		m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
 
-		m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, model.get_buffer(), model.get_indices().size());
+		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun->get_buffer(), gun->get_indices().size());
+		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room->get_buffer(), room->get_indices().size());
+
+		gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, m_pRenderer->getGraphic().descriptor_set);
+		room->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, m_pRenderer->getGraphic().descriptor_set);
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
 	}
