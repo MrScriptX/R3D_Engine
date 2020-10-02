@@ -84,6 +84,9 @@
     <ClCompile Include="..\Mesh.cpp">
       <Filter>Engine\Graphics\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\Texture.cpp">
+      <Filter>Engine\Graphics\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\VulkanBuffer.h">
@@ -144,6 +147,9 @@
       <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Mesh.h">
+      <Filter>Engine\Graphics\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Texture.h">
       <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
   </ItemGroup>

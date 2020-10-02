@@ -180,6 +180,11 @@ Graphics & Renderer::getGraphic()
 	return m_graphic;
 }
 
+std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
+{
+	return m_pBufferFactory;
+}
+
 void Renderer::destroyBuffers(Buffer & buffer)
 {
 	vkQueueWaitIdle(m_graphic.graphics_queue);
@@ -501,10 +506,10 @@ void Renderer::updateDescriptorSet()
 	vkUpdateDescriptorSets(m_graphic.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-void Renderer::createTextureImage()
+void Renderer::createTextureImage(const std::string& texture_path)
 {
 	int tex_width, tex_height, tex_channel;
-	stbi_uc* pixels = stbi_load("textures/viking_room.png", &tex_width, &tex_height, &tex_channel, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load(texture_path.c_str(), &tex_width, &tex_height, &tex_channel, STBI_rgb_alpha);
 	VkDeviceSize imageSize = tex_width * tex_height * 4;
 
 	if (!pixels)

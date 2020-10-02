@@ -19,7 +19,7 @@ Application::Application()
 	m_pRenderer->createDepthResources();
 	m_pRenderer->createFramebuffer();
 
-	m_pRenderer->createTextureImage();
+	m_pRenderer->createTextureImage("textures/viking_room.png");
 	m_pRenderer->createTextureImageView();
 	m_pRenderer->createTextureSampler();
 
@@ -42,6 +42,7 @@ Application::Application()
 	m_pRenderer->allocateCommandBuffers();
 	
 	m_pRenderer->createDescriptorSet();
+	m_pRenderer->updateDescriptorSet();
 }
 
 

@@ -48,10 +48,9 @@ public:
 
 	VkDevice& getDevice();
 	Graphics& getGraphic();//need to seperate object needed outside the class
-
+	std::unique_ptr<VulkanBuffer>& getBufferFactory();
 
 	//rendering
-
 	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
 	void createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer);
 	void createUBO();
@@ -60,8 +59,8 @@ public:
 	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer, Pipeline& pipeline);
 	void recordDrawCommands(VkCommandBuffer& commandBuffer, Pipeline& pipeline, Buffer& buffer, size_t indices);
 	void endRecordCommandBuffers(VkCommandBuffer& commandBuffer);
-
 	//!rendering
+
 	void setupCallback();
 	void createSurface(GLFWwindow& window);
 	void createFramebuffer();
@@ -71,7 +70,7 @@ public:
 	void createDescriptorPool();
 	void createDescriptorSet();
 	void updateDescriptorSet();
-	void createTextureImage();
+	void createTextureImage(const std::string& texture_path);
 	void createTextureImageView();
 	void createTextureSampler();
 	void createDepthResources();
@@ -83,7 +82,7 @@ public:
 	void destroyBuffers(Buffer& buffers);
 	void cleanSwapchain(std::shared_ptr<Pipeline> pPipeline);
 
-private:
+
 	//init fonctions
 	void recreateSwapchain(Pipeline& pipeline);
 	
@@ -105,7 +104,7 @@ private:
 	VkCommandBuffer beginCommands();
 	void endCommands(VkCommandBuffer commandBuffer);
 	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-
+private:
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
