@@ -23,10 +23,12 @@ public:
 	Buffer& get_buffer();
 
 private:
+	const std::string m_obj_path;
+
+	VkDescriptorPool m_descriptor_pool;
+
 	std::vector<Vertex> m_vertices;
 	std::vector<uint32_t> m_indices;
-
-	const std::string m_obj_path;
 
 	Buffer m_buffer;
 };

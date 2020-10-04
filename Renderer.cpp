@@ -440,7 +440,7 @@ void Renderer::createDescriptorLayout()
 
 void Renderer::createDescriptorPool()
 {
-	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+	std::array<VkDescriptorPoolSize, 4> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 1;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -450,7 +450,7 @@ void Renderer::createDescriptorPool()
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 1;
+	poolInfo.maxSets = 4;
 
 	if (vkCreateDescriptorPool(m_graphic.device, &poolInfo, nullptr, &m_graphic.descriptor_pool) != VK_SUCCESS)
 	{
@@ -473,7 +473,23 @@ void Renderer::createDescriptorSet()
 	}
 }
 
-void Renderer::updateDescriptorSet(const VkImageView& image_view, const VkSampler& image_sampler)
+void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
+{
+	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = m_graphic.descriptor_pool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts = layouts;
+
+	VkResult result = vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &descriptor_set);
+	if (result != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to allocate descriptor set!");
+	}
+}
+
+void Renderer::updateDescriptorSet(const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler)
 {
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = m_graphic.uniform_buffer;
@@ -488,7 +504,7 @@ void Renderer::updateDescriptorSet(const VkImageView& image_view, const VkSample
 
 	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrites[0].dstSet = m_graphic.descriptor_set;
+	descriptorWrites[0].dstSet = descriptor_set;
 	descriptorWrites[0].dstBinding = 0;
 	descriptorWrites[0].dstArrayElement = 0;
 	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -496,7 +512,7 @@ void Renderer::updateDescriptorSet(const VkImageView& image_view, const VkSample
 	descriptorWrites[0].pBufferInfo = &bufferInfo;
 
 	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrites[1].dstSet = m_graphic.descriptor_set;
+	descriptorWrites[1].dstSet = descriptor_set;
 	descriptorWrites[1].dstBinding = 1;
 	descriptorWrites[1].dstArrayElement = 0;
 	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;

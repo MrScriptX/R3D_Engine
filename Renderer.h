@@ -69,11 +69,13 @@ public:
 	void createDescriptorLayout();
 	void createDescriptorPool();
 	void createDescriptorSet();
-	void updateDescriptorSet(const VkImageView& image_view, const VkSampler& image_sampler);
+	void updateDescriptorSet(const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
 	void createTextureImage(const std::string& texture_path);
 	void createTextureImageView();
 	void createTextureSampler();
 	void createDepthResources();
+
+	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
 
 	//cleaning
 	void destroyTextures();

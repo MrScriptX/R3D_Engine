@@ -6,6 +6,7 @@
 
 Texture::Texture(const std::string& texture_path) : m_texture_path(texture_path)
 {
+	m_descriptor_set = VK_NULL_HANDLE;
 }
 
 Texture::~Texture()
@@ -81,23 +82,6 @@ void Texture::createTextureSampler(std::shared_ptr<Renderer> renderer)
 	}
 }
 
-void Texture::AllocateDescriptorSet()
-{
-	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = m_graphic.descriptor_pool;
-	allocInfo.descriptorSetCount = 1;
-	allocInfo.pSetLayouts = layouts;
-
-	if (vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &m_graphic.descriptor_set) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to allocate descriptor set!");
-	}
-}
-
-
-
 const VkImageView& Texture::getImageView()
 {
 	return m_texture_view;
@@ -106,4 +90,9 @@ const VkImageView& Texture::getImageView()
 const VkSampler& Texture::getSampler()
 {
 	return m_texture_sampler;
+}
+
+VkDescriptorSet& Texture::getDescriptorSet()
+{
+	return m_descriptor_set;
 }

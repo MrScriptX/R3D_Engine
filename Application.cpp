@@ -52,6 +52,9 @@ Application::Application()
 	
 	m_pRenderer->createDescriptorSet();
 
+	//m_pRenderer->allocateDescriptorSet(gun_txt->getDescriptorSet());
+	//m_pRenderer->allocateDescriptorSet(room_txt->getDescriptorSet());
+
 	//m_pRenderer->updateDescriptorSet(room_txt->getImageView(), room_txt->getSampler());
 }
 
@@ -77,10 +80,10 @@ void Application::run()
 		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun->get_buffer(), gun->get_indices().size());
 		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room->get_buffer(), room->get_indices().size());
 
-		m_pRenderer->updateDescriptorSet(gun_txt->getImageView(), gun_txt->getSampler());
+		m_pRenderer->updateDescriptorSet(m_pRenderer->getGraphic().descriptor_set, gun_txt->getImageView(), gun_txt->getSampler());
 		gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, m_pRenderer->getGraphic().descriptor_set);
 
-		m_pRenderer->updateDescriptorSet(room_txt->getImageView(), room_txt->getSampler());
+		m_pRenderer->updateDescriptorSet(m_pRenderer->getGraphic().descriptor_set, room_txt->getImageView(), room_txt->getSampler());
 		room->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, m_pRenderer->getGraphic().descriptor_set);
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);

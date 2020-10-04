@@ -12,10 +12,10 @@ public:
 	void createTextureImage(std::shared_ptr<Renderer> renderer);
 	void createTextureImageView(std::shared_ptr<Renderer> renderer);
 	void createTextureSampler(std::shared_ptr<Renderer> renderer);
-	void AllocateDescriptorSet();
 
 	const VkImageView& getImageView();
 	const VkSampler& getSampler();
+	VkDescriptorSet& getDescriptorSet();
 
 private:
 	const std::string m_texture_path;
