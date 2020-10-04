@@ -52,8 +52,15 @@ Application::Application()
 	
 	m_pRenderer->createDescriptorSet();
 
-	//m_pRenderer->allocateDescriptorSet(gun_txt->getDescriptorSet());
-	//m_pRenderer->allocateDescriptorSet(room_txt->getDescriptorSet());
+	//make one UBO per object
+	//pass UBO to allocate descriptor when texture is bind to object and not before
+	m_pRenderer->createUBO(gun_txt->getUBO(), gun_txt->getBufferMem());
+	m_pRenderer->allocateDescriptorSet(gun_txt->getDescriptorSet());
+	m_pRenderer->updateDescriptorSet(gun_txt->getUBO(), gun_txt->getDescriptorSet(), gun_txt->getImageView(), gun_txt->getSampler());
+
+	m_pRenderer->createUBO(room_txt->getUBO(), room_txt->getBufferMem());
+	m_pRenderer->allocateDescriptorSet(room_txt->getDescriptorSet());
+	m_pRenderer->updateDescriptorSet(room_txt->getUBO(), room_txt->getDescriptorSet(), room_txt->getImageView(), room_txt->getSampler());
 
 	//m_pRenderer->updateDescriptorSet(room_txt->getImageView(), room_txt->getSampler());
 }
@@ -79,12 +86,9 @@ void Application::run()
 
 		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun->get_buffer(), gun->get_indices().size());
 		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room->get_buffer(), room->get_indices().size());
-
-		m_pRenderer->updateDescriptorSet(m_pRenderer->getGraphic().descriptor_set, gun_txt->getImageView(), gun_txt->getSampler());
-		gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, m_pRenderer->getGraphic().descriptor_set);
-
-		m_pRenderer->updateDescriptorSet(m_pRenderer->getGraphic().descriptor_set, room_txt->getImageView(), room_txt->getSampler());
-		room->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, m_pRenderer->getGraphic().descriptor_set);
+		
+		gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun_txt->getDescriptorSet());
+		room->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room_txt->getDescriptorSet());
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
 	}
@@ -106,10 +110,15 @@ void Application::update()
 {
 	m_pPlayer->updateUBO(static_cast<float>(m_config->width), static_cast<float>(m_config->height));
 
+	//update every game object ubo
 	void* data;
-	vkMapMemory(m_pRenderer->getDevice(), m_pRenderer->getGraphic().uniform_memory, 0, sizeof(m_pPlayer->getUBO()), 0, &data);
+	vkMapMemory(m_pRenderer->getDevice(), room_txt->getBufferMem(), 0, sizeof(m_pPlayer->getUBO()), 0, &data);
 	memcpy(data, &m_pPlayer->getUBO(), sizeof(m_pPlayer->getUBO()));
-	vkUnmapMemory(m_pRenderer->getDevice(), m_pRenderer->getGraphic().uniform_memory);
+	vkUnmapMemory(m_pRenderer->getDevice(), room_txt->getBufferMem());
+
+	vkMapMemory(m_pRenderer->getDevice(), gun_txt->getBufferMem(), 0, sizeof(m_pPlayer->getUBO()), 0, &data);
+	memcpy(data, &m_pPlayer->getUBO(), sizeof(m_pPlayer->getUBO()));
+	vkUnmapMemory(m_pRenderer->getDevice(), gun_txt->getBufferMem());
 
 	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }

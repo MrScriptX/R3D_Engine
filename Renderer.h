@@ -54,6 +54,7 @@ public:
 	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
 	void createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer);
 	void createUBO();
+	void createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory);
 
 	void allocateCommandBuffers();
 	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer, Pipeline& pipeline);
@@ -69,7 +70,7 @@ public:
 	void createDescriptorLayout();
 	void createDescriptorPool();
 	void createDescriptorSet();
-	void updateDescriptorSet(const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
+	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
 	void createTextureImage(const std::string& texture_path);
 	void createTextureImageView();
 	void createTextureSampler();
