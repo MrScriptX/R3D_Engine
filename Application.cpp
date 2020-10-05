@@ -70,7 +70,7 @@ void Application::run()
 		m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
 		
 		//gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun_txt->getDescriptorSet());
-		room->registerDrawCmd(m_pRenderer->getGraphic().command_buffers[i], base_pipeline);&
+		room->registerDrawCmd(m_pRenderer->getGraphic().command_buffers[i], base_pipeline);
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
 	}
