@@ -19,18 +19,18 @@ Application::Application()
 	m_pRenderer->createDepthResources();
 	m_pRenderer->createFramebuffer();
 
-	m_pRenderer->createTextureImage("textures/viking_room.png");
+	m_pRenderer->createDescriptorPool();
+	m_pRenderer->allocateCommandBuffers();
+
+	/*m_pRenderer->createTextureImage("textures/viking_room.png");
 	m_pRenderer->createTextureImageView();
-	m_pRenderer->createTextureSampler();
+	m_pRenderer->createTextureSampler();*/
 
 	//------------------------------------------------------------------------------------------
 	/*room_txt = std::make_unique<Texture>("textures/viking_room.png");
 	room_txt->createTextureImage(m_pRenderer);
 	room_txt->createTextureImageView(m_pRenderer);
 	room_txt->createTextureSampler(m_pRenderer);*/
-
-	room_texture = std::make_unique<Material>();
-	room_texture->loadTexture("textures/viking_room.png", m_pRenderer);
 
 	gun_txt = std::make_unique<Texture>("textures/texture.jpg");
 	gun_txt->createTextureImage(m_pRenderer);
@@ -41,31 +41,29 @@ Application::Application()
 	gun->loadModel();
 	gun->createBuffer(m_pRenderer);
 
+	room_texture = std::make_unique<Material>();
+	room_texture->loadTexture("textures/viking_room.png", m_pRenderer);
+
 	room = std::make_unique<GameObject>();
-	room->loadMesh("models/viking_room.obj");
-	room->getMeshes()[0].createBuffer(m_pRenderer);
+	room->loadMesh("models/viking_room.obj", m_pRenderer);
+
+	m_pRenderer->createUBO(room->getUBO(), room->getUBOMemory());
+	room->getMeshes()[0].bindMaterial(*room_texture.get(), room->getUBO(), m_pRenderer);
 
 	//-------------------------------------------------------------------------------
-
-	m_pRenderer->createDescriptorPool();
-	m_pRenderer->allocateCommandBuffers();
-	
 
 	//make one UBO per object
 	//pass UBO to allocate descriptor when texture is bind to object and not before
 	//m_pRenderer->createUBO(gun->getUBO(), gun->getUBOMemory());
 	//m_pRenderer->allocateDescriptorSet(gun_txt->getDescriptorSet());
 	//m_pRenderer->updateDescriptorSet(gun->getUBO(), gun_txt->getDescriptorSet(), gun_txt->getImageView(), gun_txt->getSampler());
-
-	m_pRenderer->createUBO(room->getUBO(), room->getUBOMemory());
-	room->getMeshes()[0].bindMaterial(*room_texture.get(), room->getUBO(), m_pRenderer);
 }
 
 
 Application::~Application()
 {
 	m_pRenderer->cleanSwapchain(std::make_shared<Pipeline>(base_pipeline));
-	m_pRenderer->destroyTextures();
+	//m_pRenderer->destroyTextures();
 	//m_pRenderer->destroyDescriptors();
 	//m_pRenderer->destroyUniformBuffer();
 

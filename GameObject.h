@@ -12,7 +12,7 @@ public:
 	GameObject();
 	~GameObject();
 
-	void loadMesh(const std::string& mesh_path);
+	void loadMesh(const std::string& mesh_path, std::shared_ptr<Renderer> p_renderer);
 	std::vector<Mesh>& getMeshes();
 
 	VkBuffer& getUBO();

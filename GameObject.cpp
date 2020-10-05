@@ -10,9 +10,11 @@ GameObject::~GameObject()
 {
 }
 
-void GameObject::loadMesh(const std::string& mesh_path)
+void GameObject::loadMesh(const std::string& mesh_path, std::shared_ptr<Renderer> p_renderer)
 {
 	Mesh mesh(mesh_path);
+	mesh.createBuffer(p_renderer);
+
 	m_meshes.push_back(mesh);
 }
 
