@@ -24,7 +24,7 @@ private:
 	void update();
 	void input();
 
-	std::unique_ptr<Config> m_config;
+	std::shared_ptr<Config> m_config;
 	std::unique_ptr<Window> m_window;
 	std::shared_ptr<Renderer> m_pRenderer;
 

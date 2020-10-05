@@ -16,7 +16,7 @@
 class Window
 {
 public:
-	Window(std::unique_ptr<Config>& config, Camera& camera);
+	Window(std::shared_ptr<Config>& config, Camera& camera);
 	~Window();
 
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

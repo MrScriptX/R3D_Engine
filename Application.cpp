@@ -10,7 +10,7 @@ bool draw_gun = false;
 Application::Application()
 {
 	m_pPlayer = std::make_shared<Player>();
-	m_config = std::make_unique<Config>();
+	m_config = std::make_shared<Config>();
 	m_window = std::make_unique<Window>(m_config, m_pPlayer->getCamera());
 	m_pRenderer = std::make_shared<Renderer>(m_window->getHandle(), m_config->width, m_config->height);
 
