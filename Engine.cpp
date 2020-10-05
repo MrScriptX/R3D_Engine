@@ -16,3 +16,8 @@ void Engine::run()
 
 	} while (true);
 }
+
+void Engine::registerGameObject()
+{
+
+}

@@ -24,10 +24,16 @@ Application::Application()
 	m_pRenderer->createTextureSampler();
 
 	//------------------------------------------------------------------------------------------
-	room_txt = std::make_unique<Texture>("textures/viking_room.png");
+	/*room_txt = std::make_unique<Texture>("textures/viking_room.png");
 	room_txt->createTextureImage(m_pRenderer);
 	room_txt->createTextureImageView(m_pRenderer);
-	room_txt->createTextureSampler(m_pRenderer);
+	room_txt->createTextureSampler(m_pRenderer);*/
+
+	room_texture = std::make_unique<Material>();
+	room_texture->loadTexture("textures/viking_room.png");
+	room_texture->getTexture()->createTextureImage(m_pRenderer);
+	room_texture->getTexture()->createTextureImageView(m_pRenderer);
+	room_texture->getTexture()->createTextureSampler(m_pRenderer);
 
 	gun_txt = std::make_unique<Texture>("textures/texture.jpg");
 	gun_txt->createTextureImage(m_pRenderer);
@@ -38,9 +44,9 @@ Application::Application()
 	gun->loadModel();
 	gun->createBuffer(m_pRenderer);
 
-	room = std::make_unique<Mesh>("models/viking_room.obj");
-	room->loadModel();
-	room->createBuffer(m_pRenderer);
+	room = std::make_unique<GameObject>();
+	room->loadMesh("models/viking_room.obj");
+	room->getMeshes()[0].createBuffer(m_pRenderer);
 
 	//-------------------------------------------------------------------------------
 
@@ -54,13 +60,14 @@ Application::Application()
 
 	//make one UBO per object
 	//pass UBO to allocate descriptor when texture is bind to object and not before
-	m_pRenderer->createUBO(gun_txt->getUBO(), gun_txt->getBufferMem());
-	m_pRenderer->allocateDescriptorSet(gun_txt->getDescriptorSet());
-	m_pRenderer->updateDescriptorSet(gun_txt->getUBO(), gun_txt->getDescriptorSet(), gun_txt->getImageView(), gun_txt->getSampler());
+	//m_pRenderer->createUBO(gun->getUBO(), gun->getUBOMemory());
+	//m_pRenderer->allocateDescriptorSet(gun_txt->getDescriptorSet());
+	//m_pRenderer->updateDescriptorSet(gun->getUBO(), gun_txt->getDescriptorSet(), gun_txt->getImageView(), gun_txt->getSampler());
 
-	m_pRenderer->createUBO(room_txt->getUBO(), room_txt->getBufferMem());
-	m_pRenderer->allocateDescriptorSet(room_txt->getDescriptorSet());
-	m_pRenderer->updateDescriptorSet(room_txt->getUBO(), room_txt->getDescriptorSet(), room_txt->getImageView(), room_txt->getSampler());
+	m_pRenderer->createUBO(room->getUBO(), room->getUBOMemory());
+	room->getMeshes()[0].bindMaterial(*room_texture.get(), room->getUBO(), m_pRenderer);
+	//m_pRenderer->allocateDescriptorSet(room_texture->getTextures()[0].getDescriptorSet());
+	//m_pRenderer->updateDescriptorSet(room->getUBO(), room_texture->getTextures()[0].getDescriptorSet(), room_texture->getTextures()[0].getImageView(), room_texture->getTextures()[0].getSampler());
 
 	//m_pRenderer->updateDescriptorSet(room_txt->getImageView(), room_txt->getSampler());
 }
@@ -83,12 +90,9 @@ void Application::run()
 	for (uint16_t i = 0; i < m_pRenderer->getGraphic().command_buffers.size(); i++)
 	{
 		m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
-
-		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun->get_buffer(), gun->get_indices().size());
-		//m_pRenderer->recordDrawCommands(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room->get_buffer(), room->get_indices().size());
 		
-		gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun_txt->getDescriptorSet());
-		room->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room_txt->getDescriptorSet());
+		//gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun_txt->getDescriptorSet());
+		room->getMeshes()[0].draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room_texture->getTexture()->getDescriptorSet());
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
 	}
@@ -112,13 +116,13 @@ void Application::update()
 
 	//update every game object ubo
 	void* data;
-	vkMapMemory(m_pRenderer->getDevice(), room_txt->getBufferMem(), 0, sizeof(m_pPlayer->getUBO()), 0, &data);
+	vkMapMemory(m_pRenderer->getDevice(), room->getUBOMemory(), 0, sizeof(m_pPlayer->getUBO()), 0, &data);
 	memcpy(data, &m_pPlayer->getUBO(), sizeof(m_pPlayer->getUBO()));
-	vkUnmapMemory(m_pRenderer->getDevice(), room_txt->getBufferMem());
+	vkUnmapMemory(m_pRenderer->getDevice(), room->getUBOMemory());
 
-	vkMapMemory(m_pRenderer->getDevice(), gun_txt->getBufferMem(), 0, sizeof(m_pPlayer->getUBO()), 0, &data);
+	/*vkMapMemory(m_pRenderer->getDevice(), gun->getUBOMemory(), 0, sizeof(m_pPlayer->getUBO()), 0, &data);
 	memcpy(data, &m_pPlayer->getUBO(), sizeof(m_pPlayer->getUBO()));
-	vkUnmapMemory(m_pRenderer->getDevice(), gun_txt->getBufferMem());
+	vkUnmapMemory(m_pRenderer->getDevice(), gun->getUBOMemory());*/
 
 	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }

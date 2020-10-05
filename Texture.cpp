@@ -10,8 +10,6 @@ Texture::Texture(const std::string& texture_path) : m_texture_path(texture_path)
 	m_texture_view = VK_NULL_HANDLE;
 	m_texture_sampler = VK_NULL_HANDLE;
 	m_texture_memory = VK_NULL_HANDLE;
-	m_uniform_buffer = VK_NULL_HANDLE;
-	m_uniform_memory = VK_NULL_HANDLE;
 	m_descriptor_set = VK_NULL_HANDLE;
 }
 
@@ -101,14 +99,4 @@ const VkSampler& Texture::getSampler()
 VkDescriptorSet& Texture::getDescriptorSet()
 {
 	return m_descriptor_set;
-}
-
-VkBuffer& Texture::getUBO()
-{
-	return m_uniform_buffer;
-}
-
-VkDeviceMemory& Texture::getBufferMem()
-{
-	return m_uniform_memory;
 }

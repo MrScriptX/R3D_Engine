@@ -10,6 +10,7 @@
 
 Mesh::Mesh(const std::string& obj_path) : m_obj_path(obj_path)
 {
+	loadModel();
 }
 
 Mesh::~Mesh()
@@ -72,6 +73,14 @@ void Mesh::loadModel()
 	}
 }
 
+void Mesh::bindMaterial(Material& mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer)
+{
+	renderer->allocateDescriptorSet(mat.getTexture()->getDescriptorSet());
+	renderer->updateDescriptorSet(ubo, mat.getTexture()->getDescriptorSet(), mat.getTexture()->getImageView(), mat.getTexture()->getSampler());
+
+	m_materials.push_back(mat);
+}
+
 void Mesh::createBuffer(std::shared_ptr<Renderer> engine)
 {
 	engine->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer);
@@ -88,7 +97,12 @@ std::vector<uint32_t>& Mesh::get_indices()
 	return m_indices;
 }
 
-Buffer & Mesh::get_buffer()
+Buffer & Mesh::getBuffer()
 {
 	return m_buffer;
+}
+
+Material& Mesh::getMaterial(const size_t& index)
+{
+	return m_materials[index];
 }

@@ -6,6 +6,7 @@
 
 #include "Vertex.h"
 #include "Renderer.h"
+#include "Material.h"
 
 
 class Mesh
@@ -16,11 +17,13 @@ public:
 
 	void draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline, const VkDescriptorSet& descriptor_set);
 	void loadModel();
+	void bindMaterial(Material& mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
 	void createBuffer(std::shared_ptr<Renderer> engine);
 
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
-	Buffer& get_buffer();
+	Buffer& getBuffer();
+	Material& getMaterial(const size_t& index);
 
 private:
 	const std::string m_obj_path;
@@ -29,6 +32,8 @@ private:
 	std::vector<uint32_t> m_indices;
 
 	Buffer m_buffer;
+
+	std::vector<Material> m_materials;
 };
 
 #endif//!_MODEL_H

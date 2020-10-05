@@ -16,8 +16,6 @@ public:
 	const VkImageView& getImageView();
 	const VkSampler& getSampler();
 	VkDescriptorSet& getDescriptorSet();
-	VkBuffer& getUBO();
-	VkDeviceMemory& getBufferMem();
 
 private:
 	const std::string m_texture_path;
@@ -26,9 +24,6 @@ private:
 	VkImageView m_texture_view;
 	VkSampler m_texture_sampler;
 	VkDeviceMemory m_texture_memory;
-
-	VkBuffer m_uniform_buffer;
-	VkDeviceMemory m_uniform_memory;
 
 	VkDescriptorSet m_descriptor_set;
 };
