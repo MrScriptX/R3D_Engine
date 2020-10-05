@@ -41,13 +41,13 @@ Application::Application()
 	gun->loadModel();
 	gun->createBuffer(m_pRenderer);
 
-	room_texture = std::make_unique<Material>();
+	room_texture = std::make_shared<Material>();
 	room_texture->loadTexture("textures/viking_room.png", m_pRenderer);
 
 	room = std::make_unique<GameObject>(m_pRenderer);
 	room->loadMesh("models/viking_room.obj", m_pRenderer);
 
-	room->getMeshes()[0].bindMaterial(*room_texture.get(), room->getUBO(), m_pRenderer);
+	room->bindMatToMesh(0, room_texture);
 
 	//-------------------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ void Application::run()
 		m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
 		
 		//gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun_txt->getDescriptorSet());
-		room->getMeshes()[0].draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room_texture->getTexture()->getDescriptorSet());
+		room->getMesh(0).draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room_texture->getTexture()->getDescriptorSet());
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
 	}

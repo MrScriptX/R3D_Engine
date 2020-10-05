@@ -73,12 +73,12 @@ void Mesh::loadModel()
 	}
 }
 
-void Mesh::bindMaterial(Material& mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer)
+void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer)
 {
-	renderer->allocateDescriptorSet(mat.getTexture()->getDescriptorSet());
-	renderer->updateDescriptorSet(ubo, mat.getTexture()->getDescriptorSet(), mat.getTexture()->getImageView(), mat.getTexture()->getSampler());
+	renderer->allocateDescriptorSet(mat->getTexture()->getDescriptorSet());
+	renderer->updateDescriptorSet(ubo, mat->getTexture()->getDescriptorSet(), mat->getTexture()->getImageView(), mat->getTexture()->getSampler());
 
-	m_materials.push_back(mat);
+	vp_materials.push_back(mat);
 }
 
 void Mesh::createBuffer(std::shared_ptr<Renderer> engine)
@@ -102,7 +102,7 @@ Buffer & Mesh::getBuffer()
 	return m_buffer;
 }
 
-Material& Mesh::getMaterial(const size_t& index)
+std::shared_ptr<Material> Mesh::getMaterial(const size_t& index)
 {
-	return m_materials[index];
+	return vp_materials[index];
 }

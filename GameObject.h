@@ -12,8 +12,10 @@ public:
 	GameObject(std::shared_ptr<Renderer> p_renderer);
 	~GameObject();
 
+	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
+
 	void loadMesh(const std::string& mesh_path, std::shared_ptr<Renderer> p_renderer);
-	std::vector<Mesh>& getMeshes();
+	Mesh& getMesh(const size_t& index);
 
 	VkBuffer& getUBO();
 	VkDeviceMemory& getUBOMemory();
@@ -23,6 +25,8 @@ private:
 
 	VkBuffer m_ubo;
 	VkDeviceMemory m_ubo_memory;
+
+	std::shared_ptr<Renderer> mp_renderer;
 };
 
 #endif
