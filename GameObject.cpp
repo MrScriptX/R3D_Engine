@@ -5,6 +5,9 @@ GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_ren
 	m_ubo = VK_NULL_HANDLE;
 	m_ubo_memory = VK_NULL_HANDLE;
 
+	m_position = { 0, 0, 0 };
+	m_rotation = { 0, 0, 0 };
+
 	mp_renderer->createUBO(m_ubo, m_ubo_memory);
 }
 
@@ -36,6 +39,26 @@ void GameObject::loadMesh(const std::string& mesh_path, std::shared_ptr<Renderer
 Mesh& GameObject::getMesh(const size_t& index)
 {
 	return m_meshes[index];
+}
+
+void GameObject::setPosition(const glm::vec3& pos)
+{
+	m_position = pos;
+}
+
+const glm::vec3& GameObject::getPosition()
+{
+	return m_position;
+}
+
+void GameObject::setRotation(const glm::vec3& rot)
+{
+	m_rotation = rot;
+}
+
+const glm::vec3& GameObject::getRotation()
+{
+	return m_rotation;
 }
 
 VkBuffer& GameObject::getUBO()

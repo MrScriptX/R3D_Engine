@@ -1,5 +1,6 @@
 #include "Scene.h"
 
+
 Scene::Scene()
 {
 	m_changed = false;
@@ -30,9 +31,21 @@ void Scene::updateUBO(std::shared_ptr<Player> p_player, std::shared_ptr<Renderer
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
+		UniformBufferObject ubo = p_player->getUBO();
+		
+		glm::mat4 matrix = glm::mat4(1.0f);
+
+		matrix = glm::translate(matrix, -vp_objects[i]->getPosition());
+
+		matrix = glm::rotate(matrix, glm::radians(vp_objects[i]->getRotation().x), { 1, 0, 0 });
+		matrix = glm::rotate(matrix, glm::radians(vp_objects[i]->getRotation().y), { 0, 1, 0 });
+		matrix = glm::rotate(matrix, glm::radians(vp_objects[i]->getRotation().z), { 0, 0, 1 });
+
+		ubo.model = matrix;
+
 		void* data;
-		vkMapMemory(p_renderer->getDevice(), vp_objects[i]->getUBOMemory(), 0, sizeof(p_player->getUBO()), 0, &data);
-		memcpy(data, &p_player->getUBO(), sizeof(p_player->getUBO()));
+		vkMapMemory(p_renderer->getDevice(), vp_objects[i]->getUBOMemory(), 0, sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(p_player->getUBO()));
 		vkUnmapMemory(p_renderer->getDevice(), vp_objects[i]->getUBOMemory());
 	}
 }

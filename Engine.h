@@ -2,6 +2,7 @@
 #define _ENGINE_H
 
 #include "GameObject.h"
+#include "Scene.h"
 #include "Renderer.h"
 
 class Engine
@@ -16,8 +17,7 @@ public:
 
 private:
 	std::shared_ptr<Renderer> mp_renderer;
-
-	std::vector<std::shared_ptr<GameObject>> vp_objects;
+	std::shared_ptr<Scene> mp_scene;
 };
 
 #endif // !_ENGINE_H

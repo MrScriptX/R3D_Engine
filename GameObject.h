@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "Renderer.h"
 #include "Mesh.h"
 
 class GameObject
@@ -18,6 +17,12 @@ public:
 	void loadMesh(const std::string& mesh_path, std::shared_ptr<Renderer> p_renderer);
 	Mesh& getMesh(const size_t& index);
 
+	void setPosition(const glm::vec3& pos);
+	const glm::vec3& getPosition();
+
+	void setRotation(const glm::vec3& rot);
+	const glm::vec3& getRotation();
+
 	VkBuffer& getUBO();
 	VkDeviceMemory& getUBOMemory();
 	
@@ -26,6 +31,9 @@ private:
 
 	VkBuffer m_ubo;
 	VkDeviceMemory m_ubo_memory;
+
+	glm::vec3 m_position;
+	glm::vec3 m_rotation;
 
 	std::shared_ptr<Renderer> mp_renderer;
 };
