@@ -4,8 +4,8 @@
 
 
 
-const std::string MODEL_PATH = "models/viking_room.obj";
-const std::string TEXTURE_PATH = "textures/viking_room.png";
+bool draw_room = false;
+bool draw_gun = false;
 
 Application::Application()
 {
@@ -24,30 +24,24 @@ Application::Application()
 
 	//------------------------------------------------------------------------------------------
 
-	gun_txt = std::make_unique<Texture>("textures/texture.jpg");
-	gun_txt->createTextureImage(m_pRenderer);
-	gun_txt->createTextureImageView(m_pRenderer);
-	gun_txt->createTextureSampler(m_pRenderer);
+	gun_texture = std::make_shared<Material>();
+	gun_texture->loadTexture("textures/texture.jpg", m_pRenderer);
 
-	gun = std::make_unique<Mesh>("models/ak-47.obj");
-	gun->loadModel();
-	gun->createBuffer(m_pRenderer);
+	gun = std::make_shared<GameObject>(m_pRenderer);
+	gun->loadMesh("models/ak-47.obj", m_pRenderer);
+	
+	gun->bindMatToMesh(0, gun_texture);
 
 	room_texture = std::make_shared<Material>();
 	room_texture->loadTexture("textures/viking_room.png", m_pRenderer);
 
-	room = std::make_unique<GameObject>(m_pRenderer);
+	room = std::make_shared<GameObject>(m_pRenderer);
 	room->loadMesh("models/viking_room.obj", m_pRenderer);
 
 	room->bindMatToMesh(0, room_texture);
 
-	//-------------------------------------------------------------------------------
-
-	//make one UBO per object
-	//pass UBO to allocate descriptor when texture is bind to object and not before
-	//m_pRenderer->createUBO(gun->getUBO(), gun->getUBOMemory());
-	//m_pRenderer->allocateDescriptorSet(gun_txt->getDescriptorSet());
-	//m_pRenderer->updateDescriptorSet(gun->getUBO(), gun_txt->getDescriptorSet(), gun_txt->getImageView(), gun_txt->getSampler());
+	scene.addGameObject(gun);
+	scene.addGameObject(room);
 }
 
 
@@ -65,18 +59,6 @@ Application::~Application()
 
 void Application::run()
 {
-	for (uint16_t i = 0; i < m_pRenderer->getGraphic().command_buffers.size(); i++)
-	{
-		m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
-		
-		//gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun_txt->getDescriptorSet());
-		room->registerDrawCmd(m_pRenderer->getGraphic().command_buffers[i], base_pipeline);
-
-		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
-	}
-	
-	std::cout << "here" << std::endl;
-
 	while (!glfwWindowShouldClose(&m_window->getHandle()))
 	{
 		glfwPollEvents();
@@ -90,19 +72,20 @@ void Application::run()
 
 void Application::update()
 {
+	if (scene.isUpdate())
+	{
+		for (uint16_t i = 0; i < m_pRenderer->getGraphic().command_buffers.size(); i++)
+		{
+			m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
 
+			scene.render(base_pipeline, m_pRenderer->getGraphic().command_buffers[i]);
+
+			m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
+		}
+	}
 
 	m_pPlayer->updateUBO(static_cast<float>(m_config->width), static_cast<float>(m_config->height));
-
-	//update every game object ubo
-	void* data;
-	vkMapMemory(m_pRenderer->getDevice(), room->getUBOMemory(), 0, sizeof(m_pPlayer->getUBO()), 0, &data);
-	memcpy(data, &m_pPlayer->getUBO(), sizeof(m_pPlayer->getUBO()));
-	vkUnmapMemory(m_pRenderer->getDevice(), room->getUBOMemory());
-
-	/*vkMapMemory(m_pRenderer->getDevice(), gun->getUBOMemory(), 0, sizeof(m_pPlayer->getUBO()), 0, &data);
-	memcpy(data, &m_pPlayer->getUBO(), sizeof(m_pPlayer->getUBO()));
-	vkUnmapMemory(m_pRenderer->getDevice(), gun->getUBOMemory());*/
+	scene.updateUBO(m_pPlayer, m_pRenderer);
 
 	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }
