@@ -87,6 +87,18 @@
     <ClCompile Include="..\Texture.cpp">
       <Filter>Engine\Graphics\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\Engine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameObject.cpp">
+      <Filter>Engine\Graphics\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Material.cpp">
+      <Filter>Engine\Graphics\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Scene.cpp">
+      <Filter>Engine\Graphics\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\VulkanBuffer.h">
@@ -150,6 +162,18 @@
       <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Texture.h">
+      <Filter>Engine\Graphics\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameObject.h">
+      <Filter>Engine\Graphics\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Material.h">
+      <Filter>Engine\Graphics\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Scene.h">
       <Filter>Engine\Graphics\Header</Filter>
     </ClInclude>
   </ItemGroup>

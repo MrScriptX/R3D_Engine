@@ -247,6 +247,12 @@ void Renderer::createUBO()
 	m_pBufferFactory->createBuffer(m_graphic.uniform_buffer, m_graphic.uniform_memory, buffer_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 }
 
+void Renderer::createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory)
+{
+	VkDeviceSize buffer_size = sizeof(UniformBufferObject);
+	m_pBufferFactory->createBuffer(uniform_buffer, uniform_memory, buffer_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+}
+
 void Renderer::allocateCommandBuffers()
 {
 	m_graphic.command_buffers.resize(m_graphic.framebuffers.size());
@@ -440,7 +446,7 @@ void Renderer::createDescriptorLayout()
 
 void Renderer::createDescriptorPool()
 {
-	std::array<VkDescriptorPoolSize, 4> poolSizes = {};
+	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 1;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -489,10 +495,10 @@ void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
 	}
 }
 
-void Renderer::updateDescriptorSet(const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler)
+void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler)
 {
 	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = m_graphic.uniform_buffer;
+	bufferInfo.buffer = ubo;
 	bufferInfo.offset = 0;
 	bufferInfo.range = sizeof(UniformBufferObject);
 

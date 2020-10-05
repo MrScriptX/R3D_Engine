@@ -60,20 +60,24 @@ void VulkanDescriptor::createDescriptorPool()
 	}
 }
 
-void VulkanDescriptor::createDescriptorSet()
+void VulkanDescriptor::createDescriptorSet(const VkDescriptorPool& descriptor_pool, VkDescriptorSetLayout& layout, VkDescriptorSet& descriptor_set)
 {
-	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
+	VkDescriptorSetLayout layouts[] = { layout };
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = m_graphic.descriptor_pool;
+	allocInfo.descriptorPool = descriptor_pool;
 	allocInfo.descriptorSetCount = 1;
 	allocInfo.pSetLayouts = layouts;
 
-	if (vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &m_graphic.descriptor_set) != VK_SUCCESS)
+	VkResult result = vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &descriptor_set);
+	if (result != VK_SUCCESS)
 	{
-		throw std::runtime_error("failed to allocate descriptor set!");
+		throw std::runtime_error("Failed to allocate descriptor set!");
 	}
+}
 
+void VulkanDescriptor::updateDescriptorSet()
+{
 	VkDescriptorBufferInfo buffer_info = {};
 	buffer_info.buffer = m_graphic.uniform_buffer;
 	buffer_info.offset = 0;

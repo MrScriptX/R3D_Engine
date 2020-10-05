@@ -2,7 +2,7 @@
 
 
 
-Window::Window(std::unique_ptr<Config>& config, Camera& camera)
+Window::Window(std::shared_ptr<Config>& config, Camera& camera)
 {
 	glfwInit();
 
