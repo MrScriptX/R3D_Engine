@@ -30,10 +30,7 @@ Application::Application()
 	room_txt->createTextureSampler(m_pRenderer);*/
 
 	room_texture = std::make_unique<Material>();
-	room_texture->loadTexture("textures/viking_room.png");
-	room_texture->getTexture()->createTextureImage(m_pRenderer);
-	room_texture->getTexture()->createTextureImageView(m_pRenderer);
-	room_texture->getTexture()->createTextureSampler(m_pRenderer);
+	room_texture->loadTexture("textures/viking_room.png", m_pRenderer);
 
 	gun_txt = std::make_unique<Texture>("textures/texture.jpg");
 	gun_txt->createTextureImage(m_pRenderer);
@@ -51,12 +48,8 @@ Application::Application()
 	//-------------------------------------------------------------------------------
 
 	m_pRenderer->createDescriptorPool();
-
-	m_pRenderer->createUBO();
-
 	m_pRenderer->allocateCommandBuffers();
 	
-	m_pRenderer->createDescriptorSet();
 
 	//make one UBO per object
 	//pass UBO to allocate descriptor when texture is bind to object and not before
@@ -66,10 +59,6 @@ Application::Application()
 
 	m_pRenderer->createUBO(room->getUBO(), room->getUBOMemory());
 	room->getMeshes()[0].bindMaterial(*room_texture.get(), room->getUBO(), m_pRenderer);
-	//m_pRenderer->allocateDescriptorSet(room_texture->getTextures()[0].getDescriptorSet());
-	//m_pRenderer->updateDescriptorSet(room->getUBO(), room_texture->getTextures()[0].getDescriptorSet(), room_texture->getTextures()[0].getImageView(), room_texture->getTextures()[0].getSampler());
-
-	//m_pRenderer->updateDescriptorSet(room_txt->getImageView(), room_txt->getSampler());
 }
 
 
@@ -77,8 +66,8 @@ Application::~Application()
 {
 	m_pRenderer->cleanSwapchain(std::make_shared<Pipeline>(base_pipeline));
 	m_pRenderer->destroyTextures();
-	m_pRenderer->destroyDescriptors();
-	m_pRenderer->destroyUniformBuffer();
+	//m_pRenderer->destroyDescriptors();
+	//m_pRenderer->destroyUniformBuffer();
 
 	m_pRenderer.reset();
 	m_window.reset();
