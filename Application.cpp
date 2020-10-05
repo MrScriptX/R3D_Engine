@@ -31,7 +31,7 @@ Application::Application()
 	gun->loadMesh("models/ak-47.obj", m_pRenderer);
 	
 	gun->bindMatToMesh(0, gun_texture);
-	gun->setPosition(glm::vec3({ 10, 0, 0 }));
+	gun->setPosition(glm::vec3({ 5, 0, 0 }));
 
 	room_texture = std::make_shared<Material>();
 	room_texture->loadTexture("textures/viking_room.png", m_pRenderer);
