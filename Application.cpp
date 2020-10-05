@@ -44,10 +44,9 @@ Application::Application()
 	room_texture = std::make_unique<Material>();
 	room_texture->loadTexture("textures/viking_room.png", m_pRenderer);
 
-	room = std::make_unique<GameObject>();
+	room = std::make_unique<GameObject>(m_pRenderer);
 	room->loadMesh("models/viking_room.obj", m_pRenderer);
 
-	m_pRenderer->createUBO(room->getUBO(), room->getUBOMemory());
 	room->getMeshes()[0].bindMaterial(*room_texture.get(), room->getUBO(), m_pRenderer);
 
 	//-------------------------------------------------------------------------------

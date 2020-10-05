@@ -9,7 +9,7 @@
 class GameObject
 {
 public:
-	GameObject();
+	GameObject(std::shared_ptr<Renderer> p_renderer);
 	~GameObject();
 
 	void loadMesh(const std::string& mesh_path, std::shared_ptr<Renderer> p_renderer);

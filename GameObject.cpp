@@ -1,9 +1,11 @@
 #include "GameObject.h"
 
-GameObject::GameObject()
+GameObject::GameObject(std::shared_ptr<Renderer> p_renderer)
 {
 	m_ubo = VK_NULL_HANDLE;
 	m_ubo_memory = VK_NULL_HANDLE;
+
+	p_renderer->createUBO(m_ubo, m_ubo_memory);
 }
 
 GameObject::~GameObject()
