@@ -15,7 +15,7 @@ public:
 	Mesh(const std::string& obj_path);
 	~Mesh();
 
-	void draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline, const VkDescriptorSet& descriptor_set);
+	void draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline);
 	void loadModel();
 	void bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
 	void createBuffer(std::shared_ptr<Renderer> engine);
@@ -23,7 +23,7 @@ public:
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
 	Buffer& getBuffer();
-	std::shared_ptr<Material> getMaterial(const size_t& index);
+	std::shared_ptr<Material> getMaterial();
 
 private:
 	const std::string m_obj_path;
@@ -33,7 +33,7 @@ private:
 
 	Buffer m_buffer;
 
-	std::vector<std::shared_ptr<Material>> vp_materials;
+	std::shared_ptr<Material> p_material;
 };
 
 #endif//!_MODEL_H

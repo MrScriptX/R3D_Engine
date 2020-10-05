@@ -22,15 +22,7 @@ Application::Application()
 	m_pRenderer->createDescriptorPool();
 	m_pRenderer->allocateCommandBuffers();
 
-	/*m_pRenderer->createTextureImage("textures/viking_room.png");
-	m_pRenderer->createTextureImageView();
-	m_pRenderer->createTextureSampler();*/
-
 	//------------------------------------------------------------------------------------------
-	/*room_txt = std::make_unique<Texture>("textures/viking_room.png");
-	room_txt->createTextureImage(m_pRenderer);
-	room_txt->createTextureImageView(m_pRenderer);
-	room_txt->createTextureSampler(m_pRenderer);*/
 
 	gun_txt = std::make_unique<Texture>("textures/texture.jpg");
 	gun_txt->createTextureImage(m_pRenderer);
@@ -78,7 +70,7 @@ void Application::run()
 		m_pRenderer->beginRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i], m_pRenderer->getGraphic().framebuffers[i], base_pipeline);
 		
 		//gun->draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, gun_txt->getDescriptorSet());
-		room->getMesh(0).draw(m_pRenderer->getGraphic().command_buffers[i], base_pipeline, room_texture->getTexture()->getDescriptorSet());
+		room->registerDrawCmd(m_pRenderer->getGraphic().command_buffers[i], base_pipeline);&
 
 		m_pRenderer->endRecordCommandBuffers(m_pRenderer->getGraphic().command_buffers[i]);
 	}
@@ -98,6 +90,8 @@ void Application::run()
 
 void Application::update()
 {
+
+
 	m_pPlayer->updateUBO(static_cast<float>(m_config->width), static_cast<float>(m_config->height));
 
 	//update every game object ubo

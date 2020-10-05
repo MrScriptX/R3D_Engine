@@ -12,6 +12,14 @@ GameObject::~GameObject()
 {
 }
 
+void GameObject::registerDrawCmd(VkCommandBuffer& command_buffer, Pipeline& pipeline)
+{
+	for (size_t i = 0; i < m_meshes.size(); i++)
+	{
+		m_meshes[i].draw(command_buffer, pipeline);
+	}
+}
+
 void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material)
 {
 	m_meshes[index].bindMaterial(p_material, m_ubo, mp_renderer);

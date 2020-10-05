@@ -17,7 +17,7 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline, const VkDescriptorSet& descriptor_set)
+void Mesh::draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline)
 {
 	VkBuffer vertex_buffer[] = { m_buffer.vertex };
 	VkDeviceSize offsets[] = { 0 };
@@ -25,7 +25,7 @@ void Mesh::draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline,
 	vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffer, offsets);
 	vkCmdBindIndexBuffer(command_buffer, m_buffer.index, 0, VK_INDEX_TYPE_UINT32);
 
-	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 1, &descriptor_set, 0, nullptr);
+	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 1, &p_material->getTexture()->getDescriptorSet(), 0, nullptr);
 
 	vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
 }
@@ -78,7 +78,7 @@ void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::share
 	renderer->allocateDescriptorSet(mat->getTexture()->getDescriptorSet());
 	renderer->updateDescriptorSet(ubo, mat->getTexture()->getDescriptorSet(), mat->getTexture()->getImageView(), mat->getTexture()->getSampler());
 
-	vp_materials.push_back(mat);
+	p_material = mat;
 }
 
 void Mesh::createBuffer(std::shared_ptr<Renderer> engine)
@@ -102,7 +102,7 @@ Buffer & Mesh::getBuffer()
 	return m_buffer;
 }
 
-std::shared_ptr<Material> Mesh::getMaterial(const size_t& index)
+std::shared_ptr<Material> Mesh::getMaterial()
 {
-	return vp_materials[index];
+	return p_material;
 }
