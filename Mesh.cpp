@@ -8,7 +8,7 @@
 #endif // !TINYOBJLOADER_IMPLEMENTATION
 
 
-Mesh::Mesh(const std::string& obj_path) : m_obj_path(obj_path)
+Mesh::Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_obj_path(obj_path), mp_renderer(p_renderer)
 {
 	loadModel();
 }
@@ -85,6 +85,15 @@ void Mesh::createBuffer(std::shared_ptr<Renderer> engine)
 {
 	engine->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer);
 	engine->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer);
+}
+
+void Mesh::destroyMesh()
+{
+	vkDestroyBuffer(mp_renderer->getGraphic().device, m_buffer.index, nullptr);
+	vkFreeMemory(mp_renderer->getGraphic().device, m_buffer.index_memory, nullptr);
+
+	vkDestroyBuffer(mp_renderer->getGraphic().device, m_buffer.vertex, nullptr);
+	vkFreeMemory(mp_renderer->getGraphic().device, m_buffer.vertex_memory, nullptr);
 }
 
 std::vector<Vertex>& Mesh::get_vertices()

@@ -11,6 +11,8 @@ public:
 	GameObject(std::shared_ptr<Renderer> p_renderer);
 	~GameObject();
 
+	void destroy();
+
 	void registerDrawCmd(VkCommandBuffer& command_buffer, Pipeline& pipeline);
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
@@ -25,6 +27,8 @@ public:
 
 	VkBuffer& getUBO();
 	VkDeviceMemory& getUBOMemory();
+
+	const size_t& getMeshesCount();
 	
 private:
 	std::vector<Mesh> m_meshes;

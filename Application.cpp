@@ -49,6 +49,7 @@ Application::Application()
 Application::~Application()
 {
 	m_pRenderer->cleanSwapchain(std::make_shared<Pipeline>(base_pipeline));
+
 	//m_pRenderer->destroyTextures();
 	//m_pRenderer->destroyDescriptors();
 	//m_pRenderer->destroyUniformBuffer();

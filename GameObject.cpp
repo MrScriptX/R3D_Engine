@@ -16,6 +16,12 @@ GameObject::~GameObject()
 {
 }
 
+void GameObject::destroy()
+{
+	vkDestroyBuffer(mp_renderer->getGraphic().device, m_ubo, nullptr);
+	vkFreeMemory(mp_renderer->getGraphic().device, m_ubo_memory, nullptr);
+}
+
 void GameObject::registerDrawCmd(VkCommandBuffer& command_buffer, Pipeline& pipeline)
 {
 	for (size_t i = 0; i < m_meshes.size(); i++)
@@ -31,7 +37,7 @@ void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_
 
 void GameObject::loadMesh(const std::string& mesh_path)
 {
-	Mesh mesh(mesh_path);
+	Mesh mesh(mesh_path, mp_renderer);
 	mesh.createBuffer(mp_renderer);
 
 	m_meshes.push_back(mesh);
@@ -70,5 +76,10 @@ VkBuffer& GameObject::getUBO()
 VkDeviceMemory& GameObject::getUBOMemory()
 {
 	return m_ubo_memory;
+}
+
+const size_t& GameObject::getMeshesCount()
+{
+	return m_meshes.size();
 }
 

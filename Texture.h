@@ -6,12 +6,12 @@
 class Texture
 {
 public:
-	Texture(const std::string& texture_path);
+	Texture(const std::string& texture_path, std::shared_ptr<Renderer> p_renderer);
 	~Texture();
 
-	void createTextureImage(std::shared_ptr<Renderer> renderer);
-	void createTextureImageView(std::shared_ptr<Renderer> renderer);
-	void createTextureSampler(std::shared_ptr<Renderer> renderer);
+	void createTextureImage();
+	void createTextureImageView();
+	void createTextureSampler();
 
 	const VkImageView& getImageView();
 	const VkSampler& getSampler();
@@ -26,6 +26,8 @@ private:
 	VkDeviceMemory m_texture_memory;
 
 	VkDescriptorSet m_descriptor_set;
+
+	std::shared_ptr<Renderer> mp_renderer;
 };
 
 #endif // !_TEXTURE_H

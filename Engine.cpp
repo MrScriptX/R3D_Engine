@@ -24,6 +24,19 @@ Engine::~Engine()
 {
 	mp_renderer->cleanSwapchain(std::make_shared<Pipeline>(base_pipeline));
 
+	for (size_t i = 0; i < mp_scene->getObjects().size(); i++)
+	{
+		for (size_t t = 0; t < mp_scene->getObjects()[i]->getMeshesCount(); t++)
+		{
+			mp_scene->getObjects()[i]->getMesh(t).getMaterial()->destroyTexture();
+			mp_scene->getObjects()[i]->getMesh(t).destroyMesh();
+		}
+
+		mp_scene->getObjects()[i]->destroy();
+	}
+
+	mp_scene.reset();
+
 	mp_renderer.reset();
 	mp_window.reset();
 	mp_config.reset();
@@ -40,6 +53,11 @@ void Engine::run()
 	} while (!glfwWindowShouldClose(&mp_window->getHandle()));
 
 	vkDeviceWaitIdle(mp_renderer->getDevice());
+}
+
+void Engine::setScene(std::shared_ptr<Scene> p_scene)
+{
+	mp_scene = p_scene;
 }
 
 void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
