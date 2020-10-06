@@ -47,6 +47,11 @@ void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
 	mp_scene->addGameObject(gameobject);
 }
 
+std::shared_ptr<Renderer> Engine::getRenderEngine()
+{
+	return mp_renderer;
+}
+
 void Engine::input()
 {
 	std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();

@@ -15,6 +15,8 @@ public:
 
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
 
+	std::shared_ptr<Renderer> getRenderEngine();
+
 private:
 	void input();
 	void update();

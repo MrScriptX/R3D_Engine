@@ -1,5 +1,6 @@
 #include "GameObject.h"
 
+
 GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
 {
 	m_ubo = VK_NULL_HANDLE;
@@ -28,10 +29,10 @@ void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_
 	m_meshes[index].bindMaterial(p_material, m_ubo, mp_renderer);
 }
 
-void GameObject::loadMesh(const std::string& mesh_path, std::shared_ptr<Renderer> p_renderer)
+void GameObject::loadMesh(const std::string& mesh_path)
 {
 	Mesh mesh(mesh_path);
-	mesh.createBuffer(p_renderer);
+	mesh.createBuffer(mp_renderer);
 
 	m_meshes.push_back(mesh);
 }

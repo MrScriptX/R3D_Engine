@@ -12,19 +12,19 @@ int main()
 		app.run();
 
 		/*std::shared_ptr<Material> gun_texture = std::make_shared<Material>();
-		gun_texture->loadTexture("textures/texture.jpg", m_pRenderer);
+		gun_texture->loadTexture("textures/texture.jpg", engine.getRenderEngine());
 
-		gun = std::make_shared<GameObject>(m_pRenderer);
-		gun->loadMesh("models/ak-47.obj", m_pRenderer);
+		std::shared_ptr<GameObject> gun = std::make_shared<GameObject>(engine.getRenderEngine());
+		gun->loadMesh("models/ak-47.obj");
 
 		gun->bindMatToMesh(0, gun_texture);
 		gun->setPosition(glm::vec3({ 10, 0, 0 }));
 
-		room_texture = std::make_shared<Material>();
-		room_texture->loadTexture("textures/viking_room.png", m_pRenderer);
+		std::shared_ptr<Material> room_texture = std::make_shared<Material>();
+		room_texture->loadTexture("textures/viking_room.png", engine.getRenderEngine());
 
-		room = std::make_shared<GameObject>(m_pRenderer);
-		room->loadMesh("models/viking_room.obj", m_pRenderer);
+		std::shared_ptr<GameObject> room = std::make_shared<GameObject>(engine.getRenderEngine());
+		room->loadMesh("models/viking_room.obj");
 
 		room->bindMatToMesh(0, room_texture);*/
 
