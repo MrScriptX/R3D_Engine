@@ -15,6 +15,7 @@ Window::Window(std::shared_ptr<Config>& config, Player& player)
 	glfwSetWindowUserPointer(m_handle, &player);
 	glfwSetKeyCallback(m_handle, key_callback);
 	glfwSetCursorPosCallback(m_handle, mouse_callback);
+	glfwSetCursorPos(m_handle, 0.0, 0.0);
 }
 
 
@@ -41,6 +42,8 @@ void Window::mouse_callback(GLFWwindow * window, double xpos, double ypos)
 	Player* pPlayer = static_cast<Player*>(glfwGetWindowUserPointer(window));
 
 	pPlayer->updateRotation(xpos, ypos);
+
+	glfwSetCursorPos(window, 0.0, 0.0);
 }
 
 GLFWwindow & Window::getHandle()
