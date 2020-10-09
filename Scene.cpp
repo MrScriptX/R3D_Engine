@@ -27,11 +27,11 @@ void Scene::render(Pipeline& pipeline, VkCommandBuffer& command_buffer)
 	m_changed = false;
 }
 
-void Scene::updateUBO(std::shared_ptr<Player> p_player, std::shared_ptr<Renderer> p_renderer)
+void Scene::updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
-		UniformBufferObject ubo = p_player->getUBO();
+		UniformBufferObject ubo = p_camera->getUBO();
 		
 		glm::mat4 matrix = glm::mat4(1.0f);
 
@@ -45,7 +45,7 @@ void Scene::updateUBO(std::shared_ptr<Player> p_player, std::shared_ptr<Renderer
 
 		void* data;
 		vkMapMemory(p_renderer->getDevice(), vp_objects[i]->getUBOMemory(), 0, sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(p_player->getUBO()));
+		memcpy(data, &ubo, sizeof(p_camera->getUBO()));
 		vkUnmapMemory(p_renderer->getDevice(), vp_objects[i]->getUBOMemory());
 	}
 }

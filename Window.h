@@ -10,13 +10,13 @@
 
 #include <memory>
 
-#include "Camera.h"
 #include "Config.h"
+#include "Player.h"
 
 class Window
 {
 public:
-	Window(std::shared_ptr<Config>& config, Camera& camera);
+	Window(std::shared_ptr<Config>& config, Player& player);
 	~Window();
 
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

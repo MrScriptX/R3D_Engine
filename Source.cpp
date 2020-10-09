@@ -15,7 +15,7 @@ int main()
 		gun->loadMesh("models/ak-47.obj");
 
 		gun->bindMatToMesh(0, gun_texture);
-		gun->setPosition({ 10, 0, 0 });
+		gun->setPosition({ 10.0f, 0.0f, 0.0f });
 
 		std::shared_ptr<Material> room_texture = std::make_shared<Material>();
 		room_texture->loadTexture("textures/viking_room.png", engine.getRenderEngine());
@@ -24,8 +24,7 @@ int main()
 		room->loadMesh("models/viking_room.obj");
 
 		room->bindMatToMesh(0, room_texture);
-		room->setPosition({ 3, 0, 0 });
-		//room->setRotation({ 0, 0, 0});
+		room->setPosition({ 3.0f, 0.0f, 0.0f });
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 		scene->addGameObject(gun);

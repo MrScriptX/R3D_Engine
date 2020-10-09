@@ -17,7 +17,7 @@ public:
 
 	void addGameObject(std::shared_ptr<GameObject> gameobject);
 	void render(Pipeline& pipeline, VkCommandBuffer& command_buffer);
-	void updateUBO(std::shared_ptr<Player> p_player, std::shared_ptr<Renderer> p_renderer);
+	void updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer);
 
 	const bool& isUpdate();
 	std::vector<std::shared_ptr<GameObject>>& getObjects();

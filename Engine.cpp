@@ -4,10 +4,11 @@ Engine::Engine()
 {
 	m_last_time = std::chrono::high_resolution_clock::now();
 
-	mp_player = std::make_shared<Player>();
+	mp_camera = std::make_shared<Camera>();
+	mp_player = std::make_shared<Player>(mp_camera);
 	mp_config = std::make_shared<Config>();
 
-	mp_window = std::make_unique<Window>(mp_config, mp_player->getCamera());
+	mp_window = std::make_unique<Window>(mp_config, *mp_player.get());
 
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
 
@@ -78,7 +79,8 @@ void Engine::input()
 	std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
 	float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - m_last_time).count();
 
-	mp_player->update(delta_time);
+	mp_player->setDeltaTime(delta_time);
+	mp_player->updatePosition();
 
 	m_last_time = currentTime;
 }
@@ -97,8 +99,8 @@ void Engine::update()
 		}
 	}
 
-	mp_player->updateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));
-	mp_scene->updateUBO(mp_player, mp_renderer);
+	mp_camera->updateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));
+	mp_scene->updateUBO(mp_camera, mp_renderer);
 
 	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }

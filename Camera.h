@@ -11,23 +11,29 @@
 #include <bitset>
 #include <iostream>
 
+#include "Vertex.h"
+
 class Camera
 {
 public:
 	Camera();
 	~Camera();
 
-	void setInput(int32_t key, int32_t scancode, int32_t mods, int32_t action);
-	void mouse(double xpos, double ypos);
+	void updateUBO(const float& width, const float& height);
 
-	void updatePos();
+	void setPosition(const glm::vec3& position);
+	const glm::vec3& getPosition();
 
-	glm::vec3 getPosition();
-	glm::vec3 getRotation();
-	float& getPitch();
-	float& getYaw();
+	void setRotation(const glm::vec3& rotation);
+	const glm::vec3& getRotation();
 
-	void setDeltaTime(float dt);
+	void setPitch(const float& pitch);
+	const float& getPitch();
+
+	void setYaw(const float& yaw);
+	const float& getYaw();
+
+	UniformBufferObject& getUBO();
 
 private:
 
@@ -38,10 +44,9 @@ private:
 
 	float m_yaw;
 	float m_pitch;
-
 	glm::vec2 last_mouse_pos;
 
-	float delta_time;
+	UniformBufferObject m_ubo;
 };
 
 #endif // !_CAMERA_H
