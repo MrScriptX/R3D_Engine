@@ -1,12 +1,6 @@
 #ifndef _CAMERA_H
 #define _CAMERA_H
 
-
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <memory>
 #include <bitset>
 #include <iostream>

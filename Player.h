@@ -7,7 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Camera.h"
-#include "Vertex.h"
 
 class Player
 {
