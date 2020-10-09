@@ -11,17 +11,18 @@ public:
 	Engine();
 	~Engine();
 
-	void run();
+	void update();
+	void draw();
+
 
 	void setScene(std::shared_ptr<Scene> p_scene);
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
 
 	std::shared_ptr<Renderer> getRenderEngine();
 
-private:
-	void input();
-	void update();
+	const bool& shouldClose();
 
+private:
 
 	std::unique_ptr<Window> mp_window;
 	std::shared_ptr<Renderer> mp_renderer;

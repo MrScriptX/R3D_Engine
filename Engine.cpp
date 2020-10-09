@@ -23,6 +23,8 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+	vkDeviceWaitIdle(mp_renderer->getDevice());
+
 	mp_renderer->cleanSwapchain(std::make_shared<Pipeline>(base_pipeline));
 
 	for (size_t i = 0; i < mp_scene->getObjects().size(); i++)
@@ -46,19 +48,6 @@ Engine::~Engine()
 	mp_config.reset();
 }
 
-void Engine::run()
-{
-	do 
-	{
-		glfwPollEvents();
-		input();
-		update();
-		mp_renderer->draw(base_pipeline);
-	} while (!glfwWindowShouldClose(&mp_window->getHandle()));
-
-	vkDeviceWaitIdle(mp_renderer->getDevice());
-}
-
 void Engine::setScene(std::shared_ptr<Scene> p_scene)
 {
 	mp_scene = p_scene;
@@ -74,8 +63,15 @@ std::shared_ptr<Renderer> Engine::getRenderEngine()
 	return mp_renderer;
 }
 
-void Engine::input()
+const bool& Engine::shouldClose()
 {
+	return glfwWindowShouldClose(&mp_window->getHandle());
+}
+
+void Engine::update()
+{
+	glfwPollEvents();
+
 	std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
 	float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - m_last_time).count();
 
@@ -83,10 +79,7 @@ void Engine::input()
 	mp_player->updatePosition();
 
 	m_last_time = currentTime;
-}
 
-void Engine::update()
-{
 	if (mp_scene->isUpdate())
 	{
 		for (uint16_t i = 0; i < mp_renderer->getNumberCommandBuffer(); i++)
@@ -103,4 +96,9 @@ void Engine::update()
 	mp_scene->updateUBO(mp_camera, mp_renderer);
 
 	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
+}
+
+void Engine::draw()
+{
+	mp_renderer->draw(base_pipeline);
 }

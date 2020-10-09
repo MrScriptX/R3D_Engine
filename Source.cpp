@@ -32,7 +32,13 @@ int main()
 
 		engine.setScene(scene);
 
-		engine.run();
+		do
+		{
+			engine.update();
+			//game logic
+
+			engine.draw();
+		} while (!engine.shouldClose());
 	}
 	catch(const std::runtime_error& e)
 	{

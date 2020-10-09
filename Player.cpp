@@ -90,7 +90,6 @@ void Player::updatePosition()
 		change.y -= 1.0f * speed;
 	}
 
-	std::cout << "x: " << mp_camera->getRotation().y << std::endl;
 	mp_camera->setPosition((change * m_delta_time) + mp_camera->getPosition());
 }
 
