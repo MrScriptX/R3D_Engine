@@ -37,6 +37,9 @@ Engine::~Engine()
 
 	mp_scene.reset();
 
+	vkDestroyDescriptorPool(mp_renderer->getGraphic().device, mp_renderer->getGraphic().descriptor_pool, nullptr);
+	vkDestroyDescriptorSetLayout(mp_renderer->getGraphic().device, mp_renderer->getGraphic().descriptor_set_layout, nullptr);
+
 	mp_renderer.reset();
 	mp_window.reset();
 	mp_config.reset();
