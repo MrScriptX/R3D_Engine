@@ -43,8 +43,6 @@ public:
 	void setupDescriptorSetLayout();
 	void setupCommandPool();
 	void createNewPipeline(Pipeline& pipeline);
-	
-	void recordCommandBuffers(Pipeline& pipeline, size_t indices, Buffer& buffer);
 
 	//getters
 	VkDevice& getDevice();
@@ -63,7 +61,6 @@ public:
 
 	void allocateCommandBuffers();
 	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer, Pipeline& pipeline);
-	void recordDrawCommands(VkCommandBuffer& commandBuffer, Pipeline& pipeline, Buffer& buffer, size_t indices);
 	void endRecordCommandBuffers(VkCommandBuffer& commandBuffer);
 	//!rendering
 
@@ -80,8 +77,6 @@ public:
 
 
 	//cleaning
-	void destroyTextures();
-	void destroyDescriptors();
 	void destroyUniformBuffer();
 	void destroyBuffers(Buffer& buffers);
 	void cleanSwapchain(std::shared_ptr<Pipeline> pPipeline);

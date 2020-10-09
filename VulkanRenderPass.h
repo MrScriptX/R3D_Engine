@@ -4,6 +4,7 @@
 #include <array>
 
 #include "Graphics.h"
+#include <stdexcept>
 
 class VulkanRenderPass
 {

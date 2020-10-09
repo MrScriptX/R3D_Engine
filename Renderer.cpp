@@ -320,19 +320,6 @@ void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFram
 	m_pPipelineFactory->bindPipeline(commandBuffer, pipeline);
 }
 
-void Renderer::recordDrawCommands(VkCommandBuffer & commandBuffer, Pipeline& pipeline, Buffer & buffer, size_t indices)
-{
-	VkBuffer vertexBuffers[] = { buffer.vertex };
-	VkDeviceSize offsets[] = { 0 };
-
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(commandBuffer, buffer.index, 0, VK_INDEX_TYPE_UINT32);
-
-	m_descriptor->bindDescriptorSet(commandBuffer, pipeline.layout, m_graphic.descriptor_set);
-
-	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices), 1, 0, 0, 0);
-}
-
 void Renderer::endRecordCommandBuffers(VkCommandBuffer & commandBuffer)
 {
 	m_pRenderpass->endRenderPass(commandBuffer);
@@ -543,21 +530,6 @@ void Renderer::createDepthResources()
 	transitionImageLayout(m_graphic.depth_image, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 }
 
-void Renderer::destroyTextures()
-{
-	vkDestroySampler(m_graphic.device, m_graphic.texture_sampler, nullptr);
-	vkDestroyImageView(m_graphic.device, m_graphic.texture_view, nullptr);
-
-	vkDestroyImage(m_graphic.device, m_graphic.texture_image, nullptr);
-	vkFreeMemory(m_graphic.device, m_graphic.texture_memory, nullptr);
-}
-
-void Renderer::destroyDescriptors()
-{
-	vkDestroyDescriptorPool(m_graphic.device, m_graphic.descriptor_pool, nullptr);
-	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.descriptor_set_layout, nullptr);
-}
-
 void Renderer::destroyUniformBuffer()
 {
 	vkDestroyBuffer(m_graphic.device, m_graphic.uniform_buffer, nullptr);
@@ -626,76 +598,6 @@ void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkI
 	}
 
 	vkBindImageMemory(m_graphic.device, image, imageMemory, 0);
-}
-
-void Renderer::recordCommandBuffers(Pipeline& pipeline, size_t indices, Buffer& buffer)
-{
-	std::array<VkClearValue, 2> clear_values = {};
-	clear_values[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-	clear_values[1].depthStencil = { 1.0f, 0 };
-
-	m_graphic.command_buffers.resize(m_graphic.framebuffers.size());
-
-	VkCommandBufferAllocateInfo alloc_buffers_info = {};
-	alloc_buffers_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	alloc_buffers_info.commandPool = m_graphic.command_pool;
-	alloc_buffers_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	alloc_buffers_info.commandBufferCount = static_cast<uint32_t>(m_graphic.command_buffers.size());
-
-	if (vkAllocateCommandBuffers(m_graphic.device, &alloc_buffers_info, m_graphic.command_buffers.data()) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to allocate command buffers!");
-	}
-
-	for (size_t i = 0; i < m_graphic.command_buffers.size(); i++)
-	{
-		VkCommandBufferBeginInfo begin_buffer_info = {};
-		begin_buffer_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		begin_buffer_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-		begin_buffer_info.pInheritanceInfo = nullptr; // Optional
-
-		if (vkBeginCommandBuffer(m_graphic.command_buffers[i], &begin_buffer_info) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to begin recording command buffer!");
-		}
-
-		VkRenderPassBeginInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_graphic.render_pass;
-		renderPassInfo.framebuffer = m_graphic.framebuffers[i];
-
-		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_graphic.swapchain_details.extent;
-
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(clear_values.size());
-		renderPassInfo.pClearValues = clear_values.data();
-
-		//vkCmdBeginRenderPass(m_graphic.command_buffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-		m_pRenderpass->beginRenderPass(m_graphic.command_buffers[i], renderPassInfo);
-
-		//vkCmdBindPipeline(m_graphic.command_buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle);//to change
-		m_pPipelineFactory->bindPipeline(m_graphic.command_buffers[i], pipeline);
-
-
-		VkBuffer vertexBuffers[] = { buffer.vertex };
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(m_graphic.command_buffers[i], 0, 1, vertexBuffers, offsets);
-
-		vkCmdBindIndexBuffer(m_graphic.command_buffers[i], buffer.index, 0, VK_INDEX_TYPE_UINT16);
-
-		//vkCmdBindDescriptorSets(m_graphic.command_buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,pipeline.layout, 0, 1, &m_graphic.descriptor_set, 0, nullptr);
-		m_descriptor->bindDescriptorSet(m_graphic.command_buffers[i], pipeline.layout, m_graphic.descriptor_set);
-
-		vkCmdDrawIndexed(m_graphic.command_buffers[i], static_cast<uint32_t>(indices), 1, 0, 0, 0);
-
-		//vkCmdEndRenderPass(m_graphic.command_buffers[i]);
-		m_pRenderpass->endRenderPass(m_graphic.command_buffers[i]);
-
-		if (vkEndCommandBuffer(m_graphic.command_buffers[i]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to record command buffer!");
-		}
-	}
 }
 
 void Renderer::recreateSwapchain(Pipeline& pipeline)

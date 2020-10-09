@@ -76,7 +76,7 @@ void VulkanDescriptor::createDescriptorSet(const VkDescriptorPool& descriptor_po
 	}
 }
 
-void VulkanDescriptor::updateDescriptorSet()
+/*void VulkanDescriptor::updateDescriptorSet()
 {
 	VkDescriptorBufferInfo buffer_info = {};
 	buffer_info.buffer = m_graphic.uniform_buffer;
@@ -107,7 +107,7 @@ void VulkanDescriptor::updateDescriptorSet()
 	descriptorWrites[1].pImageInfo = &image_info;
 
 	vkUpdateDescriptorSets(m_graphic.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
-}
+}*/
 
 void VulkanDescriptor::bindDescriptorSet(VkCommandBuffer & commandBuffer, VkPipelineLayout & pipelineLayout, VkDescriptorSet & descriptorSet)
 {
