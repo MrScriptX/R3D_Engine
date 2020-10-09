@@ -28,7 +28,6 @@ int main()
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 		scene->addGameObject(gun);
-		scene->addGameObject(room);
 
 		engine.setScene(scene);
 
@@ -36,7 +35,7 @@ int main()
 		{
 			engine.update();
 			//game logic
-
+			scene->addGameObject(room);
 			engine.draw();
 		} while (!engine.shouldClose());
 	}
