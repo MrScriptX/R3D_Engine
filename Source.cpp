@@ -1,4 +1,3 @@
-#include "Application.h"
 #include "Engine.h"
 
 int main()
