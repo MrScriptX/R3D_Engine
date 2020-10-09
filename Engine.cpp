@@ -37,8 +37,8 @@ Engine::~Engine()
 
 	mp_scene.reset();
 
-	vkDestroyDescriptorPool(mp_renderer->getGraphic().device, mp_renderer->getGraphic().descriptor_pool, nullptr);
-	vkDestroyDescriptorSetLayout(mp_renderer->getGraphic().device, mp_renderer->getGraphic().descriptor_set_layout, nullptr);
+	vkDestroyDescriptorPool(mp_renderer->getDevice(), mp_renderer->getDescriptorPool(), nullptr);
+	vkDestroyDescriptorSetLayout(mp_renderer->getDevice(), mp_renderer->getDescriptorSetLayout(), nullptr);
 
 	mp_renderer.reset();
 	mp_window.reset();
@@ -87,13 +87,13 @@ void Engine::update()
 {
 	if (mp_scene->isUpdate())
 	{
-		for (uint16_t i = 0; i < mp_renderer->getGraphic().command_buffers.size(); i++)
+		for (uint16_t i = 0; i < mp_renderer->getNumberCommandBuffer(); i++)
 		{
-			mp_renderer->beginRecordCommandBuffers(mp_renderer->getGraphic().command_buffers[i], mp_renderer->getGraphic().framebuffers[i], base_pipeline);
+			mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(i), mp_renderer->getFrameBuffer(i), base_pipeline);
 
-			mp_scene->render(base_pipeline, mp_renderer->getGraphic().command_buffers[i]);
+			mp_scene->render(base_pipeline, mp_renderer->getCommandBuffer(i));
 
-			mp_renderer->endRecordCommandBuffers(mp_renderer->getGraphic().command_buffers[i]);
+			mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(i));
 		}
 	}
 

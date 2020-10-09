@@ -175,9 +175,29 @@ VkDevice& Renderer::getDevice()
 	return m_graphic.device;
 }
 
-Graphics & Renderer::getGraphic()
+VkDescriptorPool& Renderer::getDescriptorPool()
 {
-	return m_graphic;
+	return m_graphic.descriptor_pool;
+}
+
+VkDescriptorSetLayout& Renderer::getDescriptorSetLayout()
+{
+	return m_graphic.descriptor_set_layout;
+}
+
+const size_t& Renderer::getNumberCommandBuffer()
+{
+	return m_graphic.command_buffers.size();
+}
+
+VkFramebuffer& Renderer::getFrameBuffer(const size_t& i)
+{
+	return m_graphic.framebuffers[i];
+}
+
+VkCommandBuffer& Renderer::getCommandBuffer(const size_t& i)
+{
+	return m_graphic.command_buffers[i];
 }
 
 std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
@@ -464,21 +484,6 @@ void Renderer::createDescriptorPool()
 	}
 }
 
-void Renderer::createDescriptorSet()
-{
-	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = m_graphic.descriptor_pool;
-	allocInfo.descriptorSetCount = 1;
-	allocInfo.pSetLayouts = layouts;
-
-	if (vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &m_graphic.descriptor_set) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to allocate descriptor set!");
-	}
-}
-
 void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
 {
 	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
@@ -526,75 +531,6 @@ void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& d
 	descriptorWrites[1].pImageInfo = &imageInfo;
 
 	vkUpdateDescriptorSets(m_graphic.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
-}
-
-void Renderer::createTextureImage(const std::string& texture_path)
-{
-	int tex_width, tex_height, tex_channel;
-	stbi_uc* pixels = stbi_load(texture_path.c_str(), &tex_width, &tex_height, &tex_channel, STBI_rgb_alpha);
-	VkDeviceSize imageSize = tex_width * tex_height * 4;
-
-	if (!pixels)
-	{
-		throw std::runtime_error("failed to load texture image!");
-	}
-
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
-
-	m_pBufferFactory->createBuffer(stagingBuffer, stagingBufferMemory, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	void* data;
-	vkMapMemory(m_graphic.device, stagingBufferMemory, 0, imageSize, 0, &data);
-	memcpy(data, pixels, static_cast<size_t>(imageSize));
-	vkUnmapMemory(m_graphic.device, stagingBufferMemory);
-
-	stbi_image_free(pixels);
-
-	createImage(tex_width, tex_height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_graphic.texture_image, m_graphic.texture_memory);
-
-	transitionImageLayout(m_graphic.texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	copyBufferToImage(stagingBuffer, m_graphic.texture_image, static_cast<uint32_t>(tex_width), static_cast<uint32_t>(tex_height));
-
-	transitionImageLayout(m_graphic.texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-	vkDestroyBuffer(m_graphic.device, stagingBuffer, nullptr);
-	vkFreeMemory(m_graphic.device, stagingBufferMemory, nullptr);
-}
-
-void Renderer::createTextureImageView()
-{
-	m_graphic.texture_view = createImageView(m_graphic.texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
-}
-
-void Renderer::createTextureSampler()
-{
-	VkSamplerCreateInfo samplerInfo = {};
-	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-	samplerInfo.magFilter = VK_FILTER_LINEAR;
-	samplerInfo.minFilter = VK_FILTER_LINEAR;
-
-	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-
-	samplerInfo.anisotropyEnable = VK_TRUE;
-	samplerInfo.maxAnisotropy = 16;
-
-	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-	samplerInfo.unnormalizedCoordinates = VK_FALSE;
-	samplerInfo.compareEnable = VK_FALSE;
-	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-
-	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-	samplerInfo.mipLodBias = 0.0f;
-	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = 0.0f;
-
-	if (vkCreateSampler(m_graphic.device, &samplerInfo, nullptr, &m_graphic.texture_sampler) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to create texture sampler!");
-	}
 }
 
 void Renderer::createDepthResources()

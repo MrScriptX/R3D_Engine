@@ -46,8 +46,13 @@ public:
 	
 	void recordCommandBuffers(Pipeline& pipeline, size_t indices, Buffer& buffer);
 
+	//getters
 	VkDevice& getDevice();
-	Graphics& getGraphic();//need to seperate object needed outside the class
+	VkDescriptorPool& getDescriptorPool();
+	VkDescriptorSetLayout& getDescriptorSetLayout();
+	VkCommandBuffer& getCommandBuffer(const size_t& i);
+	const size_t& getNumberCommandBuffer();
+	VkFramebuffer& getFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
 
 	//rendering
@@ -69,14 +74,10 @@ public:
 	void createSyncObject();
 	void createDescriptorLayout();
 	void createDescriptorPool();
-	void createDescriptorSet();
+	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
 	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
-	void createTextureImage(const std::string& texture_path);
-	void createTextureImageView();
-	void createTextureSampler();
 	void createDepthResources();
 
-	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
 
 	//cleaning
 	void destroyTextures();

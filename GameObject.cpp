@@ -18,8 +18,8 @@ GameObject::~GameObject()
 
 void GameObject::destroy()
 {
-	vkDestroyBuffer(mp_renderer->getGraphic().device, m_ubo, nullptr);
-	vkFreeMemory(mp_renderer->getGraphic().device, m_ubo_memory, nullptr);
+	vkDestroyBuffer(mp_renderer->getDevice(), m_ubo, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory, nullptr);
 }
 
 void GameObject::registerDrawCmd(VkCommandBuffer& command_buffer, Pipeline& pipeline)

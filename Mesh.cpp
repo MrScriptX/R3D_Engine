@@ -89,11 +89,11 @@ void Mesh::createBuffer(std::shared_ptr<Renderer> engine)
 
 void Mesh::destroyMesh()
 {
-	vkDestroyBuffer(mp_renderer->getGraphic().device, m_buffer.index, nullptr);
-	vkFreeMemory(mp_renderer->getGraphic().device, m_buffer.index_memory, nullptr);
+	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer.index, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_buffer.index_memory, nullptr);
 
-	vkDestroyBuffer(mp_renderer->getGraphic().device, m_buffer.vertex, nullptr);
-	vkFreeMemory(mp_renderer->getGraphic().device, m_buffer.vertex_memory, nullptr);
+	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer.vertex, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_buffer.vertex_memory, nullptr);
 }
 
 std::vector<Vertex>& Mesh::get_vertices()

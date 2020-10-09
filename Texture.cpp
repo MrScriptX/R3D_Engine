@@ -15,11 +15,11 @@ Texture::Texture(const std::string& texture_path, std::shared_ptr<Renderer> p_re
 
 Texture::~Texture()
 {
-	vkDestroySampler(mp_renderer->getGraphic().device, m_texture_sampler, nullptr);
-	vkDestroyImageView(mp_renderer->getGraphic().device, m_texture_view, nullptr);
+	vkDestroySampler(mp_renderer->getDevice(), m_texture_sampler, nullptr);
+	vkDestroyImageView(mp_renderer->getDevice(), m_texture_view, nullptr);
 
-	vkDestroyImage(mp_renderer->getGraphic().device, m_texture_image, nullptr);
-	vkFreeMemory(mp_renderer->getGraphic().device, m_texture_memory, nullptr);
+	vkDestroyImage(mp_renderer->getDevice(), m_texture_image, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_texture_memory, nullptr);
 }
 
 void Texture::createTextureImage()
@@ -39,9 +39,9 @@ void Texture::createTextureImage()
 	mp_renderer->getBufferFactory()->createBuffer(stagingBuffer, stagingBufferMemory, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	void* data;
-	vkMapMemory(mp_renderer->getGraphic().device, stagingBufferMemory, 0, imageSize, 0, &data);
+	vkMapMemory(mp_renderer->getDevice(), stagingBufferMemory, 0, imageSize, 0, &data);
 	memcpy(data, pixels, static_cast<size_t>(imageSize));
-	vkUnmapMemory(mp_renderer->getGraphic().device, stagingBufferMemory);
+	vkUnmapMemory(mp_renderer->getDevice(), stagingBufferMemory);
 
 	stbi_image_free(pixels);
 
@@ -52,8 +52,8 @@ void Texture::createTextureImage()
 
 	mp_renderer->transitionImageLayout(m_texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-	vkDestroyBuffer(mp_renderer->getGraphic().device, stagingBuffer, nullptr);
-	vkFreeMemory(mp_renderer->getGraphic().device, stagingBufferMemory, nullptr);
+	vkDestroyBuffer(mp_renderer->getDevice(), stagingBuffer, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), stagingBufferMemory, nullptr);
 }
 
 void Texture::createTextureImageView()
@@ -85,7 +85,7 @@ void Texture::createTextureSampler()
 	samplerInfo.minLod = 0.0f;
 	samplerInfo.maxLod = 0.0f;
 
-	if (vkCreateSampler(mp_renderer->getGraphic().device, &samplerInfo, nullptr, &m_texture_sampler) != VK_SUCCESS)
+	if (vkCreateSampler(mp_renderer->getDevice(), &samplerInfo, nullptr, &m_texture_sampler) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create texture sampler!");
 	}
