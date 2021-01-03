@@ -75,12 +75,6 @@ struct Graphics
 
 	VkDescriptorSetLayout descriptor_set_layout = VK_NULL_HANDLE;
 	VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
-	VkDescriptorSet descriptor_set = VK_NULL_HANDLE;
-
-	VkImage texture_image;
-	VkImageView texture_view;
-	VkSampler texture_sampler;
-	VkDeviceMemory texture_memory;
 
 	VkImage depth_image;
 	VkDeviceMemory depth_memory;

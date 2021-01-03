@@ -175,9 +175,29 @@ VkDevice& Renderer::getDevice()
 	return m_graphic.device;
 }
 
-Graphics & Renderer::getGraphic()
+VkDescriptorPool& Renderer::getDescriptorPool()
 {
-	return m_graphic;
+	return m_graphic.descriptor_pool;
+}
+
+VkDescriptorSetLayout& Renderer::getDescriptorSetLayout()
+{
+	return m_graphic.descriptor_set_layout;
+}
+
+const size_t& Renderer::getNumberCommandBuffer()
+{
+	return m_graphic.command_buffers.size();
+}
+
+VkFramebuffer& Renderer::getFrameBuffer(const size_t& i)
+{
+	return m_graphic.framebuffers[i];
+}
+
+VkCommandBuffer& Renderer::getCommandBuffer(const size_t& i)
+{
+	return m_graphic.command_buffers[i];
 }
 
 std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
@@ -298,19 +318,6 @@ void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFram
 
 	m_pRenderpass->beginRenderPass(commandBuffer, renderPassInfo);
 	m_pPipelineFactory->bindPipeline(commandBuffer, pipeline);
-}
-
-void Renderer::recordDrawCommands(VkCommandBuffer & commandBuffer, Pipeline& pipeline, Buffer & buffer, size_t indices)
-{
-	VkBuffer vertexBuffers[] = { buffer.vertex };
-	VkDeviceSize offsets[] = { 0 };
-
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(commandBuffer, buffer.index, 0, VK_INDEX_TYPE_UINT32);
-
-	m_descriptor->bindDescriptorSet(commandBuffer, pipeline.layout, m_graphic.descriptor_set);
-
-	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices), 1, 0, 0, 0);
 }
 
 void Renderer::endRecordCommandBuffers(VkCommandBuffer & commandBuffer)
@@ -464,21 +471,6 @@ void Renderer::createDescriptorPool()
 	}
 }
 
-void Renderer::createDescriptorSet()
-{
-	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = m_graphic.descriptor_pool;
-	allocInfo.descriptorSetCount = 1;
-	allocInfo.pSetLayouts = layouts;
-
-	if (vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &m_graphic.descriptor_set) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to allocate descriptor set!");
-	}
-}
-
 void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
 {
 	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
@@ -528,75 +520,6 @@ void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& d
 	vkUpdateDescriptorSets(m_graphic.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-void Renderer::createTextureImage(const std::string& texture_path)
-{
-	int tex_width, tex_height, tex_channel;
-	stbi_uc* pixels = stbi_load(texture_path.c_str(), &tex_width, &tex_height, &tex_channel, STBI_rgb_alpha);
-	VkDeviceSize imageSize = tex_width * tex_height * 4;
-
-	if (!pixels)
-	{
-		throw std::runtime_error("failed to load texture image!");
-	}
-
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
-
-	m_pBufferFactory->createBuffer(stagingBuffer, stagingBufferMemory, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	void* data;
-	vkMapMemory(m_graphic.device, stagingBufferMemory, 0, imageSize, 0, &data);
-	memcpy(data, pixels, static_cast<size_t>(imageSize));
-	vkUnmapMemory(m_graphic.device, stagingBufferMemory);
-
-	stbi_image_free(pixels);
-
-	createImage(tex_width, tex_height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_graphic.texture_image, m_graphic.texture_memory);
-
-	transitionImageLayout(m_graphic.texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	copyBufferToImage(stagingBuffer, m_graphic.texture_image, static_cast<uint32_t>(tex_width), static_cast<uint32_t>(tex_height));
-
-	transitionImageLayout(m_graphic.texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-	vkDestroyBuffer(m_graphic.device, stagingBuffer, nullptr);
-	vkFreeMemory(m_graphic.device, stagingBufferMemory, nullptr);
-}
-
-void Renderer::createTextureImageView()
-{
-	m_graphic.texture_view = createImageView(m_graphic.texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
-}
-
-void Renderer::createTextureSampler()
-{
-	VkSamplerCreateInfo samplerInfo = {};
-	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-	samplerInfo.magFilter = VK_FILTER_LINEAR;
-	samplerInfo.minFilter = VK_FILTER_LINEAR;
-
-	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-
-	samplerInfo.anisotropyEnable = VK_TRUE;
-	samplerInfo.maxAnisotropy = 16;
-
-	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-	samplerInfo.unnormalizedCoordinates = VK_FALSE;
-	samplerInfo.compareEnable = VK_FALSE;
-	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-
-	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-	samplerInfo.mipLodBias = 0.0f;
-	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = 0.0f;
-
-	if (vkCreateSampler(m_graphic.device, &samplerInfo, nullptr, &m_graphic.texture_sampler) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to create texture sampler!");
-	}
-}
-
 void Renderer::createDepthResources()
 {
 	VkFormat depthFormat = findDepthFormat();
@@ -605,21 +528,6 @@ void Renderer::createDepthResources()
 	m_graphic.depth_view = createImageView(m_graphic.depth_image, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 
 	transitionImageLayout(m_graphic.depth_image, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-}
-
-void Renderer::destroyTextures()
-{
-	vkDestroySampler(m_graphic.device, m_graphic.texture_sampler, nullptr);
-	vkDestroyImageView(m_graphic.device, m_graphic.texture_view, nullptr);
-
-	vkDestroyImage(m_graphic.device, m_graphic.texture_image, nullptr);
-	vkFreeMemory(m_graphic.device, m_graphic.texture_memory, nullptr);
-}
-
-void Renderer::destroyDescriptors()
-{
-	vkDestroyDescriptorPool(m_graphic.device, m_graphic.descriptor_pool, nullptr);
-	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.descriptor_set_layout, nullptr);
 }
 
 void Renderer::destroyUniformBuffer()
@@ -690,76 +598,6 @@ void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkI
 	}
 
 	vkBindImageMemory(m_graphic.device, image, imageMemory, 0);
-}
-
-void Renderer::recordCommandBuffers(Pipeline& pipeline, size_t indices, Buffer& buffer)
-{
-	std::array<VkClearValue, 2> clear_values = {};
-	clear_values[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-	clear_values[1].depthStencil = { 1.0f, 0 };
-
-	m_graphic.command_buffers.resize(m_graphic.framebuffers.size());
-
-	VkCommandBufferAllocateInfo alloc_buffers_info = {};
-	alloc_buffers_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	alloc_buffers_info.commandPool = m_graphic.command_pool;
-	alloc_buffers_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	alloc_buffers_info.commandBufferCount = static_cast<uint32_t>(m_graphic.command_buffers.size());
-
-	if (vkAllocateCommandBuffers(m_graphic.device, &alloc_buffers_info, m_graphic.command_buffers.data()) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to allocate command buffers!");
-	}
-
-	for (size_t i = 0; i < m_graphic.command_buffers.size(); i++)
-	{
-		VkCommandBufferBeginInfo begin_buffer_info = {};
-		begin_buffer_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		begin_buffer_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-		begin_buffer_info.pInheritanceInfo = nullptr; // Optional
-
-		if (vkBeginCommandBuffer(m_graphic.command_buffers[i], &begin_buffer_info) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to begin recording command buffer!");
-		}
-
-		VkRenderPassBeginInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_graphic.render_pass;
-		renderPassInfo.framebuffer = m_graphic.framebuffers[i];
-
-		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_graphic.swapchain_details.extent;
-
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(clear_values.size());
-		renderPassInfo.pClearValues = clear_values.data();
-
-		//vkCmdBeginRenderPass(m_graphic.command_buffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-		m_pRenderpass->beginRenderPass(m_graphic.command_buffers[i], renderPassInfo);
-
-		//vkCmdBindPipeline(m_graphic.command_buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle);//to change
-		m_pPipelineFactory->bindPipeline(m_graphic.command_buffers[i], pipeline);
-
-
-		VkBuffer vertexBuffers[] = { buffer.vertex };
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(m_graphic.command_buffers[i], 0, 1, vertexBuffers, offsets);
-
-		vkCmdBindIndexBuffer(m_graphic.command_buffers[i], buffer.index, 0, VK_INDEX_TYPE_UINT16);
-
-		//vkCmdBindDescriptorSets(m_graphic.command_buffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,pipeline.layout, 0, 1, &m_graphic.descriptor_set, 0, nullptr);
-		m_descriptor->bindDescriptorSet(m_graphic.command_buffers[i], pipeline.layout, m_graphic.descriptor_set);
-
-		vkCmdDrawIndexed(m_graphic.command_buffers[i], static_cast<uint32_t>(indices), 1, 0, 0, 0);
-
-		//vkCmdEndRenderPass(m_graphic.command_buffers[i]);
-		m_pRenderpass->endRenderPass(m_graphic.command_buffers[i]);
-
-		if (vkEndCommandBuffer(m_graphic.command_buffers[i]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to record command buffer!");
-		}
-	}
 }
 
 void Renderer::recreateSwapchain(Pipeline& pipeline)
