@@ -80,16 +80,14 @@ void Engine::update()
 
 	m_last_time = currentTime;
 
-	if (mp_scene->isUpdate())
+	const int frame = (mp_renderer->getFrameIndex());
+	if (mp_scene->isUpdate(frame))
 	{
-		for (uint16_t i = 0; i < mp_renderer->getNumberCommandBuffer(); i++)
-		{
-			mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(i), mp_renderer->getFrameBuffer(i), base_pipeline);
+		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame), base_pipeline);
 
-			mp_scene->render(base_pipeline, mp_renderer->getCommandBuffer(i));
+		mp_scene->render(base_pipeline, mp_renderer->getCommandBuffer(frame), frame);
 
-			mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(i));
-		}
+		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
 	}
 
 	mp_camera->updateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));

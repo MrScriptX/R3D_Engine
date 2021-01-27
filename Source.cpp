@@ -34,9 +34,8 @@ int main()
 
 		do
 		{
-			engine.update();
 			//game logic
-			
+			engine.update();
 			engine.draw();
 		} while (!engine.shouldClose());
 	}

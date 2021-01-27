@@ -3,7 +3,7 @@
 
 Scene::Scene()
 {
-	m_changed = false;
+	m_changed.fill(false);
 }
 
 Scene::~Scene()
@@ -14,17 +14,17 @@ void Scene::addGameObject(std::shared_ptr<GameObject> gameobject)
 {
 	vp_objects.push_back(gameobject);
 
-	m_changed = true;
+	m_changed.fill(true);
 }
 
-void Scene::render(Pipeline& pipeline, VkCommandBuffer& command_buffer)
+void Scene::render(Pipeline& pipeline, VkCommandBuffer& command_buffer, const int i)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
 		vp_objects[i]->registerDrawCmd(command_buffer, pipeline);
 	}
 
-	m_changed = false;
+	m_changed[i] = false;
 }
 
 void Scene::updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer)
@@ -50,9 +50,9 @@ void Scene::updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 	}
 }
 
-const bool& Scene::isUpdate()
+const bool& Scene::isUpdate(const int i)
 {
-	return m_changed;
+	return m_changed[i];
 }
 
 std::vector<std::shared_ptr<GameObject>>& Scene::getObjects()

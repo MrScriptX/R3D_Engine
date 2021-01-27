@@ -205,6 +205,11 @@ std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
 	return m_pBufferFactory;
 }
 
+const int Renderer::getFrameIndex()
+{
+	return m_frame_index;
+}
+
 void Renderer::destroyBuffers(Buffer & buffer)
 {
 	vkQueueWaitIdle(m_graphic.graphics_queue);

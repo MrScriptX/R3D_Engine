@@ -2,6 +2,7 @@
 #define _SCENE_H
 
 #include <vector>
+#include <array>
 
 #include "GameObject.h"
 #include "Player.h"
@@ -16,14 +17,14 @@ public:
 	~Scene();
 
 	void addGameObject(std::shared_ptr<GameObject> gameobject);
-	void render(Pipeline& pipeline, VkCommandBuffer& command_buffer);
+	void render(Pipeline& pipeline, VkCommandBuffer& command_buffer, const int i);
 	void updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer);
 
-	const bool& isUpdate();
+	const bool& isUpdate(const int i);
 	std::vector<std::shared_ptr<GameObject>>& getObjects();
 
 private:
-	bool m_changed;
+	std::array<bool, 2> m_changed;
 	std::vector<std::shared_ptr<GameObject>> vp_objects;
 };
 

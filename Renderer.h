@@ -52,6 +52,7 @@ public:
 	const size_t& getNumberCommandBuffer();
 	VkFramebuffer& getFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
+	const int getFrameIndex();
 
 	//rendering
 	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
