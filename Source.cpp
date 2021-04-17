@@ -2,20 +2,13 @@
 
 int main()
 {
-	Engine engine;
-
 	try
 	{
+		Engine engine;
 		Logger::init();
 
 		std::shared_ptr<Material> gun_texture = std::make_shared<Material>();
 		gun_texture->loadTexture("textures/texture.jpg", engine.getRenderEngine());
-
-		std::shared_ptr<GameObject> gun = std::make_shared<GameObject>(engine.getRenderEngine());
-		gun->loadMesh("models/ak-47.obj");
-
-		gun->bindMatToMesh(0, gun_texture);
-		gun->setPosition({ 10.0f, 0.0f, 0.0f });
 
 		std::shared_ptr<Material> room_texture = std::make_shared<Material>();
 		room_texture->loadTexture("textures/viking_room.png", engine.getRenderEngine());
@@ -27,7 +20,6 @@ int main()
 		room->setPosition({ 3.0f, 0.0f, 0.0f });
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-		scene->addGameObject(gun);
 		scene->addGameObject(room);
 
 		engine.setScene(scene);
@@ -42,6 +34,7 @@ int main()
 	catch(const std::runtime_error& e)
 	{
 		std::cerr << e.what() << std::endl;
+		system("pause");
 		return EXIT_FAILURE;
 	}
 
