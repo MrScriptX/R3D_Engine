@@ -72,15 +72,15 @@ void Engine::update()
 {
 	glfwPollEvents();
 
-	std::chrono::steady_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
-	float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - m_last_time).count();
+	std::chrono::steady_clock::time_point current_time = std::chrono::high_resolution_clock::now();
+	float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_last_time).count();
 
 	mp_player->setDeltaTime(delta_time);
 	mp_player->updatePosition();
 
-	m_last_time = currentTime;
+	m_last_time = current_time;
 
-	const int frame = (mp_renderer->getFrameIndex());
+	const int frame = mp_renderer->getFrameIndex();
 	if (mp_scene->isUpdate(frame))
 	{
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame), base_pipeline);
