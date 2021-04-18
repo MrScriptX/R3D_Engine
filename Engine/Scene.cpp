@@ -10,11 +10,38 @@ Scene::~Scene()
 {
 }
 
-void Scene::addGameObject(std::shared_ptr<GameObject> gameobject)
+R3DResult Scene::addGameObject(std::shared_ptr<GameObject> gameobject)
 {
-	vp_objects.push_back(gameobject);
+	// check if object is not in the scene
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		if (vp_objects[i] == gameobject)
+		{
+			return R3DResult::R3D_OBJECT_IN_SCENE;
+		}
+	}
 
+	// add object to scene
+	vp_objects.push_back(gameobject);
 	m_changed.fill(true);
+
+	return R3DResult::R3D_SUCCESS;
+}
+
+R3DResult Scene::removeGameObject(std::shared_ptr<GameObject> gameobject)
+{
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		if (vp_objects[i] == gameobject)
+		{
+			vp_objects.erase(vp_objects.begin() + i);
+			m_changed.fill(true);
+
+			return R3DResult::R3D_SUCCESS;
+		}
+	}
+
+	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }
 
 void Scene::render(Pipeline& pipeline, VkCommandBuffer& command_buffer, const int i)

@@ -185,7 +185,7 @@ VkDescriptorSetLayout& Renderer::getDescriptorSetLayout()
 	return m_graphic.descriptor_set_layout;
 }
 
-const size_t& Renderer::getNumberCommandBuffer()
+const size_t Renderer::getNumberCommandBuffer()
 {
 	return m_graphic.command_buffers.size();
 }

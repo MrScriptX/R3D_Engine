@@ -16,7 +16,8 @@ public:
 	Scene();
 	~Scene();
 
-	void addGameObject(std::shared_ptr<GameObject> gameobject);
+	R3DResult addGameObject(std::shared_ptr<GameObject> gameobject);
+	R3DResult removeGameObject(std::shared_ptr<GameObject> gameobject);
 	void render(Pipeline& pipeline, VkCommandBuffer& command_buffer, const int i);
 	void updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer);
 
@@ -24,7 +25,7 @@ public:
 	std::vector<std::shared_ptr<GameObject>>& getObjects();
 
 private:
-	std::array<bool, 2> m_changed;
+	std::array<bool, 3> m_changed;
 	std::vector<std::shared_ptr<GameObject>> vp_objects;
 };
 

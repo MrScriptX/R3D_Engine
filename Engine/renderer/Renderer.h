@@ -26,7 +26,7 @@
 
 #include "../Logger.h"
 
-constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 2;
+constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 3;
 
 class Renderer
 {
@@ -49,7 +49,7 @@ public:
 	VkDescriptorPool& getDescriptorPool();
 	VkDescriptorSetLayout& getDescriptorSetLayout();
 	VkCommandBuffer& getCommandBuffer(const size_t& i);
-	const size_t& getNumberCommandBuffer();
+	const size_t getNumberCommandBuffer();
 	VkFramebuffer& getFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
 	const int getFrameIndex();
