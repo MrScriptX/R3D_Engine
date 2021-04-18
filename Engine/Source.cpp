@@ -21,9 +21,9 @@ int main()
 
 		engine.setScene(scene);
 
+		// running loop
 		do
 		{
-			//game logic
 			engine.update();
 			engine.draw();
 		} while (!engine.shouldClose());

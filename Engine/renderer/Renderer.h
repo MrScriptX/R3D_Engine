@@ -49,7 +49,7 @@ public:
 	VkDescriptorPool& getDescriptorPool();
 	VkDescriptorSetLayout& getDescriptorSetLayout();
 	VkCommandBuffer& getCommandBuffer(const size_t& i);
-	const size_t& getNumberCommandBuffer();
+	const size_t getNumberCommandBuffer();
 	VkFramebuffer& getFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
 	const int getFrameIndex();
