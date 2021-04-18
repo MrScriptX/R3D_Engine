@@ -225,11 +225,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>F:\libs\stb-master;F:\Programs\VulkanSDK\1.1.126.0\Include;F:\libs\glfw-3.3.4.bin.WIN64\include;F:\libs\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\libs\stb_image;$(VULKAN_SDK)\Include;$(ProjectDir)\libs\glfw-3.3.4\include;$(ProjectDir)\libs\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>F:\Programs\VulkanSDK\1.1.126.0\Lib;F:\libs\glfw-3.3.4.bin.WIN64\lib-vc2019;F:\libs\glew-2.1.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;$(ProjectDir)\libs\glfw-3.3.4\lib;$(ProjectDir)\glew-2.1.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

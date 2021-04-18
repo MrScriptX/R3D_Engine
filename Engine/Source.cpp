@@ -34,7 +34,7 @@ int main()
 	catch(const std::runtime_error& e)
 	{
 		std::cerr << e.what() << std::endl;
-		system("pause");
+		system("pause");//no system pause | try catch should be done more localy depending on where to end 
 		return EXIT_FAILURE;
 	}
 
