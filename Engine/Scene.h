@@ -24,7 +24,7 @@ public:
 	std::vector<std::shared_ptr<GameObject>>& getObjects();
 
 private:
-	std::array<bool, 2> m_changed;
+	std::array<bool, 3> m_changed;
 	std::vector<std::shared_ptr<GameObject>> vp_objects;
 };
 

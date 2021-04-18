@@ -26,7 +26,7 @@
 
 #include "../Logger.h"
 
-constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 2;
+constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 3;
 
 class Renderer
 {
