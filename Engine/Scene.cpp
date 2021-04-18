@@ -12,6 +12,11 @@ Scene::~Scene()
 
 void Scene::addGameObject(std::shared_ptr<GameObject> gameobject)
 {
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		if (vp_objects[i] == gameobject) return;
+	}
+
 	vp_objects.push_back(gameobject);
 
 	m_changed.fill(true);
