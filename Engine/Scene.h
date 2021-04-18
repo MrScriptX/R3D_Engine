@@ -16,7 +16,7 @@ public:
 	Scene();
 	~Scene();
 
-	void addGameObject(std::shared_ptr<GameObject> gameobject);
+	R3DResult addGameObject(std::shared_ptr<GameObject> gameobject);
 	void render(Pipeline& pipeline, VkCommandBuffer& command_buffer, const int i);
 	void updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer);
 

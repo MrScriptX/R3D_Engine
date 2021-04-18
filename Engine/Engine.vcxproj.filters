@@ -170,6 +170,9 @@
     <ClInclude Include="renderer\VulkanSwapchain.h">
       <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
+    <ClInclude Include="errors.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\shader.vert">
