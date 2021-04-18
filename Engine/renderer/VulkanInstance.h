@@ -5,7 +5,7 @@
 #include <GLFW\glfw3.h>
 
 #include <iostream>
-#include "Graphics.h"
+#include "../Graphics.h"
 
 class VulkanInstance
 {

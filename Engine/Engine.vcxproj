@@ -50,19 +50,19 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="renderer\Renderer.cpp" />
+    <ClCompile Include="renderer\VulkanBuffer.cpp" />
+    <ClCompile Include="renderer\VulkanCommandBuffer.cpp" />
+    <ClCompile Include="renderer\VulkanCommandPool.cpp" />
+    <ClCompile Include="renderer\VulkanDescriptor.cpp" />
+    <ClCompile Include="renderer\VulkanDevice.cpp" />
+    <ClCompile Include="renderer\VulkanInstance.cpp" />
+    <ClCompile Include="renderer\VulkanPipeline.cpp" />
+    <ClCompile Include="renderer\VulkanRenderPass.cpp" />
+    <ClCompile Include="renderer\VulkanSwapchain.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="VulkanBuffer.cpp" />
-    <ClCompile Include="VulkanCommandBuffer.cpp" />
-    <ClCompile Include="VulkanCommandPool.cpp" />
-    <ClCompile Include="VulkanDescriptor.cpp" />
-    <ClCompile Include="VulkanDevice.cpp" />
-    <ClCompile Include="VulkanInstance.cpp" />
-    <ClCompile Include="VulkanPipeline.cpp" />
-    <ClCompile Include="VulkanRenderPass.cpp" />
-    <ClCompile Include="VulkanSwapchain.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -76,19 +76,19 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="renderer\Renderer.h" />
+    <ClInclude Include="renderer\VulkanBuffer.h" />
+    <ClInclude Include="renderer\VulkanCommandBuffer.h" />
+    <ClInclude Include="renderer\VulkanCommandPool.h" />
+    <ClInclude Include="renderer\VulkanDescriptor.h" />
+    <ClInclude Include="renderer\VulkanDevice.h" />
+    <ClInclude Include="renderer\VulkanInstance.h" />
+    <ClInclude Include="renderer\VulkanPipeline.h" />
+    <ClInclude Include="renderer\VulkanRenderPass.h" />
+    <ClInclude Include="renderer\VulkanSwapchain.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
-    <ClInclude Include="VulkanBuffer.h" />
-    <ClInclude Include="VulkanCommandBuffer.h" />
-    <ClInclude Include="VulkanCommandPool.h" />
-    <ClInclude Include="VulkanDescriptor.h" />
-    <ClInclude Include="VulkanDevice.h" />
-    <ClInclude Include="VulkanInstance.h" />
-    <ClInclude Include="VulkanPipeline.h" />
-    <ClInclude Include="VulkanRenderPass.h" />
-    <ClInclude Include="VulkanSwapchain.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

@@ -4,8 +4,8 @@
 #include <array>
 #include <stdexcept>
 
-#include "Vertex.h"
-#include "Graphics.h"
+#include "../Vertex.h"
+#include "../Graphics.h"
 
 class VulkanDescriptor
 {

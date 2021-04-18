@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Config.h"
-#include "Graphics.h"
+#include "../Config.h"
+#include "../Graphics.h"
 
 class VulkanSwapchain
 {

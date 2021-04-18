@@ -3,8 +3,8 @@
 
 #include <fstream>
 
-#include "Vertex.h"
-#include "Graphics.h"
+#include "../Vertex.h"
+#include "../Graphics.h"
 
 class VulkanPipeline
 {
