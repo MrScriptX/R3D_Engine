@@ -13,7 +13,7 @@ int main()
 		std::shared_ptr<GameObject> room = std::make_shared<GameObject>(engine.getRenderEngine());
 		room->loadMesh("assets/models/viking_room.obj");
 		room->bindMatToMesh(0, room_texture);
-		room->setPosition({ 3.0f, 0.0f, 0.0f });
+		room->setPosition({ -3.0f, 0.0f, 0.0f });
 
 		std::shared_ptr<Material> room2_texture = std::make_shared<Material>();
 		room2_texture->loadTexture("assets/textures/viking_room.png", engine.getRenderEngine());
@@ -32,7 +32,7 @@ int main()
 			if (init == 30000) {
 				room2->loadMesh("assets/models/viking_room.obj");
 				room2->bindMatToMesh(0, room2_texture);
-				room2->setPosition({ 13.0f, 0.0f, 0.0f });
+				room2->setPosition({ -13.0f, 0.0f, 0.0f });
 
 				scene->addGameObject(room2);
 			}
