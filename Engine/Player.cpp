@@ -37,6 +37,7 @@ void Player::updateRotation(const double& xpos, const double& ypos)
 	mp_camera->setYaw(mp_camera->getYaw() + (mouse_delta.x * sensibility));
 	mp_camera->setPitch(mp_camera->getPitch() + (mouse_delta.y * sensibility));
 
+
 	/*glm::vec3 forward = { 0.0f, 0.0f, 0.0f };
 	forward.x = glm::cos(mp_camera->getYaw()) * glm::sin(mp_camera->getPitch());
 	forward.y = glm::sin(mp_camera->getYaw());
@@ -45,8 +46,6 @@ void Player::updateRotation(const double& xpos, const double& ypos)
 	glm::vec3 normal = glm::vec3(glm::sin(mp_camera->getPitch() - 3.14f / 2.0f), 0, glm::cos(mp_camera->getPitch() - 3.14f / 2.0f));
 
 	glm::vec3 up = glm::cross(normal, forward);
-
-
 
 	mp_camera->setRotation(up);*/
 }
@@ -58,26 +57,26 @@ void Player::updatePosition()
 
 	if (m_keyboard_press[GLFW_KEY_W] == true)
 	{
-		change.x -= -glm::cos(glm::radians(mp_camera->getRotation().y)) * speed;//rotation still not working
-		change.z -= -glm::sin(glm::radians(mp_camera->getRotation().y)) * speed;
+		change.x -= -glm::sin(mp_camera->getYaw()) * speed;
+		change.z -= glm::cos(mp_camera->getYaw()) * speed;
 	}
 
 	if (m_keyboard_press[GLFW_KEY_S] == true)
 	{
-		change.x += -glm::cos(glm::radians(mp_camera->getRotation().y)) * speed;
-		change.z += -glm::sin(glm::radians(mp_camera->getRotation().y)) * speed;
+		change.x += -glm::sin(mp_camera->getYaw()) * speed;
+		change.z += glm::cos(mp_camera->getYaw()) * speed;
 	}
 
 	if (m_keyboard_press[GLFW_KEY_A] == true)
 	{
-		change.x += -glm::cos(glm::radians(mp_camera->getRotation().y + 90.0f)) * speed;
-		change.z += -glm::sin(glm::radians(mp_camera->getRotation().y + 90.0f)) * speed;
+		change.x += -glm::sin(mp_camera->getYaw() + glm::radians(90.0f)) * speed;
+		change.z += glm::cos(mp_camera->getYaw() + glm::radians(90.0f)) * speed;
 	}
 
 	if (m_keyboard_press[GLFW_KEY_D] == true)
 	{
-		change.x -= -glm::cos(glm::radians(mp_camera->getRotation().y + 90.0f)) * speed;
-		change.z -= -glm::sin(glm::radians(mp_camera->getRotation().y + 90.0f)) * speed;
+		change.x -= -glm::sin(mp_camera->getYaw() + glm::radians(90.0f)) * speed;
+		change.z -= glm::cos(mp_camera->getYaw() + glm::radians(90.0f)) * speed;
 	}
 
 	if (m_keyboard_press[GLFW_KEY_LEFT_SHIFT] == true)
