@@ -4,7 +4,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "../Graphics.h"
+#include "../graphics/Graphics.h"
 
 class VulkanBuffer
 {

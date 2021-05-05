@@ -10,8 +10,8 @@
 
 #include <memory>
 
-#include "Config.h"
-#include "Player.h"
+#include "graphics/Config.h"
+#include "cameras/Player.h"
 
 class Window
 {

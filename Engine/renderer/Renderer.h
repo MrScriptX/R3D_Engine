@@ -22,7 +22,8 @@
 #include "VulkanCommandPool.h"
 #include "VulkanPipeline.h"
 #include "VulkanBuffer.h"
-#include "../Graphics.h"
+
+#include "../graphics/Graphics.h"
 
 #include "../Logger.h"
 
