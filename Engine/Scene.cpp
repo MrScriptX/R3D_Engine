@@ -62,7 +62,7 @@ void Scene::updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 		
 		glm::mat4 matrix = glm::mat4(1.0f);
 
-		matrix = glm::translate(matrix, -vp_objects[i]->getPosition());
+		matrix = glm::translate(matrix, vp_objects[i]->getPosition());
 
 		matrix = glm::rotate(matrix, glm::radians(vp_objects[i]->getRotation().x), { 1, 0, 0 });
 		matrix = glm::rotate(matrix, glm::radians(vp_objects[i]->getRotation().y), { 0, 1, 0 });

@@ -26,7 +26,7 @@ Camera::~Camera()
 void Camera::updateUBO(const float& width, const float& height)
 {
 	m_ubo.view = updateView(m_pitch, m_yaw, m_position);
-	m_ubo.model = createModelMatrix(m_rotation, m_position);
+	//m_ubo.model = createModelMatrix(glm::vec3(0.f, 0.f, 0.f), m_position); // not used
 	m_ubo.proj = createProjMatrix(width, height);
 	m_ubo.proj[1][1] *= -1;
 }
