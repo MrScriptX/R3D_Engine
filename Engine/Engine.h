@@ -1,9 +1,10 @@
 #ifndef _ENGINE_H
 #define _ENGINE_H
 
-#include "GameObject.h"
-#include "Scene.h"
 #include "Window.h"
+
+#include "world/GameObject.h"
+#include "world/Scene.h"
 
 class Engine
 {

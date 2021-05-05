@@ -5,7 +5,8 @@
 #include <bitset>
 #include <iostream>
 
-#include "Vertex.h"
+#include "../graphics/Graphics.h"
+#include "../graphics/Vertex.h"
 
 class Camera
 {

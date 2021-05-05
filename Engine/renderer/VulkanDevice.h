@@ -3,7 +3,8 @@
 
 #include <iostream>
 #include <set>
-#include "../Graphics.h"
+
+#include "../graphics/Graphics.h"
 
 class VulkanDevice
 {

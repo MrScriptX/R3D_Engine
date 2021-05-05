@@ -4,9 +4,10 @@
 #include <memory>
 #include <unordered_map>
 
-#include "Vertex.h"
-#include "renderer/Renderer.h"
 #include "Material.h"
+
+#include "../graphics/Vertex.h"
+#include "../renderer/Renderer.h"
 
 
 class Mesh

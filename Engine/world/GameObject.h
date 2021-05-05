@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Mesh.h"
-#include "errors.h"
+#include "../errors.h"
 
 class GameObject
 {
