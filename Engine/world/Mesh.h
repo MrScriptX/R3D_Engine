@@ -4,6 +4,10 @@
 #include <memory>
 #include <unordered_map>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include "Material.h"
 
 #include "../graphics/Vertex.h"
@@ -42,30 +46,3 @@ private:
 };
 
 #endif//!_MODEL_H
-
-/*Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(MODEL_PATH, aiProcessPreset_TargetRealtime_Quality);
-
-	for (int i = 0; i < scene->mNumMeshes; i++)
-	{
-		const aiMesh* mesh = scene->mMeshes[i];
-		for (int t = 0; t < mesh->mNumVertices; t++)
-		{
-			Vertex vertex;
-			vertex.pos.x = mesh->mVertices[i].x;
-			vertex.pos.y = mesh->mVertices[i].y;
-			vertex.pos.z = mesh->mVertices[i].z;
-
-			vertex.color = { 1.0f, 1.0f, 1.0f };
-
-			vertex.texCoord.x = mesh->mTextureCoords[i]->x;
-			vertex.texCoord.y = mesh->mTextureCoords[i]->y;
-
-			vertices.push_back(vertex);
-		}
-
-		for (int x = 0; x < mesh->mFaces->mNumIndices; x++)
-		{
-			indices.push_back(mesh->mFaces->mIndices[x]);
-		}
-	}*/
