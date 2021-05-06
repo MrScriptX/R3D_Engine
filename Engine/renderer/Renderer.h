@@ -74,6 +74,7 @@ public:
 	void createDescriptorLayout();
 	void createDescriptorPool();
 	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
+	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set);
 	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
 	void createDepthResources();
 

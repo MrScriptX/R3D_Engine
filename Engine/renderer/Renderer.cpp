@@ -492,20 +492,15 @@ void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
 	}
 }
 
-void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler)
+void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set)
 {
+	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
+
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = ubo;
 	bufferInfo.offset = 0;
 	bufferInfo.range = sizeof(UniformBufferObject);
 
-	VkDescriptorImageInfo imageInfo = {};
-	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	imageInfo.imageView = image_view;
-	imageInfo.sampler = image_sampler;
-
-
-	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = descriptor_set;
 	descriptorWrites[0].dstBinding = 0;
@@ -513,6 +508,31 @@ void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& d
 	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrites[0].descriptorCount = 1;
 	descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+	vkUpdateDescriptorSets(m_graphic.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler)
+{
+	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
+
+	VkDescriptorBufferInfo bufferInfo = {};
+	bufferInfo.buffer = ubo;
+	bufferInfo.offset = 0;
+	bufferInfo.range = sizeof(UniformBufferObject);
+
+	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[0].dstSet = descriptor_set;
+	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstArrayElement = 0;
+	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrites[0].descriptorCount = 1;
+	descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+	VkDescriptorImageInfo imageInfo = {};
+	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	imageInfo.imageView = image_view;
+	imageInfo.sampler = image_sampler;
 
 	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[1].dstSet = descriptor_set;

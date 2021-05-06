@@ -2,11 +2,23 @@
 
 Material::Material()
 {
+	m_descriptor_set = VK_NULL_HANDLE;
 }
 
 Material::~Material()
 {
 	m_texture.reset();
+}
+
+void Material::setColor(glm::vec3 color)
+{
+	m_color = std::make_shared<glm::vec3>(color);
+}
+
+void Material::clearColor()
+{
+	m_color.reset();
+	m_color = nullptr;
 }
 
 void Material::loadTexture(const std::string& texture_path, std::shared_ptr<Renderer> renderer)
@@ -17,13 +29,23 @@ void Material::loadTexture(const std::string& texture_path, std::shared_ptr<Rend
 	m_texture->createTextureSampler();
 }
 
+void Material::destroyTexture()
+{
+	m_texture.reset();
+	m_texture = nullptr;
+}
+
+std::shared_ptr<glm::vec3> Material::getColor()
+{
+	return std::shared_ptr<glm::vec3>();
+}
+
 std::shared_ptr<Texture> Material::getTexture()
 {
 	return m_texture;
 }
 
-void Material::destroyTexture()
+VkDescriptorSet& Material::getDescriptorSet()
 {
-	m_texture.reset();
-	m_texture = nullptr;
+	return m_descriptor_set;
 }
