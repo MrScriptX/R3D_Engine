@@ -1,12 +1,5 @@
 #include "Mesh.h"
 
-#ifndef TINYOBJLOADER_IMPLEMENTATION
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "../tiny_obj_loader.h"
-
-#endif // !TINYOBJLOADER_IMPLEMENTATION
-
 
 Mesh::Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_obj_path(obj_path), mp_renderer(p_renderer)
 {
@@ -32,43 +25,42 @@ void Mesh::draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline)
 
 void Mesh::loadModel()
 {
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-	std::string err;
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(m_obj_path, aiProcess_Triangulate);
 
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, m_obj_path.c_str()))
+	for (int i = 0; i < scene->mNumMeshes; i++)
 	{
-		throw std::runtime_error(err);
-	}
-
-	std::unordered_map<Vertex, uint32_t> uniqueVertices = {};
-
-	for (const auto& shape : shapes)
-	{
-		for (const auto& index : shape.mesh.indices)
+		const aiMesh* mesh = scene->mMeshes[i];
+		for (int t = 0; t < mesh->mNumVertices; t++)
 		{
 			Vertex vertex = {};
 
+			const aiVector3D* pPos = &(mesh->mVertices[t]);
+			const aiVector3D* pTexCoord = &(mesh->mTextureCoords[0][t]);
+
 			vertex.pos = {
-				attrib.vertices[3 * index.vertex_index + 0],
-				attrib.vertices[3 * index.vertex_index + 1],
-				attrib.vertices[3 * index.vertex_index + 2]
+				pPos->x,
+				pPos->y,
+				pPos->z
 			};
 
 			vertex.texCoord = {
-				attrib.texcoords[2 * index.texcoord_index + 0],
-				1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+				pTexCoord->x,
+				1.0f - pTexCoord->y
 			};
 
 			vertex.color = { 1.0f, 1.0f, 1.0f };
 
-			if (uniqueVertices.count(vertex) == 0) {
-				uniqueVertices[vertex] = static_cast<uint32_t>(m_vertices.size());
-				m_vertices.push_back(vertex);
-			}
+			m_vertices.push_back(vertex);
+		}
 
-			m_indices.push_back(uniqueVertices[vertex]);
+		for (unsigned int t = 0; t < mesh->mNumFaces; ++t)
+		{
+			aiFace face = mesh->mFaces[t];
+			for (int j = 0; j < face.mNumIndices; j++)
+			{
+				m_indices.push_back(face.mIndices[j]);
+			}
 		}
 	}
 }

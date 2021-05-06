@@ -1,7 +1,7 @@
 #ifndef _VULKAN_COMMANDBUFFER_H
 #define _VULKAN_COMMANDBUFFER_H
 
-#include "../Graphics.h"
+#include "../graphics/Graphics.h"
 #include <stdexcept>
 
 class VulkanCommandBuffer

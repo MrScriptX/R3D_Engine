@@ -10,9 +10,6 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{be767481-ce1d-4bad-a5f3-4aeae38d9b7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\shaders">
-      <UniqueIdentifier>{e06a0a1d-1845-47d4-806a-03cbfb95abf7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Renderer">
       <UniqueIdentifier>{fc06610a-7ac2-4f0f-b638-951b5eff3bd8}</UniqueIdentifier>
     </Filter>
@@ -30,6 +27,9 @@
     </Filter>
     <Filter Include="Engine\World">
       <UniqueIdentifier>{f0d3173b-0d3b-48a2-a5fb-0ec342f99870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Asset">
+      <UniqueIdentifier>{cbc302f8-152a-45f7-b3f6-ede5fab25a31}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -175,11 +175,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\shaders\shader.vert">
-      <Filter>Engine\shaders</Filter>
-    </None>
     <None Include="..\shaders\shader.frag">
-      <Filter>Engine\shaders</Filter>
+      <Filter>Asset</Filter>
+    </None>
+    <None Include="..\shaders\shader.vert">
+      <Filter>Asset</Filter>
     </None>
   </ItemGroup>
 </Project>
