@@ -8,7 +8,7 @@ int main()
 		Logger::init();
 
 		std::shared_ptr<Material> room_texture = std::make_shared<Material>();
-		//room_texture->loadTexture("assets/textures/viking_room.png", engine.getRenderEngine());
+		room_texture->loadTexture("assets/textures/viking_room.png", engine.getRenderEngine());
 
 		std::shared_ptr<GameObject> room = std::make_shared<GameObject>(engine.getRenderEngine());
 		room->loadMesh("assets/models/viking_room.obj");

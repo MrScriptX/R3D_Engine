@@ -17,7 +17,7 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline)
 	auto attributeDescriptions = Vertex::getAttributeDescriptions();
 
 	auto vertShaderCode = readFile("assets/shaders/vert.spv");
-	auto fragShaderCode = readFile("assets/shaders/frag.spv");
+	auto fragShaderCode = readFile("assets/shaders/texture_shader.spv");
 
 	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
 	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
