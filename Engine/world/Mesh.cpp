@@ -15,7 +15,7 @@ Mesh::~Mesh()
 
 void Mesh::draw(const VkCommandBuffer& command_buffer)
 {
-	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline()->handle);
+	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().handle);
 
 	VkBuffer vertex_buffer[] = { m_buffer.vertex };
 	VkDeviceSize offsets[] = { 0 };
@@ -23,7 +23,7 @@ void Mesh::draw(const VkCommandBuffer& command_buffer)
 	vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffer, offsets);
 	vkCmdBindIndexBuffer(command_buffer, m_buffer.index, 0, VK_INDEX_TYPE_UINT32);
 
-	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline()->layout, 0, 1, &p_material->getDescriptorSet(), 0, nullptr);
+	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, &p_material->getDescriptorSet(), 0, nullptr);
 
 	vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
 }

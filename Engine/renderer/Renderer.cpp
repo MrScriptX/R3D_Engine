@@ -166,11 +166,6 @@ void Renderer::setupCommandPool()
 	m_commandPool = std::make_unique<VulkanCommandPool>(m_graphic);
 }
 
-void Renderer::createNewPipeline(std::shared_ptr<Pipeline> pipeline)
-{
-	m_pPipelineFactory->createPipeline(pipeline);
-}
-
 VkDevice& Renderer::getDevice()
 {
 	return m_graphic.device;

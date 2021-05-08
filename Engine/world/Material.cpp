@@ -45,7 +45,7 @@ std::shared_ptr<Texture> Material::getTexture()
 	return m_texture;
 }
 
-std::shared_ptr<Pipeline> Material::GetPipeline()
+const Pipeline& Material::GetPipeline()
 {
 	return mp_renderer->GetPipelineFactory()->GetPipeline(m_shader);
 }

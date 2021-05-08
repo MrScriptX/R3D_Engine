@@ -21,7 +21,7 @@ public:
 
 	std::shared_ptr<glm::vec3> getColor();
 	std::shared_ptr<Texture> getTexture();
-	std::shared_ptr<Pipeline> GetPipeline();
+	const Pipeline& GetPipeline();
 	VkDescriptorSet& getDescriptorSet();
 private:
 	std::shared_ptr<Texture> m_texture;

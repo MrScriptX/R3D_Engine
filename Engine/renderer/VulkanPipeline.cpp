@@ -12,7 +12,7 @@ VulkanPipeline::~VulkanPipeline()
 {
 }
 
-void VulkanPipeline::createPipeline(std::shared_ptr<Pipeline> p_pipeline)
+void VulkanPipeline::createPipeline(Pipeline& pipeline)
 {
 	auto bindingDescription = Vertex::getBindingDescription();
 	auto attributeDescriptions = Vertex::getAttributeDescriptions();
@@ -115,7 +115,7 @@ void VulkanPipeline::createPipeline(std::shared_ptr<Pipeline> p_pipeline)
 	pipelineLayoutInfo.setLayoutCount = 1;
 	pipelineLayoutInfo.pSetLayouts = &m_graphic.descriptor_set_layout;
 
-	if (vkCreatePipelineLayout(m_graphic.device, &pipelineLayoutInfo, nullptr, &p_pipeline->layout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(m_graphic.device, &pipelineLayoutInfo, nullptr, &pipeline.layout) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create pipeline layout!");
 	}
@@ -131,12 +131,12 @@ void VulkanPipeline::createPipeline(std::shared_ptr<Pipeline> p_pipeline)
 	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pDepthStencilState = &depthStencil;
 	pipelineInfo.pColorBlendState = &colorBlending;
-	pipelineInfo.layout = p_pipeline->layout;
+	pipelineInfo.layout = pipeline.layout;
 	pipelineInfo.renderPass = m_graphic.render_pass;
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateGraphicsPipelines(m_graphic.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &p_pipeline->handle) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(m_graphic.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.handle) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create graphics pipeline!");
 	}
@@ -152,37 +152,31 @@ void VulkanPipeline::bindPipeline(VkCommandBuffer& commandBuffer, std::shared_pt
 
 void VulkanPipeline::CreatePipelines()
 {
-	m_base_pipeline = std::make_shared<Pipeline>();
-	m_no_texture_pipeline = std::make_shared<Pipeline>();
-	m_texture_pipeline = std::make_shared<Pipeline>();
-
-	createPipeline(m_base_pipeline);
-	createPipeline(m_no_texture_pipeline);
-	createPipeline(m_texture_pipeline);
+	for (size_t i = 0; i < m_pipelines.size(); i++)
+	{
+		createPipeline(m_pipelines[i]);
+	}
 }
 
 void VulkanPipeline::DestroyPipelines()
 {
-	vkDestroyPipeline(m_graphic.device, m_base_pipeline->handle, nullptr);
-	vkDestroyPipelineLayout(m_graphic.device, m_base_pipeline->layout, nullptr);
-
-	vkDestroyPipeline(m_graphic.device, m_no_texture_pipeline->handle, nullptr);
-	vkDestroyPipelineLayout(m_graphic.device, m_no_texture_pipeline->layout, nullptr);
-
-	vkDestroyPipeline(m_graphic.device, m_texture_pipeline->handle, nullptr);
-	vkDestroyPipelineLayout(m_graphic.device, m_texture_pipeline->layout, nullptr);
+	for (size_t i = 0; i < m_pipelines.size(); i++)
+	{
+		vkDestroyPipeline(m_graphic.device, m_pipelines[i].handle, nullptr);
+		vkDestroyPipelineLayout(m_graphic.device, m_pipelines[i].layout, nullptr);
+	}
 }
 
-std::shared_ptr<Pipeline> VulkanPipeline::GetPipeline(const SHADER shader)
+const Pipeline& VulkanPipeline::GetPipeline(const SHADER shader)
 {
 	switch (shader)
 	{
 	case SHADER::NO_TEXTURE:
-		return m_no_texture_pipeline;
+		return m_pipelines[1];
 	case SHADER::TEXTURE:
-		return m_texture_pipeline;
+		return m_pipelines[2];
 	default:
-		return m_base_pipeline;
+		return m_pipelines[0];
 	}
 }
 
