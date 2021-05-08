@@ -16,7 +16,7 @@ void VulkanPipeline::CreatePipelines()
 {
 	for (size_t i = 0; i < m_pipelines.size(); i++)
 	{
-		createPipeline(m_pipelines[i], m_shader_files[i]);
+		createPipeline(m_pipelines[i], m_shaders.fragment_shader_files[i]);
 	}
 }
 
@@ -29,13 +29,13 @@ void VulkanPipeline::DestroyPipelines()
 	}
 }
 
-const Pipeline& VulkanPipeline::GetPipeline(const SHADER shader)
+const Pipeline& VulkanPipeline::GetPipeline(const TSHADER shader)
 {
 	switch (shader)
 	{
-	case SHADER::NO_TEXTURE:
+	case TSHADER::NO_TEXTURE:
 		return m_pipelines[1];
-	case SHADER::TEXTURE:
+	case TSHADER::TEXTURE:
 		return m_pipelines[2];
 	default:
 		return m_pipelines[0];

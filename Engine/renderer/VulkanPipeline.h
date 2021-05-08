@@ -5,8 +5,9 @@
 
 #include "../graphics/Vertex.h"
 #include "../graphics/Graphics.h"
+#include "../graphics/Shaders.h"
 
-enum class SHADER
+enum class TSHADER
 {
 	DEFAULT,
 	NO_TEXTURE,
@@ -22,7 +23,7 @@ public:
 	void CreatePipelines();
 	void DestroyPipelines();
 
-	const Pipeline& GetPipeline(const SHADER shader);
+	const Pipeline& GetPipeline(const TSHADER shader);
 
 private:
 	void createPipeline(Pipeline& pipeline, const std::string& shader_file);
@@ -30,9 +31,9 @@ private:
 
 	std::vector<char> readFile(const std::string& filename);//should be in other file
 
-	std::array<const std::string, 3> m_shader_files = {"assets/shaders/frag.spv", "assets/shaders/no_texture_shader.spv", "assets/shaders/texture_shader.spv"};
 	std::array<Pipeline, 3> m_pipelines;
 	Graphics & m_graphic;//should be shared ptr
+	Shaders m_shaders;
 };
 
 #endif _VULKAN_PIPELINE_H

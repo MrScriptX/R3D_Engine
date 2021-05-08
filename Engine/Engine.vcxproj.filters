@@ -173,6 +173,9 @@
     <ClInclude Include="Engine.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="graphics\Shaders.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\HLSL\no_texture_shader.frag">

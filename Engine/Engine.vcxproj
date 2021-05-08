@@ -73,6 +73,7 @@
     <ClInclude Include="graphics\Config.h" />
     <ClInclude Include="graphics\Graphics.h" />
     <ClInclude Include="graphics\Math.h" />
+    <ClInclude Include="graphics\Shaders.h" />
     <ClInclude Include="graphics\Vertex.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="renderer\Renderer.h" />
