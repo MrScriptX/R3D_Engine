@@ -26,7 +26,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	setupDescriptorSetLayout();
 	setupCommandPool();
 
-	m_pPipelineFactory = std::make_unique<VulkanPipeline>(m_graphic);
+	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_graphic);
 }
 
 
@@ -203,7 +203,7 @@ std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
 
 std::unique_ptr<VulkanPipeline>& Renderer::GetPipelineFactory()
 {
-	return m_pPipelineFactory;
+	return mp_pipelines_manager;
 }
 
 const int Renderer::getFrameIndex()
@@ -636,7 +636,7 @@ void Renderer::recreateSwapchain()
 	VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	m_pRenderpass->createRenderPass(format);
 
-	m_pPipelineFactory->CreatePipelines();
+	mp_pipelines_manager->CreatePipelines();
 	createDepthResources();
 	createFramebuffer();
 	allocateCommandBuffers();
@@ -656,7 +656,7 @@ void Renderer::cleanSwapchain()
 	
 	vkFreeCommandBuffers(m_graphic.device, m_graphic.command_pool, static_cast<uint32_t>(m_graphic.command_buffers.size()), m_graphic.command_buffers.data());
 
-	m_pPipelineFactory->DestroyPipelines();
+	mp_pipelines_manager->DestroyPipelines();
 
 	vkDestroyRenderPass(m_graphic.device, m_graphic.render_pass, nullptr);
 

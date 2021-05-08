@@ -43,7 +43,6 @@ public:
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
 	void setupCommandPool();
-	void createNewPipeline(std::shared_ptr<Pipeline> pipeline);
 
 	//getters
 	VkDevice& getDevice();
@@ -138,7 +137,7 @@ private:
 	std::unique_ptr<VulkanRenderPass> m_pRenderpass;
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
 	std::unique_ptr<VulkanCommandPool> m_commandPool;
-	std::unique_ptr<VulkanPipeline> m_pPipelineFactory;
+	std::unique_ptr<VulkanPipeline> mp_pipelines_manager;
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
 
 	size_t m_frame_index = 0;
