@@ -35,7 +35,7 @@ public:
 	Renderer(GLFWwindow& window, uint32_t width, uint32_t height);
 	~Renderer();
 
-	int32_t draw(Pipeline& pipeline);
+	int32_t draw();
 
 	void setupInstance(GLFWwindow& window);
 	void setupDevice();
@@ -43,7 +43,7 @@ public:
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
 	void setupCommandPool();
-	void createNewPipeline(Pipeline& pipeline);
+	void createNewPipeline(std::shared_ptr<Pipeline> pipeline);
 
 	//getters
 	VkDevice& getDevice();
@@ -53,6 +53,7 @@ public:
 	const size_t getNumberCommandBuffer();
 	VkFramebuffer& getFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
+	std::unique_ptr<VulkanPipeline>& GetPipelineFactory();
 	const int getFrameIndex();
 
 	//rendering
@@ -62,7 +63,7 @@ public:
 	void createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory);
 
 	void allocateCommandBuffers();
-	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer, Pipeline& pipeline);
+	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer);
 	void endRecordCommandBuffers(VkCommandBuffer& commandBuffer);
 	//!rendering
 
@@ -82,11 +83,11 @@ public:
 	//cleaning
 	void destroyUniformBuffer();
 	void destroyBuffers(Buffer& buffers);
-	void cleanSwapchain(std::shared_ptr<Pipeline> pPipeline);
+	void cleanSwapchain();
 
 
 	//init fonctions
-	void recreateSwapchain(Pipeline& pipeline);
+	void recreateSwapchain();
 	
 
 	//helper fonctions

@@ -10,7 +10,7 @@
 class Material
 {
 public:
-	Material();
+	Material(const SHADER shader, std::shared_ptr<Renderer> p_renderer);
 	~Material();
 
 	void setColor(glm::vec3 color);
@@ -21,12 +21,15 @@ public:
 
 	std::shared_ptr<glm::vec3> getColor();
 	std::shared_ptr<Texture> getTexture();
+	std::shared_ptr<Pipeline> GetPipeline();
 	VkDescriptorSet& getDescriptorSet();
 private:
 	std::shared_ptr<Texture> m_texture;
 	std::shared_ptr<glm::vec3> m_color;
 
+	const SHADER m_shader;
 	VkDescriptorSet m_descriptor_set;
+	std::shared_ptr<Renderer> mp_renderer;
 };
 
 #endif // !_MATERIAL_H

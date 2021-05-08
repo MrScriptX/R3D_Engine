@@ -32,8 +32,7 @@ private:
 	std::shared_ptr<Camera> mp_camera;
 	std::shared_ptr<Player> mp_player;
 	std::shared_ptr<Config> mp_config;
-
-	Pipeline base_pipeline;
+	
 	std::chrono::steady_clock::time_point m_last_time;
 };
 

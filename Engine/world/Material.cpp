@@ -1,6 +1,6 @@
 #include "Material.h"
 
-Material::Material()
+Material::Material(const SHADER shader, std::shared_ptr<Renderer> p_renderer) : m_shader(shader), mp_renderer(p_renderer)
 {
 	m_descriptor_set = VK_NULL_HANDLE;
 }
@@ -37,12 +37,17 @@ void Material::destroyTexture()
 
 std::shared_ptr<glm::vec3> Material::getColor()
 {
-	return std::shared_ptr<glm::vec3>();
+	return m_color;
 }
 
 std::shared_ptr<Texture> Material::getTexture()
 {
 	return m_texture;
+}
+
+std::shared_ptr<Pipeline> Material::GetPipeline()
+{
+	return mp_renderer->GetPipelineFactory()->GetPipeline(m_shader);
 }
 
 VkDescriptorSet& Material::getDescriptorSet()

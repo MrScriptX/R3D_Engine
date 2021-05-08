@@ -44,11 +44,11 @@ R3DResult Scene::removeGameObject(std::shared_ptr<GameObject> gameobject)
 	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }
 
-void Scene::render(Pipeline& pipeline, VkCommandBuffer& command_buffer, const int i)
+void Scene::render(VkCommandBuffer& command_buffer, const int i)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
-		vp_objects[i]->registerDrawCmd(command_buffer, pipeline);
+		vp_objects[i]->registerDrawCmd(command_buffer);
 	}
 
 	m_changed[i] = false;

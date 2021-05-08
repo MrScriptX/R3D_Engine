@@ -175,10 +175,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\shaders\shader.frag">
+    <None Include="assets\shaders\HLSL\no_texture_shader.frag">
       <Filter>Asset</Filter>
     </None>
-    <None Include="..\shaders\shader.vert">
+    <None Include="assets\shaders\HLSL\shader.vert">
+      <Filter>Asset</Filter>
+    </None>
+    <None Include="assets\shaders\HLSL\shader_compiler.bat">
+      <Filter>Asset</Filter>
+    </None>
+    <None Include="assets\shaders\HLSL\texture_shader.frag">
       <Filter>Asset</Filter>
     </None>
   </ItemGroup>

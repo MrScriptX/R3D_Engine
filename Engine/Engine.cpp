@@ -12,8 +12,8 @@ Engine::Engine()
 
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
 
+	// create pipelines
 
-	mp_renderer->createNewPipeline(base_pipeline);
 	mp_renderer->createDepthResources();
 	mp_renderer->createFramebuffer();
 
@@ -25,7 +25,7 @@ Engine::~Engine()
 {
 	vkDeviceWaitIdle(mp_renderer->getDevice());
 
-	mp_renderer->cleanSwapchain(std::make_shared<Pipeline>(base_pipeline));
+	mp_renderer->cleanSwapchain();
 
 	for (size_t i = 0; i < mp_scene->getObjects().size(); i++)
 	{
@@ -83,9 +83,9 @@ void Engine::update()
 	const int frame = mp_renderer->getFrameIndex();
 	if (mp_scene->isUpdate(frame))
 	{
-		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame), base_pipeline);
+		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
 
-		mp_scene->render(base_pipeline, mp_renderer->getCommandBuffer(frame), frame);
+		mp_scene->render(mp_renderer->getCommandBuffer(frame), frame);
 
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
 	}
@@ -98,5 +98,5 @@ void Engine::update()
 
 void Engine::draw()
 {
-	mp_renderer->draw(base_pipeline);
+	mp_renderer->draw();
 }

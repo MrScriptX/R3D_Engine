@@ -14,7 +14,7 @@ public:
 
 	void destroy();
 
-	void registerDrawCmd(VkCommandBuffer& command_buffer, Pipeline& pipeline);
+	void registerDrawCmd(VkCommandBuffer& command_buffer);
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
 	void loadMesh(const std::string& mesh_path);

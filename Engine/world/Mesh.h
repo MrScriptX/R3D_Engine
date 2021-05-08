@@ -21,7 +21,7 @@ public:
 	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
 	~Mesh();
 
-	void draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline);
+	void draw(const VkCommandBuffer& command_buffer);
 	void loadModel();
 	void bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
 	void createBuffer(std::shared_ptr<Renderer> engine);

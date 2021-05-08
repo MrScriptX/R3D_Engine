@@ -4,6 +4,7 @@
 
 VulkanPipeline::VulkanPipeline(Graphics & m_graphic) : m_graphic(m_graphic)
 {
+	CreatePipelines();
 }
 
 
@@ -11,7 +12,7 @@ VulkanPipeline::~VulkanPipeline()
 {
 }
 
-void VulkanPipeline::createPipeline(Pipeline& pipeline)
+void VulkanPipeline::createPipeline(std::shared_ptr<Pipeline> p_pipeline)
 {
 	auto bindingDescription = Vertex::getBindingDescription();
 	auto attributeDescriptions = Vertex::getAttributeDescriptions();
@@ -114,7 +115,7 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline)
 	pipelineLayoutInfo.setLayoutCount = 1;
 	pipelineLayoutInfo.pSetLayouts = &m_graphic.descriptor_set_layout;
 
-	if (vkCreatePipelineLayout(m_graphic.device, &pipelineLayoutInfo, nullptr, &pipeline.layout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(m_graphic.device, &pipelineLayoutInfo, nullptr, &p_pipeline->layout) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create pipeline layout!");
 	}
@@ -130,12 +131,12 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline)
 	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pDepthStencilState = &depthStencil;
 	pipelineInfo.pColorBlendState = &colorBlending;
-	pipelineInfo.layout = pipeline.layout;
+	pipelineInfo.layout = p_pipeline->layout;
 	pipelineInfo.renderPass = m_graphic.render_pass;
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateGraphicsPipelines(m_graphic.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.handle) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(m_graphic.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &p_pipeline->handle) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create graphics pipeline!");
 	}
@@ -144,9 +145,45 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline)
 	vkDestroyShaderModule(m_graphic.device, vertShaderModule, nullptr);
 }
 
-void VulkanPipeline::bindPipeline(VkCommandBuffer& commandBuffer, Pipeline& pipeline)
+void VulkanPipeline::bindPipeline(VkCommandBuffer& commandBuffer, std::shared_ptr<Pipeline> pipeline)
 {
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle);
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->handle);
+}
+
+void VulkanPipeline::CreatePipelines()
+{
+	m_base_pipeline = std::make_shared<Pipeline>();
+	m_no_texture_pipeline = std::make_shared<Pipeline>();
+	m_texture_pipeline = std::make_shared<Pipeline>();
+
+	createPipeline(m_base_pipeline);
+	createPipeline(m_no_texture_pipeline);
+	createPipeline(m_texture_pipeline);
+}
+
+void VulkanPipeline::DestroyPipelines()
+{
+	vkDestroyPipeline(m_graphic.device, m_base_pipeline->handle, nullptr);
+	vkDestroyPipelineLayout(m_graphic.device, m_base_pipeline->layout, nullptr);
+
+	vkDestroyPipeline(m_graphic.device, m_no_texture_pipeline->handle, nullptr);
+	vkDestroyPipelineLayout(m_graphic.device, m_no_texture_pipeline->layout, nullptr);
+
+	vkDestroyPipeline(m_graphic.device, m_texture_pipeline->handle, nullptr);
+	vkDestroyPipelineLayout(m_graphic.device, m_texture_pipeline->layout, nullptr);
+}
+
+std::shared_ptr<Pipeline> VulkanPipeline::GetPipeline(const SHADER shader)
+{
+	switch (shader)
+	{
+	case SHADER::NO_TEXTURE:
+		return m_no_texture_pipeline;
+	case SHADER::TEXTURE:
+		return m_texture_pipeline;
+	default:
+		return m_base_pipeline;
+	}
 }
 
 std::vector<char> VulkanPipeline::readFile(const std::string & filename)
