@@ -19,21 +19,20 @@ public:
 	VulkanPipeline(Graphics & m_graphic);
 	~VulkanPipeline();
 
-	void createPipeline(Pipeline& pipeline);
-	void bindPipeline(VkCommandBuffer& commandBuffer, std::shared_ptr<Pipeline> pipeline);
 	void CreatePipelines();
 	void DestroyPipelines();
 
 	const Pipeline& GetPipeline(const SHADER shader);
 
 private:
-
-	std::vector<char> readFile(const std::string& filename);
+	void createPipeline(Pipeline& pipeline, const std::string& shader_file);
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 
-	std::array<Pipeline, 3> m_pipelines;
+	std::vector<char> readFile(const std::string& filename);//should be in other file
 
-	Graphics & m_graphic;
+	std::array<const std::string, 3> m_shader_files = {"assets/shaders/frag.spv", "assets/shaders/no_texture_shader.spv", "assets/shaders/texture_shader.spv"};
+	std::array<Pipeline, 3> m_pipelines;
+	Graphics & m_graphic;//should be shared ptr
 };
 
 #endif _VULKAN_PIPELINE_H

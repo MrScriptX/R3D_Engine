@@ -12,13 +12,43 @@ VulkanPipeline::~VulkanPipeline()
 {
 }
 
-void VulkanPipeline::createPipeline(Pipeline& pipeline)
+void VulkanPipeline::CreatePipelines()
+{
+	for (size_t i = 0; i < m_pipelines.size(); i++)
+	{
+		createPipeline(m_pipelines[i], m_shader_files[i]);
+	}
+}
+
+void VulkanPipeline::DestroyPipelines()
+{
+	for (size_t i = 0; i < m_pipelines.size(); i++)
+	{
+		vkDestroyPipeline(m_graphic.device, m_pipelines[i].handle, nullptr);
+		vkDestroyPipelineLayout(m_graphic.device, m_pipelines[i].layout, nullptr);
+	}
+}
+
+const Pipeline& VulkanPipeline::GetPipeline(const SHADER shader)
+{
+	switch (shader)
+	{
+	case SHADER::NO_TEXTURE:
+		return m_pipelines[1];
+	case SHADER::TEXTURE:
+		return m_pipelines[2];
+	default:
+		return m_pipelines[0];
+	}
+}
+
+void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& shader_file)
 {
 	auto bindingDescription = Vertex::getBindingDescription();
 	auto attributeDescriptions = Vertex::getAttributeDescriptions();
 
 	auto vertShaderCode = readFile("assets/shaders/vert.spv");
-	auto fragShaderCode = readFile("assets/shaders/texture_shader.spv");
+	auto fragShaderCode = readFile(shader_file);
 
 	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
 	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
@@ -145,39 +175,20 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline)
 	vkDestroyShaderModule(m_graphic.device, vertShaderModule, nullptr);
 }
 
-void VulkanPipeline::bindPipeline(VkCommandBuffer& commandBuffer, std::shared_ptr<Pipeline> pipeline)
+VkShaderModule VulkanPipeline::createShaderModule(const std::vector<char>& code)
 {
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->handle);
-}
+	VkShaderModuleCreateInfo shader_module_info = {};
+	shader_module_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	shader_module_info.codeSize = code.size();
+	shader_module_info.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
-void VulkanPipeline::CreatePipelines()
-{
-	for (size_t i = 0; i < m_pipelines.size(); i++)
+	VkShaderModule shaderModule;
+	if (vkCreateShaderModule(m_graphic.device, &shader_module_info, nullptr, &shaderModule) != VK_SUCCESS)
 	{
-		createPipeline(m_pipelines[i]);
+		throw std::runtime_error("failed to create shader module!");
 	}
-}
 
-void VulkanPipeline::DestroyPipelines()
-{
-	for (size_t i = 0; i < m_pipelines.size(); i++)
-	{
-		vkDestroyPipeline(m_graphic.device, m_pipelines[i].handle, nullptr);
-		vkDestroyPipelineLayout(m_graphic.device, m_pipelines[i].layout, nullptr);
-	}
-}
-
-const Pipeline& VulkanPipeline::GetPipeline(const SHADER shader)
-{
-	switch (shader)
-	{
-	case SHADER::NO_TEXTURE:
-		return m_pipelines[1];
-	case SHADER::TEXTURE:
-		return m_pipelines[2];
-	default:
-		return m_pipelines[0];
-	}
+	return shaderModule;
 }
 
 std::vector<char> VulkanPipeline::readFile(const std::string & filename)
@@ -198,20 +209,4 @@ std::vector<char> VulkanPipeline::readFile(const std::string & filename)
 	file.close();
 
 	return buffer;
-}
-
-VkShaderModule VulkanPipeline::createShaderModule(const std::vector<char>& code)
-{
-	VkShaderModuleCreateInfo shader_module_info = {};
-	shader_module_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	shader_module_info.codeSize = code.size();
-	shader_module_info.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-	VkShaderModule shaderModule;
-	if (vkCreateShaderModule(m_graphic.device, &shader_module_info, nullptr, &shaderModule) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to create shader module!");
-	}
-
-	return shaderModule;
 }

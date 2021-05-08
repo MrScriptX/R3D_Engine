@@ -7,7 +7,7 @@ int main()
 		Engine engine;
 		Logger::init();
 
-		std::shared_ptr<Material> room_texture = std::make_shared<Material>(SHADER::DEFAULT, engine.getRenderEngine());
+		std::shared_ptr<Material> room_texture = std::make_shared<Material>(SHADER::TEXTURE, engine.getRenderEngine());
 		room_texture->loadTexture("assets/textures/viking_room.png", engine.getRenderEngine());
 
 		std::shared_ptr<GameObject> room = std::make_shared<GameObject>(engine.getRenderEngine());
