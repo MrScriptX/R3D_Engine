@@ -36,18 +36,6 @@ void Player::updateRotation(const double& xpos, const double& ypos)
 
 	mp_camera->setYaw(mp_camera->getYaw() + (mouse_delta.x * sensibility));
 	mp_camera->setPitch(mp_camera->getPitch() + (mouse_delta.y * sensibility));
-
-
-	/*glm::vec3 forward = { 0.0f, 0.0f, 0.0f };
-	forward.x = glm::cos(mp_camera->getYaw()) * glm::sin(mp_camera->getPitch());
-	forward.y = glm::sin(mp_camera->getYaw());
-	forward.z = glm::cos(mp_camera->getYaw()) * glm::cos(mp_camera->getPitch());
-
-	glm::vec3 normal = glm::vec3(glm::sin(mp_camera->getPitch() - 3.14f / 2.0f), 0, glm::cos(mp_camera->getPitch() - 3.14f / 2.0f));
-
-	glm::vec3 up = glm::cross(normal, forward);
-
-	mp_camera->setRotation(up);*/
 }
 
 void Player::updatePosition()
