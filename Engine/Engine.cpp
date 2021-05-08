@@ -56,21 +56,28 @@ void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
 	mp_scene->addGameObject(gameobject);
 }
 
-const Material Engine::CreateMaterial(const TSHADER shader)
+const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader)
 {
-	return Material(shader, mp_renderer);
+	return std::make_shared<Material>(shader, mp_renderer);
 }
 
-const Material Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file)
+const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file)
 {
-	Material mat(shader, mp_renderer);
-	mat.LoadTexture(texture_file);
+	std::shared_ptr<Material> mat = std::make_shared<Material>(shader, mp_renderer);
+	mat->LoadTexture(texture_file);
 	return mat;
 }
 
-const GameObject Engine::CreateGameObject()
+const std::shared_ptr<GameObject> Engine::CreateGameObject()
 {
-	return GameObject(mp_renderer);
+	return std::make_shared<GameObject>(mp_renderer);
+}
+
+const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& object_file)
+{
+	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(mp_renderer);
+	go->loadMesh(object_file);
+	return go;
 }
 
 const bool& Engine::shouldClose()

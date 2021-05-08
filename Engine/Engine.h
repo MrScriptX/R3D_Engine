@@ -20,11 +20,12 @@ public:
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
 
 	// CREATE MATERIAL
-	const Material CreateMaterial(const TSHADER shader);
-	const Material CreateMaterial(const TSHADER shader, const std::string& texture_file);
+	const std::shared_ptr<Material> CreateMaterial(const TSHADER shader);
+	const std::shared_ptr<Material> CreateMaterial(const TSHADER shader, const std::string& texture_file);
 
 	// CREATE GAMEOBJECT
-	const GameObject CreateGameObject();
+	const std::shared_ptr<GameObject> CreateGameObject();
+	const std::shared_ptr<GameObject> CreateGameObject(const std::string& object_file);
 
 	const bool& shouldClose();
 
