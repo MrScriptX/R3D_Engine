@@ -12,8 +12,6 @@ Engine::Engine()
 
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
 
-	// create pipelines
-
 	mp_renderer->createDepthResources();
 	mp_renderer->createFramebuffer();
 
@@ -61,6 +59,18 @@ void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
 std::shared_ptr<Renderer> Engine::getRenderEngine()
 {
 	return mp_renderer;
+}
+
+const Material Engine::CreateMaterial(const TSHADER shader)
+{
+	return Material(shader, mp_renderer);
+}
+
+const Material Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file)
+{
+	Material mat(shader, mp_renderer);
+	mat.loadTexture(texture_file, mp_renderer);
+	return mat;
 }
 
 const bool& Engine::shouldClose()

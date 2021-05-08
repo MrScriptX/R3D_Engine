@@ -21,6 +21,10 @@ public:
 
 	std::shared_ptr<Renderer> getRenderEngine();
 
+	// CREATE MATERIAL
+	const Material CreateMaterial(const TSHADER shader);
+	const Material CreateMaterial(const TSHADER shader, const std::string& texture_file);
+
 	const bool& shouldClose();
 
 private:
