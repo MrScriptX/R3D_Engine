@@ -21,15 +21,15 @@ void Material::clearColor()
 	m_color = nullptr;
 }
 
-void Material::loadTexture(const std::string& texture_path, std::shared_ptr<Renderer> renderer)
+void Material::LoadTexture(const std::string& texture_path)
 {
-	m_texture = std::make_shared<Texture>(texture_path, renderer);
+	m_texture = std::make_shared<Texture>(texture_path, mp_renderer);
 	m_texture->createTextureImage();
 	m_texture->createTextureImageView();
 	m_texture->createTextureSampler();
 }
 
-void Material::destroyTexture()
+void Material::DestroyTexture()
 {
 	m_texture.reset();
 	m_texture = nullptr;

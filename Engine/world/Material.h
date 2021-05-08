@@ -16,8 +16,8 @@ public:
 	void setColor(glm::vec3 color);
 	void clearColor();
 
-	void loadTexture(const std::string& texture_path, std::shared_ptr<Renderer> renderer);
-	void destroyTexture();
+	void LoadTexture(const std::string& texture_path);
+	void DestroyTexture();
 
 	std::shared_ptr<glm::vec3> getColor();
 	std::shared_ptr<Texture> getTexture();

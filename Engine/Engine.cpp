@@ -69,7 +69,7 @@ const Material Engine::CreateMaterial(const TSHADER shader)
 const Material Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file)
 {
 	Material mat(shader, mp_renderer);
-	mat.loadTexture(texture_file, mp_renderer);
+	mat.LoadTexture(texture_file);
 	return mat;
 }
 
