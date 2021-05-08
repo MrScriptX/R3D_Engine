@@ -19,11 +19,12 @@ public:
 	void setScene(std::shared_ptr<Scene> p_scene);
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
 
-	std::shared_ptr<Renderer> getRenderEngine();
-
 	// CREATE MATERIAL
 	const Material CreateMaterial(const TSHADER shader);
 	const Material CreateMaterial(const TSHADER shader, const std::string& texture_file);
+
+	// CREATE GAMEOBJECT
+	const GameObject CreateGameObject();
 
 	const bool& shouldClose();
 

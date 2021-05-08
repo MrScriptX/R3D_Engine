@@ -11,7 +11,7 @@ int main()
 		//std::shared_ptr<Material> room_texture = std::make_shared<Material>(TSHADER::NO_TEXTURE, engine.getRenderEngine());
 		//room_texture->loadTexture("assets/textures/viking_room.png", engine.getRenderEngine());
 
-		std::shared_ptr<GameObject> room = std::make_shared<GameObject>(engine.getRenderEngine());
+		std::shared_ptr<GameObject> room = std::make_shared<GameObject>(engine.CreateGameObject());
 		room->loadMesh("assets/models/viking_room.obj");
 		room->bindMatToMesh(0, room_texture);
 		room->setPosition({ 3.0f, 0.0f, 0.0f });

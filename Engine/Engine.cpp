@@ -29,7 +29,7 @@ Engine::~Engine()
 	{
 		for (size_t t = 0; t < mp_scene->getObjects()[i]->getMeshesCount(); t++)
 		{
-			mp_scene->getObjects()[i]->getMesh(t).getMaterial()->destroyTexture();
+			mp_scene->getObjects()[i]->getMesh(t).getMaterial()->DestroyTexture();
 			mp_scene->getObjects()[i]->getMesh(t).destroyMesh();
 		}
 
@@ -56,11 +56,6 @@ void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
 	mp_scene->addGameObject(gameobject);
 }
 
-std::shared_ptr<Renderer> Engine::getRenderEngine()
-{
-	return mp_renderer;
-}
-
 const Material Engine::CreateMaterial(const TSHADER shader)
 {
 	return Material(shader, mp_renderer);
@@ -71,6 +66,11 @@ const Material Engine::CreateMaterial(const TSHADER shader, const std::string& t
 	Material mat(shader, mp_renderer);
 	mat.LoadTexture(texture_file);
 	return mat;
+}
+
+const GameObject Engine::CreateGameObject()
+{
+	return GameObject(mp_renderer);
 }
 
 const bool& Engine::shouldClose()
