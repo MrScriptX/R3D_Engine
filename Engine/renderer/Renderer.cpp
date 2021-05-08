@@ -17,7 +17,6 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	WIDTH = std::make_unique<uint32_t>(width);
 	HEIGHT = std::make_unique<uint32_t>(height);
 
-	m_pPipelineFactory = std::make_unique<VulkanPipeline>(m_graphic);
 	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_graphic);
 
 	setupInstance(window);
@@ -26,6 +25,8 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	setupRenderPass();
 	setupDescriptorSetLayout();
 	setupCommandPool();
+
+	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_graphic);
 }
 
 
@@ -51,7 +52,7 @@ Renderer::~Renderer()
 	vkDestroyInstance(m_graphic.instance, nullptr);
 }
 
-int32_t Renderer::draw(Pipeline& pipeline)
+int32_t Renderer::draw()
 {
 	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max());
 	vkResetFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_frame_index]);
@@ -67,7 +68,7 @@ int32_t Renderer::draw(Pipeline& pipeline)
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
-		recreateSwapchain(pipeline);
+		recreateSwapchain();
 		return 1;
 	}
 	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
@@ -118,7 +119,7 @@ int32_t Renderer::draw(Pipeline& pipeline)
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 	{
-		recreateSwapchain(pipeline);
+		recreateSwapchain();
 		return 1;
 	}
 	else if (result != VK_SUCCESS)
@@ -165,11 +166,6 @@ void Renderer::setupCommandPool()
 	m_commandPool = std::make_unique<VulkanCommandPool>(m_graphic);
 }
 
-void Renderer::createNewPipeline(Pipeline& pipeline)
-{
-	m_pPipelineFactory->createPipeline(pipeline);
-}
-
 VkDevice& Renderer::getDevice()
 {
 	return m_graphic.device;
@@ -203,6 +199,11 @@ VkCommandBuffer& Renderer::getCommandBuffer(const size_t& i)
 std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
 {
 	return m_pBufferFactory;
+}
+
+std::unique_ptr<VulkanPipeline>& Renderer::GetPipelineFactory()
+{
+	return mp_pipelines_manager;
 }
 
 const int Renderer::getFrameIndex()
@@ -294,7 +295,7 @@ void Renderer::allocateCommandBuffers()
 	}
 }
 
-void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFramebuffer& frameBuffer, Pipeline & pipeline)
+void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFramebuffer& frameBuffer)
 {
 	std::array<VkClearValue, 2> clear_values = {};
 	clear_values[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -322,7 +323,6 @@ void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFram
 	renderPassInfo.pClearValues = clear_values.data();
 
 	m_pRenderpass->beginRenderPass(commandBuffer, renderPassInfo);
-	m_pPipelineFactory->bindPipeline(commandBuffer, pipeline);
 }
 
 void Renderer::endRecordCommandBuffers(VkCommandBuffer & commandBuffer)
@@ -492,20 +492,15 @@ void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
 	}
 }
 
-void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler)
+void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set)
 {
+	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
+
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = ubo;
 	bufferInfo.offset = 0;
 	bufferInfo.range = sizeof(UniformBufferObject);
 
-	VkDescriptorImageInfo imageInfo = {};
-	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	imageInfo.imageView = image_view;
-	imageInfo.sampler = image_sampler;
-
-
-	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = descriptor_set;
 	descriptorWrites[0].dstBinding = 0;
@@ -513,6 +508,31 @@ void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& d
 	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrites[0].descriptorCount = 1;
 	descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+	vkUpdateDescriptorSets(m_graphic.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler)
+{
+	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
+
+	VkDescriptorBufferInfo bufferInfo = {};
+	bufferInfo.buffer = ubo;
+	bufferInfo.offset = 0;
+	bufferInfo.range = sizeof(UniformBufferObject);
+
+	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[0].dstSet = descriptor_set;
+	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstArrayElement = 0;
+	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrites[0].descriptorCount = 1;
+	descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+	VkDescriptorImageInfo imageInfo = {};
+	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	imageInfo.imageView = image_view;
+	imageInfo.sampler = image_sampler;
 
 	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[1].dstSet = descriptor_set;
@@ -605,10 +625,10 @@ void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkI
 	vkBindImageMemory(m_graphic.device, image, imageMemory, 0);
 }
 
-void Renderer::recreateSwapchain(Pipeline& pipeline)
+void Renderer::recreateSwapchain()
 {
 	vkDeviceWaitIdle(m_graphic.device);
-	cleanSwapchain(std::make_shared<Pipeline>(pipeline));
+	cleanSwapchain();
 
 
 	m_swapchain->createSwapchain();
@@ -616,13 +636,13 @@ void Renderer::recreateSwapchain(Pipeline& pipeline)
 	VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	m_pRenderpass->createRenderPass(format);
 
-	createNewPipeline(pipeline);
+	mp_pipelines_manager->CreatePipelines();
 	createDepthResources();
 	createFramebuffer();
 	allocateCommandBuffers();
 }
 
-void Renderer::cleanSwapchain(std::shared_ptr<Pipeline> pPipeline)
+void Renderer::cleanSwapchain()
 {
 	vkDestroyImageView(m_graphic.device, m_graphic.depth_view, nullptr);
 	vkDestroyImage(m_graphic.device, m_graphic.depth_image, nullptr);
@@ -636,8 +656,7 @@ void Renderer::cleanSwapchain(std::shared_ptr<Pipeline> pPipeline)
 	
 	vkFreeCommandBuffers(m_graphic.device, m_graphic.command_pool, static_cast<uint32_t>(m_graphic.command_buffers.size()), m_graphic.command_buffers.data());
 
-	vkDestroyPipeline(m_graphic.device, pPipeline->handle, nullptr);
-	vkDestroyPipelineLayout(m_graphic.device, pPipeline->layout, nullptr);
+	mp_pipelines_manager->DestroyPipelines();
 
 	vkDestroyRenderPass(m_graphic.device, m_graphic.render_pass, nullptr);
 

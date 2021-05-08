@@ -22,11 +22,11 @@ void GameObject::destroy()
 	vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory, nullptr);
 }
 
-void GameObject::registerDrawCmd(VkCommandBuffer& command_buffer, Pipeline& pipeline)
+void GameObject::registerDrawCmd(VkCommandBuffer& command_buffer)
 {
 	for (size_t i = 0; i < m_meshes.size(); i++)
 	{
-		m_meshes[i].draw(command_buffer, pipeline);
+		m_meshes[i].draw(command_buffer);
 	}
 }
 

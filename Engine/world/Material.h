@@ -10,15 +10,26 @@
 class Material
 {
 public:
-	Material();
+	Material(const TSHADER shader, std::shared_ptr<Renderer> p_renderer);
 	~Material();
 
-	void loadTexture(const std::string& texture_path, std::shared_ptr<Renderer> renderer);
-	std::shared_ptr<Texture> getTexture();
-	void destroyTexture();
+	void setColor(glm::vec3 color);
+	void clearColor();
 
+	void LoadTexture(const std::string& texture_path);
+	void DestroyTexture();
+
+	std::shared_ptr<glm::vec3> getColor();
+	std::shared_ptr<Texture> getTexture();
+	const Pipeline& GetPipeline();
+	VkDescriptorSet& getDescriptorSet();
 private:
 	std::shared_ptr<Texture> m_texture;
+	std::shared_ptr<glm::vec3> m_color;
+
+	const TSHADER m_shader;
+	VkDescriptorSet m_descriptor_set;
+	std::shared_ptr<Renderer> mp_renderer;
 };
 
 #endif // !_MATERIAL_H

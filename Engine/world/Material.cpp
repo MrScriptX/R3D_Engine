@@ -1,7 +1,8 @@
 #include "Material.h"
 
-Material::Material()
+Material::Material(const TSHADER shader, std::shared_ptr<Renderer> p_renderer) : m_shader(shader), mp_renderer(p_renderer)
 {
+	m_descriptor_set = VK_NULL_HANDLE;
 }
 
 Material::~Material()
@@ -9,12 +10,34 @@ Material::~Material()
 	m_texture.reset();
 }
 
-void Material::loadTexture(const std::string& texture_path, std::shared_ptr<Renderer> renderer)
+void Material::setColor(glm::vec3 color)
 {
-	m_texture = std::make_shared<Texture>(texture_path, renderer);
+	m_color = std::make_shared<glm::vec3>(color);
+}
+
+void Material::clearColor()
+{
+	m_color.reset();
+	m_color = nullptr;
+}
+
+void Material::LoadTexture(const std::string& texture_path)
+{
+	m_texture = std::make_shared<Texture>(texture_path, mp_renderer);
 	m_texture->createTextureImage();
 	m_texture->createTextureImageView();
 	m_texture->createTextureSampler();
+}
+
+void Material::DestroyTexture()
+{
+	m_texture.reset();
+	m_texture = nullptr;
+}
+
+std::shared_ptr<glm::vec3> Material::getColor()
+{
+	return m_color;
 }
 
 std::shared_ptr<Texture> Material::getTexture()
@@ -22,8 +45,12 @@ std::shared_ptr<Texture> Material::getTexture()
 	return m_texture;
 }
 
-void Material::destroyTexture()
+const Pipeline& Material::GetPipeline()
 {
-	m_texture.reset();
-	m_texture = nullptr;
+	return mp_renderer->GetPipelineFactory()->GetPipeline(m_shader);
+}
+
+VkDescriptorSet& Material::getDescriptorSet()
+{
+	return m_descriptor_set;
 }

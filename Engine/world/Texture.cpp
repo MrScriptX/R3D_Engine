@@ -10,7 +10,6 @@ Texture::Texture(const std::string& texture_path, std::shared_ptr<Renderer> p_re
 	m_texture_view = VK_NULL_HANDLE;
 	m_texture_sampler = VK_NULL_HANDLE;
 	m_texture_memory = VK_NULL_HANDLE;
-	m_descriptor_set = VK_NULL_HANDLE;
 }
 
 Texture::~Texture()
@@ -99,9 +98,4 @@ const VkImageView& Texture::getImageView()
 const VkSampler& Texture::getSampler()
 {
 	return m_texture_sampler;
-}
-
-VkDescriptorSet& Texture::getDescriptorSet()
-{
-	return m_descriptor_set;
 }

@@ -1,5 +1,8 @@
 #include "Mesh.h"
 
+Mesh::Mesh(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
+{
+}
 
 Mesh::Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_obj_path(obj_path), mp_renderer(p_renderer)
 {
@@ -10,15 +13,17 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::draw(const VkCommandBuffer& command_buffer, const Pipeline& pipeline)
+void Mesh::draw(const VkCommandBuffer& command_buffer)
 {
+	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().handle);
+
 	VkBuffer vertex_buffer[] = { m_buffer.vertex };
 	VkDeviceSize offsets[] = { 0 };
 
 	vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffer, offsets);
 	vkCmdBindIndexBuffer(command_buffer, m_buffer.index, 0, VK_INDEX_TYPE_UINT32);
 
-	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 1, &p_material->getTexture()->getDescriptorSet(), 0, nullptr);
+	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, &p_material->getDescriptorSet(), 0, nullptr);
 
 	vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
 }
@@ -67,8 +72,16 @@ void Mesh::loadModel()
 
 void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer)
 {
-	renderer->allocateDescriptorSet(mat->getTexture()->getDescriptorSet());
-	renderer->updateDescriptorSet(ubo, mat->getTexture()->getDescriptorSet(), mat->getTexture()->getImageView(), mat->getTexture()->getSampler());
+	renderer->allocateDescriptorSet(mat->getDescriptorSet());
+
+	if (mat->getTexture() == nullptr)
+	{
+		renderer->updateDescriptorSet(ubo, mat->getDescriptorSet());
+	}
+	else
+	{
+		renderer->updateDescriptorSet(ubo, mat->getDescriptorSet(), mat->getTexture()->getImageView(), mat->getTexture()->getSampler());
+	}
 
 	p_material = mat;
 }

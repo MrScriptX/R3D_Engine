@@ -35,7 +35,7 @@ public:
 	Renderer(GLFWwindow& window, uint32_t width, uint32_t height);
 	~Renderer();
 
-	int32_t draw(Pipeline& pipeline);
+	int32_t draw();
 
 	void setupInstance(GLFWwindow& window);
 	void setupDevice();
@@ -43,7 +43,6 @@ public:
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
 	void setupCommandPool();
-	void createNewPipeline(Pipeline& pipeline);
 
 	//getters
 	VkDevice& getDevice();
@@ -53,6 +52,7 @@ public:
 	const size_t getNumberCommandBuffer();
 	VkFramebuffer& getFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
+	std::unique_ptr<VulkanPipeline>& GetPipelineFactory();
 	const int getFrameIndex();
 
 	//rendering
@@ -62,7 +62,7 @@ public:
 	void createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory);
 
 	void allocateCommandBuffers();
-	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer, Pipeline& pipeline);
+	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer);
 	void endRecordCommandBuffers(VkCommandBuffer& commandBuffer);
 	//!rendering
 
@@ -74,6 +74,7 @@ public:
 	void createDescriptorLayout();
 	void createDescriptorPool();
 	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
+	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set);
 	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
 	void createDepthResources();
 
@@ -81,11 +82,11 @@ public:
 	//cleaning
 	void destroyUniformBuffer();
 	void destroyBuffers(Buffer& buffers);
-	void cleanSwapchain(std::shared_ptr<Pipeline> pPipeline);
+	void cleanSwapchain();
 
 
 	//init fonctions
-	void recreateSwapchain(Pipeline& pipeline);
+	void recreateSwapchain();
 	
 
 	//helper fonctions
@@ -136,7 +137,7 @@ private:
 	std::unique_ptr<VulkanRenderPass> m_pRenderpass;
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
 	std::unique_ptr<VulkanCommandPool> m_commandPool;
-	std::unique_ptr<VulkanPipeline> m_pPipelineFactory;
+	std::unique_ptr<VulkanPipeline> mp_pipelines_manager;
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
 
 	size_t m_frame_index = 0;
