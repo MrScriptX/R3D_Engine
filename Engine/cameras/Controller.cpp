@@ -7,22 +7,25 @@ Controller::Controller(std::shared_ptr<Camera> p_camera)
 
 	// Set default controls
 	std::function<void()> default_func = [this]() { mp_camera->MoveForward(2.0f); };
-	SetKeyToFunc(GLFW_KEY_W, default_func);
+	SetKeyToFunc(GLFW_KEY_W, default_func, ActionType::R3D_HOLD);
 
 	default_func = [this]() { mp_camera->MoveBackward(2.0f); };
-	SetKeyToFunc(GLFW_KEY_S, default_func);
+	SetKeyToFunc(GLFW_KEY_S, default_func, ActionType::R3D_HOLD);
 
 	default_func = [this]() { mp_camera->MoveLeft(2.0f); };
-	SetKeyToFunc(GLFW_KEY_A, default_func);
+	SetKeyToFunc(GLFW_KEY_A, default_func, ActionType::R3D_HOLD);
 
 	default_func = [this]() { mp_camera->MoveRight(2.0f); };
-	SetKeyToFunc(GLFW_KEY_D, default_func);
+	SetKeyToFunc(GLFW_KEY_D, default_func, ActionType::R3D_HOLD);
 
 	default_func = [this]() { mp_camera->MoveUp(2.0f); };
-	SetKeyToFunc(GLFW_KEY_LEFT_SHIFT, default_func);
+	SetKeyToFunc(GLFW_KEY_LEFT_SHIFT, default_func, ActionType::R3D_HOLD);
 
 	default_func = [this]() { mp_camera->MoveDown(2.0f); };
-	SetKeyToFunc(GLFW_KEY_LEFT_CONTROL, default_func);
+	SetKeyToFunc(GLFW_KEY_LEFT_CONTROL, default_func, ActionType::R3D_HOLD);
+
+	m_onpress_actions = std::make_unique<std::array<std::function<void()>, 348>>();
+	m_onrelease_actions = std::make_unique<std::array<std::function<void()>, 348>>();
 }
 
 
@@ -35,16 +38,36 @@ void Controller::setInput(int32_t key, int32_t scancode, int32_t mods, int32_t a
 	if (action == GLFW_PRESS)
 	{
 		m_keyboard_press.set(key, true);
+
+		if(m_onpress_actions->at(key))
+			m_onpress_actions->at(key)();
 	}
 	else if (action == GLFW_RELEASE)
 	{
 		m_keyboard_press.set(key, false);
+
+		if(m_onrelease_actions->at(key))
+			m_onrelease_actions->at(key)();
 	}
 }
 
-void Controller::SetKeyToFunc(const int32_t& key, std::function<void()>& func)
+void Controller::SetKeyToFunc(const int32_t& key, std::function<void()>& func, const ActionType& type)
 {
-	m_actions.push_back({ key, func });
+	switch (type)
+	{
+	case ActionType::RED_RELEASE:
+		m_onrelease_actions->at(key) = func;
+		break;
+	case ActionType::R3D_PRESS:
+		m_onpress_actions->at(key) = func;
+		break;
+	case ActionType::R3D_HOLD:
+		m_hold_actions.push_back({ key, func });
+		break;
+	default:
+		m_hold_actions.push_back({ key, func });
+		break;
+	}
 }
 
 void Controller::updateRotation(const double& xpos, const double& ypos)
@@ -59,11 +82,11 @@ void Controller::updateRotation(const double& xpos, const double& ypos)
 
 void Controller::Update(const float& dt)
 {
-	for (size_t i = 0; i < m_actions.size(); i++)
+	for (size_t i = 0; i < m_hold_actions.size(); i++)
 	{
-		if (m_keyboard_press[m_actions[i].key])
+		if (m_keyboard_press[m_hold_actions[i].key])
 		{
-			m_actions[i].func();
+			m_hold_actions[i].func();
 		}
 	}
 
