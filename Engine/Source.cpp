@@ -36,6 +36,11 @@ int main()
 		};
 		engine.BindKeyToFunc(GLFW_KEY_E, fillmode, ActionType::R3D_PRESS);
 
+		std::function<void()> pointmode = [&engine]() {
+			engine.SetPointMode();
+		};
+		engine.BindKeyToFunc(GLFW_KEY_R, pointmode, ActionType::R3D_PRESS);
+
 		int init = 0;
 		// running loop
 		do
