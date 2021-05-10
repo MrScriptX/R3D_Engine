@@ -4,8 +4,8 @@ Engine::Engine()
 {
 	m_last_time = std::chrono::high_resolution_clock::now();
 
-	mp_camera = std::make_shared<Camera>();
-	mp_controller = std::make_shared<Controller>(mp_camera);
+	mp_main_camera = std::make_shared<Camera>();
+	mp_controller = std::make_shared<Controller>(mp_main_camera);
 	mp_config = std::make_shared<Config>();
 
 	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
@@ -85,6 +85,11 @@ void Engine::BindKeyToFunc(const int& key, std::function<void()>& func)
 	mp_controller->SetKeyToFunc(key, func);
 }
 
+const std::shared_ptr<Camera> Engine::GetMainCamera()
+{
+	return mp_main_camera;
+}
+
 const bool& Engine::shouldClose()
 {
 	return glfwWindowShouldClose(&mp_window->getHandle());
@@ -111,8 +116,8 @@ void Engine::update()
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
 	}
 
-	mp_camera->updateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));
-	mp_scene->updateUBO(mp_camera, mp_renderer);
+	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));
+	mp_scene->updateUBO(mp_main_camera, mp_renderer);
 
 	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }

@@ -24,12 +24,19 @@ Camera::~Camera()
 {
 }
 
-void Camera::updateUBO(const float& width, const float& height)
+void Camera::UpdateUBO(const float& width, const float& height)
 {
 	m_ubo.view = updateView(m_pitch, m_yaw, m_position);
 	//m_ubo.model = createModelMatrix(glm::vec3(0.f, 0.f, 0.f), m_position); // not used
 	m_ubo.proj = createProjMatrix(width, height);
 	m_ubo.proj[1][1] *= -1;
+}
+
+void Camera::UpdatePosition(const float& dt)
+{
+	m_position += m_delta_position * dt;
+
+	m_delta_position = glm::vec3{ 0.f, 0.f, 0.f };
 }
 
 void Camera::MoveForward(const float& speed)
@@ -90,29 +97,22 @@ void Camera::MoveDown(const float& speed)
 	m_delta_position += change;
 }
 
-void Camera::UpdatePosition(const float& dt)
-{
-	m_position += m_delta_position * dt;
-
-	m_delta_position = glm::vec3{ 0.f, 0.f, 0.f };
-}
-
-void Camera::setPosition(const glm::vec3& position)
+void Camera::SetPosition(const glm::vec3& position)
 {
 	m_position = position;
 }
 
-const glm::vec3& Camera::getPosition()
+const glm::vec3& Camera::GetPosition()
 {
 	return m_position;
 }
 
-void Camera::setRotation(const glm::vec3& rotation)
+void Camera::SetRotation(const glm::vec3& rotation)
 {
 	m_rotation = rotation;
 }
 
-const glm::vec3& Camera::getRotation()
+const glm::vec3& Camera::GetRotation()
 {
 	return m_rotation;
 }

@@ -14,7 +14,8 @@ public:
 	Camera();
 	~Camera();
 
-	void updateUBO(const float& width, const float& height);
+	void UpdateUBO(const float& width, const float& height);
+	void UpdatePosition(const float& dt);
 
 	void MoveForward(const float& speed);
 	void MoveBackward(const float& speed);
@@ -23,13 +24,11 @@ public:
 	void MoveUp(const float& speed);
 	void MoveDown(const float& speed);
 
-	void UpdatePosition(const float& dt);
+	void SetPosition(const glm::vec3& position);
+	const glm::vec3& GetPosition();
 
-	void setPosition(const glm::vec3& position);
-	const glm::vec3& getPosition();
-
-	void setRotation(const glm::vec3& rotation);
-	const glm::vec3& getRotation();
+	void SetRotation(const glm::vec3& rotation);
+	const glm::vec3& GetRotation();
 
 	void setPitch(const float& pitch);
 	const float& getPitch();
