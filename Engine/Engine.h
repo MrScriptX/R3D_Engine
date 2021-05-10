@@ -33,6 +33,11 @@ public:
 	// CAMERA
 	const std::shared_ptr<Camera> GetMainCamera();
 
+	// VIEWING
+	void SetWireframeMode();
+	void SetPointMode();
+	void SetFillMode();
+
 	const bool& shouldClose();
 
 private:

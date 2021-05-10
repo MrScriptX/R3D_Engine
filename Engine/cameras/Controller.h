@@ -36,8 +36,8 @@ public:
 	uint32_t getLoadRadius();
 private:
 	std::vector<Actions> m_hold_actions;
-	std::vector<Actions> m_onpress_actions;
-	std::vector<Actions> m_onrelease_actions;
+	std::array<std::function<void()>, 348> m_onpress_actions;
+	std::array<std::function<void()>, 348> m_onrelease_actions;
 
 	uint32_t m_load_radius = 4;
 	std::bitset<348> m_keyboard_press;

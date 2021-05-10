@@ -26,8 +26,15 @@ int main()
 
 		engine.setScene(scene);
 
-		std::function<void()> my_func = []() {std::clog << "Test d'un key bind" << std::endl; };
-		engine.BindKeyToFunc(GLFW_KEY_Q, my_func, ActionType::R3D_PRESS);
+		std::function<void()> wireframemode = [&engine]() {
+			engine.SetWireframeMode();
+		};
+		engine.BindKeyToFunc(GLFW_KEY_Q, wireframemode, ActionType::R3D_PRESS);
+
+		std::function<void()> fillmode = [&engine]() {
+			engine.SetFillMode();
+		};
+		engine.BindKeyToFunc(GLFW_KEY_E, fillmode, ActionType::R3D_PRESS);
 
 		int init = 0;
 		// running loop

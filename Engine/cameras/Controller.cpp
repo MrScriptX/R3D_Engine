@@ -23,6 +23,10 @@ Controller::Controller(std::shared_ptr<Camera> p_camera)
 
 	default_func = [this]() { mp_camera->MoveDown(2.0f); };
 	SetKeyToFunc(GLFW_KEY_LEFT_CONTROL, default_func, ActionType::R3D_HOLD);
+
+	default_func = []() { return; }; // empty func so not to crash upon call
+	m_onpress_actions.fill(default_func);
+	m_onrelease_actions.fill(default_func);
 }
 
 
@@ -36,19 +40,13 @@ void Controller::setInput(int32_t key, int32_t scancode, int32_t mods, int32_t a
 	{
 		m_keyboard_press.set(key, true);
 
-		for (size_t i = 0; i < m_onpress_actions.size(); i++)
-		{
-			m_onpress_actions[i].func();
-		}
+		m_onpress_actions[key]();
 	}
 	else if (action == GLFW_RELEASE)
 	{
 		m_keyboard_press.set(key, false);
 
-		for (size_t i = 0; i < m_onrelease_actions.size(); i++)
-		{
-			m_onrelease_actions[i].func();
-		}
+		m_onrelease_actions[key]();
 	}
 }
 
@@ -57,10 +55,10 @@ void Controller::SetKeyToFunc(const int32_t& key, std::function<void()>& func, c
 	switch (type)
 	{
 	case ActionType::RED_RELEASE:
-		m_onrelease_actions.push_back({ key, func });
+		m_onrelease_actions[key] = func;
 		break;
 	case ActionType::R3D_PRESS:
-		m_onpress_actions.push_back({ key, func });
+		m_onpress_actions[key] = func;
 		break;
 	case ActionType::R3D_HOLD:
 		m_hold_actions.push_back({ key, func });

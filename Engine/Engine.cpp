@@ -90,6 +90,21 @@ const std::shared_ptr<Camera> Engine::GetMainCamera()
 	return mp_main_camera;
 }
 
+void Engine::SetWireframeMode()
+{
+	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_LINE);
+}
+
+void Engine::SetPointMode()
+{
+	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_POINT);
+}
+
+void Engine::SetFillMode()
+{
+	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL);
+}
+
 const bool& Engine::shouldClose()
 {
 	return glfwWindowShouldClose(&mp_window->getHandle());
