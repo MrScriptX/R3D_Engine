@@ -2,9 +2,9 @@
 #define _VULKAN_RENDERPASS_H
 
 #include <array>
-
-#include "../Graphics.h"
 #include <stdexcept>
+
+#include "../graphics/Graphics.h"
 
 class VulkanRenderPass
 {

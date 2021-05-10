@@ -1,9 +1,10 @@
 #ifndef _ENGINE_H
 #define _ENGINE_H
 
-#include "GameObject.h"
-#include "Scene.h"
 #include "Window.h"
+
+#include "world/GameObject.h"
+#include "world/Scene.h"
 
 class Engine
 {
@@ -18,7 +19,24 @@ public:
 	void setScene(std::shared_ptr<Scene> p_scene);
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
 
-	std::shared_ptr<Renderer> getRenderEngine();
+	// CREATE MATERIAL
+	const std::shared_ptr<Material> CreateMaterial(const TSHADER shader);
+	const std::shared_ptr<Material> CreateMaterial(const TSHADER shader, const std::string& texture_file);
+
+	// CREATE GAMEOBJECT
+	const std::shared_ptr<GameObject> CreateGameObject();
+	const std::shared_ptr<GameObject> CreateGameObject(const std::string& object_file);
+
+	// CONTROLLER
+	void BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type = ActionType::R3D_PRESS);
+
+	// CAMERA
+	const std::shared_ptr<Camera> GetMainCamera();
+
+	// VIEWING
+	void SetWireframeMode();
+	void SetPointMode();
+	void SetFillMode();
 
 	const bool& shouldClose();
 
@@ -28,11 +46,10 @@ private:
 	std::shared_ptr<Renderer> mp_renderer;
 	std::shared_ptr<Scene> mp_scene;
 
-	std::shared_ptr<Camera> mp_camera;
-	std::shared_ptr<Player> mp_player;
+	std::shared_ptr<Camera> mp_main_camera;
+	std::shared_ptr<Controller> mp_controller;
 	std::shared_ptr<Config> mp_config;
-
-	Pipeline base_pipeline;
+	
 	std::chrono::steady_clock::time_point m_last_time;
 };
 

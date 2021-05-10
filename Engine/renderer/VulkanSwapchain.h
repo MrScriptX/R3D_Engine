@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "../Config.h"
-#include "../Graphics.h"
+#include "../graphics/Config.h"
+#include "../graphics/Graphics.h"
 
 class VulkanSwapchain
 {
@@ -14,6 +14,7 @@ public:
 	~VulkanSwapchain();
 
 	void createSwapchain();
+	const uint32_t& GetHeigth();
 private:
 	void createImagesView();
 

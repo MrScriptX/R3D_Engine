@@ -22,7 +22,8 @@
 #include "VulkanCommandPool.h"
 #include "VulkanPipeline.h"
 #include "VulkanBuffer.h"
-#include "../Graphics.h"
+
+#include "../graphics/Graphics.h"
 
 #include "../Logger.h"
 
@@ -34,7 +35,8 @@ public:
 	Renderer(GLFWwindow& window, uint32_t width, uint32_t height);
 	~Renderer();
 
-	int32_t draw(Pipeline& pipeline);
+	int32_t draw();
+	int32_t AcquireNextImage();
 
 	void setupInstance(GLFWwindow& window);
 	void setupDevice();
@@ -42,7 +44,8 @@ public:
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
 	void setupCommandPool();
-	void createNewPipeline(Pipeline& pipeline);
+
+	void SetPolygonFillingMode(const VkPolygonMode& mode);
 
 	//getters
 	VkDevice& getDevice();
@@ -52,7 +55,11 @@ public:
 	const size_t getNumberCommandBuffer();
 	VkFramebuffer& getFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
+	std::unique_ptr<VulkanPipeline>& GetPipelineFactory();
 	const int getFrameIndex();
+	const bool& IsUpdated(const size_t& i);
+	void SetUpdate(const size_t& i);
+	const uint32_t& GetHeight();
 
 	//rendering
 	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
@@ -61,7 +68,7 @@ public:
 	void createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory);
 
 	void allocateCommandBuffers();
-	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer, Pipeline& pipeline);
+	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer);
 	void endRecordCommandBuffers(VkCommandBuffer& commandBuffer);
 	//!rendering
 
@@ -73,6 +80,7 @@ public:
 	void createDescriptorLayout();
 	void createDescriptorPool();
 	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
+	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set);
 	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
 	void createDepthResources();
 
@@ -80,11 +88,11 @@ public:
 	//cleaning
 	void destroyUniformBuffer();
 	void destroyBuffers(Buffer& buffers);
-	void cleanSwapchain(std::shared_ptr<Pipeline> pPipeline);
+	void cleanSwapchain();
 
 
 	//init fonctions
-	void recreateSwapchain(Pipeline& pipeline);
+	void recreateSwapchain();
 	
 
 	//helper fonctions
@@ -135,10 +143,12 @@ private:
 	std::unique_ptr<VulkanRenderPass> m_pRenderpass;
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
 	std::unique_ptr<VulkanCommandPool> m_commandPool;
-	std::unique_ptr<VulkanPipeline> m_pPipelineFactory;
+	std::unique_ptr<VulkanPipeline> mp_pipelines_manager;
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
 
-	size_t m_frame_index = 0;
+	uint32_t m_current_image = 0;
+	uint32_t m_last_image = 0;
+	std::array<bool, 3> m_is_updated;
 };
 
 #endif _RENDERER_H
