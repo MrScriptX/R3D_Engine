@@ -87,7 +87,7 @@
     <ClCompile Include="world\Texture.cpp">
       <Filter>Engine\World</Filter>
     </ClCompile>
-    <ClCompile Include="cameras\Player.cpp">
+    <ClCompile Include="cameras\Controller.cpp">
       <Filter>Engine\Cameras</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
@@ -152,7 +152,7 @@
     <ClInclude Include="world\Texture.h">
       <Filter>Engine\World</Filter>
     </ClInclude>
-    <ClInclude Include="cameras\Player.h">
+    <ClInclude Include="cameras\Controller.h">
       <Filter>Engine\Cameras</Filter>
     </ClInclude>
     <ClInclude Include="graphics\Vertex.h">

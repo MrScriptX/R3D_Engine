@@ -27,6 +27,12 @@ public:
 	const std::shared_ptr<GameObject> CreateGameObject();
 	const std::shared_ptr<GameObject> CreateGameObject(const std::string& object_file);
 
+	// CONTROLLER
+	void BindKeyToFunc(const int& key, std::function<void()>& func);
+
+	// CAMERA
+	const std::shared_ptr<Camera> GetMainCamera();
+
 	const bool& shouldClose();
 
 private:
@@ -35,8 +41,8 @@ private:
 	std::shared_ptr<Renderer> mp_renderer;
 	std::shared_ptr<Scene> mp_scene;
 
-	std::shared_ptr<Camera> mp_camera;
-	std::shared_ptr<Player> mp_player;
+	std::shared_ptr<Camera> mp_main_camera;
+	std::shared_ptr<Controller> mp_controller;
 	std::shared_ptr<Config> mp_config;
 	
 	std::chrono::steady_clock::time_point m_last_time;

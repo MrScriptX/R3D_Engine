@@ -4,11 +4,11 @@ Engine::Engine()
 {
 	m_last_time = std::chrono::high_resolution_clock::now();
 
-	mp_camera = std::make_shared<Camera>();
-	mp_player = std::make_shared<Player>(mp_camera);
+	mp_main_camera = std::make_shared<Camera>();
+	mp_controller = std::make_shared<Controller>(mp_main_camera);
 	mp_config = std::make_shared<Config>();
 
-	mp_window = std::make_unique<Window>(mp_config, *mp_player.get());
+	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
 
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
 
@@ -80,6 +80,16 @@ const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& ob
 	return go;
 }
 
+void Engine::BindKeyToFunc(const int& key, std::function<void()>& func)
+{
+	mp_controller->SetKeyToFunc(key, func);
+}
+
+const std::shared_ptr<Camera> Engine::GetMainCamera()
+{
+	return mp_main_camera;
+}
+
 const bool& Engine::shouldClose()
 {
 	return glfwWindowShouldClose(&mp_window->getHandle());
@@ -92,23 +102,22 @@ void Engine::update()
 	std::chrono::steady_clock::time_point current_time = std::chrono::high_resolution_clock::now();
 	float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_last_time).count();
 
-	mp_player->setDeltaTime(delta_time);
-	mp_player->updatePosition();
+	mp_controller->Update(delta_time);
 
 	m_last_time = current_time;
 
-	const int frame = mp_renderer->getFrameIndex();
-	if (mp_scene->isUpdate(frame))
+	const int32_t frame = mp_renderer->AcquireNextImage();
+	if (frame != -1 && (mp_scene->isUpdate(frame) || mp_renderer->IsUpdated(frame)))
 	{
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
-
 		mp_scene->render(mp_renderer->getCommandBuffer(frame), frame);
-
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
+
+		mp_renderer->SetUpdate(frame);
 	}
 
-	mp_camera->updateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));
-	mp_scene->updateUBO(mp_camera, mp_renderer);
+	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));
+	mp_scene->updateUBO(mp_main_camera, mp_renderer);
 
 	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }

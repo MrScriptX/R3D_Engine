@@ -36,6 +36,7 @@ public:
 	~Renderer();
 
 	int32_t draw();
+	int32_t AcquireNextImage();
 
 	void setupInstance(GLFWwindow& window);
 	void setupDevice();
@@ -43,6 +44,8 @@ public:
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
 	void setupCommandPool();
+
+	void SetPolygonFillingMode(const VkPolygonMode& mode);
 
 	//getters
 	VkDevice& getDevice();
@@ -54,6 +57,9 @@ public:
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
 	std::unique_ptr<VulkanPipeline>& GetPipelineFactory();
 	const int getFrameIndex();
+	const bool& IsUpdated(const size_t& i);
+	void SetUpdate(const size_t& i);
+	const uint32_t& GetHeight();
 
 	//rendering
 	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
@@ -140,7 +146,9 @@ private:
 	std::unique_ptr<VulkanPipeline> mp_pipelines_manager;
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
 
-	size_t m_frame_index = 0;
+	uint32_t m_current_image = 0;
+	uint32_t m_last_image = 0;
+	std::array<bool, 3> m_is_updated;
 };
 
 #endif _RENDERER_H

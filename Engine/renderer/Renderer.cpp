@@ -16,6 +16,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
 	WIDTH = std::make_unique<uint32_t>(width);
 	HEIGHT = std::make_unique<uint32_t>(height);
+	m_is_updated.fill(false);
 
 	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_graphic);
 
@@ -54,33 +55,15 @@ Renderer::~Renderer()
 
 int32_t Renderer::draw()
 {
-	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max());
-	vkResetFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_frame_index]);
-
-	VkResult result;
 	if (m_graphic.validation_layer_enable)
 	{
 		vkQueueWaitIdle(m_graphic.present_queue);
 	}
 
-	uint32_t image_index = 0;
-	result = vkAcquireNextImageKHR(m_graphic.device, m_graphic.swapchain, std::numeric_limits<uint64_t>::max(), m_graphic.semaphores_image_available[m_frame_index], VK_NULL_HANDLE, &image_index);
-
-	if (result == VK_ERROR_OUT_OF_DATE_KHR)
-	{
-		recreateSwapchain();
-		return 1;
-	}
-	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
-	{
-		throw std::runtime_error("failed to acquire swap chain image!");
-	}
-
-
 	VkSubmitInfo submit_info = {};
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore waitSemaphores[] = { m_graphic.semaphores_image_available[m_frame_index] };
+	VkSemaphore waitSemaphores[] = { m_graphic.semaphores_image_available[m_last_image] };
 
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submit_info.waitSemaphoreCount = 1;
@@ -88,18 +71,20 @@ int32_t Renderer::draw()
 	submit_info.pWaitDstStageMask = waitStages;
 
 	submit_info.commandBufferCount = 1;
-	submit_info.pCommandBuffers = &m_graphic.command_buffers[image_index];
+	submit_info.pCommandBuffers = &m_graphic.command_buffers[m_current_image]; 
 
-	VkSemaphore signalSemaphores[] = { m_graphic.semaphores_render_finished[m_frame_index] };
+	VkSemaphore signalSemaphores[] = { m_graphic.semaphores_render_finished[m_last_image] };
 
 	submit_info.signalSemaphoreCount = 1;
 	submit_info.pSignalSemaphores = signalSemaphores;
 
-	result = vkQueueSubmit(m_graphic.graphics_queue, 1, &submit_info, m_graphic.fences_in_flight[m_frame_index]);
+	vkResetFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image]);
+
+	VkResult result;
+	result = vkQueueSubmit(m_graphic.graphics_queue, 1, &submit_info, m_graphic.fences_in_flight[m_current_image]);
 
 	if (result != VK_SUCCESS)
 	{
-		std::cerr << result;
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
 
@@ -112,23 +97,43 @@ int32_t Renderer::draw()
 	VkSwapchainKHR swapchains[] = { m_graphic.swapchain };
 	present_info.swapchainCount = 1;
 	present_info.pSwapchains = swapchains;
-	present_info.pImageIndices = &image_index;
+	present_info.pImageIndices = &m_current_image;
 	present_info.pResults = nullptr;
 
 	result = vkQueuePresentKHR(m_graphic.present_queue, &present_info);
 
+	int return_code = 0;
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 	{
 		recreateSwapchain();
-		return 1;
+		return_code = 1;
 	}
 	else if (result != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to present swap chain image!");
 	}
 
-	m_frame_index = (m_frame_index + 1) % MAX_FRAMES_IN_FLIGHT;
-	return 0;
+	return return_code;
+}
+
+int32_t Renderer::AcquireNextImage()
+{
+	m_last_image = m_current_image;
+
+	VkResult result;
+	result = vkAcquireNextImageKHR(m_graphic.device, m_graphic.swapchain, std::numeric_limits<uint64_t>::max(), m_graphic.semaphores_image_available[m_current_image], VK_NULL_HANDLE, &m_current_image);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		recreateSwapchain();
+		return -1;
+	}
+	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+	{
+		throw std::runtime_error("failed to acquire swapchain image!");
+	}
+
+	return m_current_image;
 }
 
 void Renderer::setupInstance(GLFWwindow& window)
@@ -164,6 +169,13 @@ void Renderer::setupDescriptorSetLayout()
 void Renderer::setupCommandPool()
 {
 	m_commandPool = std::make_unique<VulkanCommandPool>(m_graphic);
+}
+
+void Renderer::SetPolygonFillingMode(const VkPolygonMode& mode)
+{
+	m_graphic.polygone_mode = mode;
+
+	recreateSwapchain();
 }
 
 VkDevice& Renderer::getDevice()
@@ -208,7 +220,22 @@ std::unique_ptr<VulkanPipeline>& Renderer::GetPipelineFactory()
 
 const int Renderer::getFrameIndex()
 {
-	return m_frame_index;
+	return m_current_image;
+}
+
+const bool& Renderer::IsUpdated(const size_t& i)
+{
+	return m_is_updated[i];
+}
+
+void Renderer::SetUpdate(const size_t& i)
+{
+	m_is_updated[i] = false;
+}
+
+const uint32_t& Renderer::GetHeight()
+{
+	return m_swapchain->GetHeigth();
 }
 
 void Renderer::destroyBuffers(Buffer & buffer)
@@ -297,6 +324,8 @@ void Renderer::allocateCommandBuffers()
 
 void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFramebuffer& frameBuffer)
 {
+	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image], VK_TRUE, std::numeric_limits<uint64_t>::max());
+
 	std::array<VkClearValue, 2> clear_values = {};
 	clear_values[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
 	clear_values[1].depthStencil = { 1.0f, 0 };
@@ -627,9 +656,7 @@ void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkI
 
 void Renderer::recreateSwapchain()
 {
-	vkDeviceWaitIdle(m_graphic.device);
 	cleanSwapchain();
-
 
 	m_swapchain->createSwapchain();
 
@@ -640,10 +667,16 @@ void Renderer::recreateSwapchain()
 	createDepthResources();
 	createFramebuffer();
 	allocateCommandBuffers();
+
+	m_is_updated.fill(true);
 }
 
 void Renderer::cleanSwapchain()
 {
+	vkDeviceWaitIdle(m_graphic.device);
+	vkQueueWaitIdle(m_graphic.graphics_queue);
+	vkQueueWaitIdle(m_graphic.present_queue);
+
 	vkDestroyImageView(m_graphic.device, m_graphic.depth_view, nullptr);
 	vkDestroyImage(m_graphic.device, m_graphic.depth_image, nullptr);
 	vkFreeMemory(m_graphic.device, m_graphic.depth_memory, nullptr);

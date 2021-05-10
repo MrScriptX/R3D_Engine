@@ -5,7 +5,7 @@
 #include <array>
 
 #include "GameObject.h"
-#include "../cameras/Player.h"
+#include "../cameras/Controller.h"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>

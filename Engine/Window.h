@@ -11,12 +11,12 @@
 #include <memory>
 
 #include "graphics/Config.h"
-#include "cameras/Player.h"
+#include "cameras/Controller.h"
 
 class Window
 {
 public:
-	Window(std::shared_ptr<Config>& config, Player& player);
+	Window(std::shared_ptr<Config>& config, Controller& controller);
 	~Window();
 
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

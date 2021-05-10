@@ -1,5 +1,5 @@
-#ifndef _PLAYER_H
-#define _PLAYER_H
+#ifndef _CONTROLLER_H
+#define _CONTROLLER_H
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -8,26 +8,32 @@
 
 #include "Camera.h"
 
-class Player
+struct Actions
+{
+	const int32_t key;
+	const std::function<void()> func;
+};
+
+class Controller
 {
 public:
-	Player(std::shared_ptr<Camera> p_camera);
-	~Player();
+	Controller(std::shared_ptr<Camera> p_camera);
+	~Controller();
 
-	void setDeltaTime(const float& delta_time);
 	void setInput(int32_t key, int32_t scancode, int32_t mods, int32_t action);
+	void SetKeyToFunc(const int32_t& key, std::function<void()>& func);
 
+	void Update(const float& dt);
 	void updateRotation(const double& xpos, const double& ypos);
-	void updatePosition();
 
 	uint32_t getLoadRadius();
 private:
+	std::vector<Actions> m_actions;
 	std::bitset<348> m_keyboard_press;
-	float m_delta_time;
 
 	uint32_t m_load_radius = 4;
 
 	std::shared_ptr<Camera> mp_camera;
 };
 
-#endif _PLAYER_H
+#endif //!_CONTROLLER_H
