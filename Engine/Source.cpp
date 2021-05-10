@@ -23,7 +23,6 @@ int main()
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 		scene->addGameObject(room);
-		scene->addGameObject(room2);
 
 		engine.setScene(scene);
 
@@ -34,6 +33,11 @@ int main()
 		// running loop
 		do
 		{
+			if (init++ == 30000)
+			{
+				scene->addGameObject(room2);
+			}
+
 			engine.update();
 			engine.draw();
 		} while (!engine.shouldClose());

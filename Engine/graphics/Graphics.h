@@ -79,6 +79,8 @@ struct Graphics
 	VkImage depth_image;
 	VkDeviceMemory depth_memory;
 	VkImageView depth_view;
+
+	VkPolygonMode polygone_mode = VK_POLYGON_MODE_FILL;
 };
 
 struct Pipeline

@@ -107,7 +107,7 @@ void Engine::update()
 	m_last_time = current_time;
 
 	const int frame = mp_renderer->getFrameIndex();
-	if (mp_scene->isUpdate(frame))
+	if (mp_scene->isUpdate(frame) || mp_renderer->IsUpdated())
 	{
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
 

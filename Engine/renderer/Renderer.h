@@ -44,6 +44,8 @@ public:
 	void setupDescriptorSetLayout();
 	void setupCommandPool();
 
+	void SetPolygonFillingMode(const VkPolygonMode& mode);
+
 	//getters
 	VkDevice& getDevice();
 	VkDescriptorPool& getDescriptorPool();
@@ -54,6 +56,7 @@ public:
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
 	std::unique_ptr<VulkanPipeline>& GetPipelineFactory();
 	const int getFrameIndex();
+	const bool& IsUpdated();
 
 	//rendering
 	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
@@ -141,6 +144,7 @@ private:
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
 
 	size_t m_frame_index = 0;
+	bool m_is_updated = false;
 };
 
 #endif _RENDERER_H

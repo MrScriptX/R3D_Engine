@@ -54,7 +54,6 @@ Renderer::~Renderer()
 
 int32_t Renderer::draw()
 {
-	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max());
 	vkResetFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_frame_index]);
 
 	VkResult result;
@@ -68,12 +67,13 @@ int32_t Renderer::draw()
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
+		std::clog << "acquire" << std::endl;
 		recreateSwapchain();
 		return 1;
 	}
 	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 	{
-		throw std::runtime_error("failed to acquire swap chain image!");
+		throw std::runtime_error("failed to acquire swapchain image!");
 	}
 
 
@@ -117,10 +117,11 @@ int32_t Renderer::draw()
 
 	result = vkQueuePresentKHR(m_graphic.present_queue, &present_info);
 
+	int return_code = 0;
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 	{
 		recreateSwapchain();
-		return 1;
+		return_code = 1;
 	}
 	else if (result != VK_SUCCESS)
 	{
@@ -128,7 +129,8 @@ int32_t Renderer::draw()
 	}
 
 	m_frame_index = (m_frame_index + 1) % MAX_FRAMES_IN_FLIGHT;
-	return 0;
+
+	return return_code;
 }
 
 void Renderer::setupInstance(GLFWwindow& window)
@@ -164,6 +166,13 @@ void Renderer::setupDescriptorSetLayout()
 void Renderer::setupCommandPool()
 {
 	m_commandPool = std::make_unique<VulkanCommandPool>(m_graphic);
+}
+
+void Renderer::SetPolygonFillingMode(const VkPolygonMode& mode)
+{
+	m_graphic.polygone_mode = mode;
+
+	recreateSwapchain();
 }
 
 VkDevice& Renderer::getDevice()
@@ -209,6 +218,11 @@ std::unique_ptr<VulkanPipeline>& Renderer::GetPipelineFactory()
 const int Renderer::getFrameIndex()
 {
 	return m_frame_index;
+}
+
+const bool& Renderer::IsUpdated()
+{
+	return m_is_updated;
 }
 
 void Renderer::destroyBuffers(Buffer & buffer)
@@ -297,6 +311,8 @@ void Renderer::allocateCommandBuffers()
 
 void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFramebuffer& frameBuffer)
 {
+	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_frame_index], VK_TRUE, std::numeric_limits<uint64_t>::max());
+
 	std::array<VkClearValue, 2> clear_values = {};
 	clear_values[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
 	clear_values[1].depthStencil = { 1.0f, 0 };
@@ -627,9 +643,7 @@ void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkI
 
 void Renderer::recreateSwapchain()
 {
-	vkDeviceWaitIdle(m_graphic.device);
 	cleanSwapchain();
-
 
 	m_swapchain->createSwapchain();
 
@@ -640,10 +654,14 @@ void Renderer::recreateSwapchain()
 	createDepthResources();
 	createFramebuffer();
 	allocateCommandBuffers();
+
+	m_is_updated = true;
 }
 
 void Renderer::cleanSwapchain()
 {
+	vkDeviceWaitIdle(m_graphic.device);
+
 	vkDestroyImageView(m_graphic.device, m_graphic.depth_view, nullptr);
 	vkDestroyImage(m_graphic.device, m_graphic.depth_image, nullptr);
 	vkFreeMemory(m_graphic.device, m_graphic.depth_memory, nullptr);
