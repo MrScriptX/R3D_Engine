@@ -5,10 +5,10 @@ Engine::Engine()
 	m_last_time = std::chrono::high_resolution_clock::now();
 
 	mp_camera = std::make_shared<Camera>();
-	mp_player = std::make_shared<Controller>(mp_camera);
+	mp_controller = std::make_shared<Controller>(mp_camera);
 	mp_config = std::make_shared<Config>();
 
-	mp_window = std::make_unique<Window>(mp_config, *mp_player.get());
+	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
 
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
 
@@ -80,6 +80,11 @@ const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& ob
 	return go;
 }
 
+void Engine::BindKeyToFunc(const int& key, std::function<void()>& func)
+{
+	mp_controller->SetKeyToFunc(key, func);
+}
+
 const bool& Engine::shouldClose()
 {
 	return glfwWindowShouldClose(&mp_window->getHandle());
@@ -92,8 +97,7 @@ void Engine::update()
 	std::chrono::steady_clock::time_point current_time = std::chrono::high_resolution_clock::now();
 	float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_last_time).count();
 
-	mp_player->setDeltaTime(delta_time);
-	mp_player->updatePosition();
+	mp_controller->Update(delta_time);
 
 	m_last_time = current_time;
 

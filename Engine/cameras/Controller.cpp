@@ -4,16 +4,30 @@
 Controller::Controller(std::shared_ptr<Camera> p_camera)
 {
 	mp_camera = p_camera;
+
+	// Set default controls
+	std::function<void()> default_func = [this]() { mp_camera->MoveForward(2.0f); };
+	SetKeyToFunc(GLFW_KEY_W, default_func);
+
+	default_func = [this]() { mp_camera->MoveBackward(2.0f); };
+	SetKeyToFunc(GLFW_KEY_S, default_func);
+
+	default_func = [this]() { mp_camera->MoveLeft(2.0f); };
+	SetKeyToFunc(GLFW_KEY_A, default_func);
+
+	default_func = [this]() { mp_camera->MoveRight(2.0f); };
+	SetKeyToFunc(GLFW_KEY_D, default_func);
+
+	default_func = [this]() { mp_camera->MoveUp(2.0f); };
+	SetKeyToFunc(GLFW_KEY_LEFT_SHIFT, default_func);
+
+	default_func = [this]() { mp_camera->MoveDown(2.0f); };
+	SetKeyToFunc(GLFW_KEY_LEFT_CONTROL, default_func);
 }
 
 
 Controller::~Controller()
 {
-}
-
-void Controller::setDeltaTime(const float& delta_time)
-{
-	m_delta_time = delta_time;
 }
 
 void Controller::setInput(int32_t key, int32_t scancode, int32_t mods, int32_t action)
@@ -28,6 +42,11 @@ void Controller::setInput(int32_t key, int32_t scancode, int32_t mods, int32_t a
 	}
 }
 
+void Controller::SetKeyToFunc(const int32_t& key, std::function<void()>& func)
+{
+	m_actions.push_back({ key, func });
+}
+
 void Controller::updateRotation(const double& xpos, const double& ypos)
 {
 	const float sensibility = 0.005f;
@@ -38,41 +57,17 @@ void Controller::updateRotation(const double& xpos, const double& ypos)
 	mp_camera->setPitch(mp_camera->getPitch() + (mouse_delta.y * sensibility));
 }
 
-void Controller::updatePosition()
+void Controller::Update(const float& dt)
 {
-	const float speed = 2.0f;
-
-	if (m_keyboard_press[GLFW_KEY_W] == true)
+	for (size_t i = 0; i < m_actions.size(); i++)
 	{
-		mp_camera->MoveForward(speed);
+		if (m_keyboard_press[m_actions[i].key])
+		{
+			m_actions[i].func();
+		}
 	}
 
-	if (m_keyboard_press[GLFW_KEY_S] == true)
-	{
-		mp_camera->MoveBackward(speed);
-	}
-
-	if (m_keyboard_press[GLFW_KEY_A] == true)
-	{
-		mp_camera->MoveLeft(speed);
-	}
-
-	if (m_keyboard_press[GLFW_KEY_D] == true)
-	{
-		mp_camera->MoveRight(speed);
-	}
-
-	if (m_keyboard_press[GLFW_KEY_LEFT_SHIFT] == true)
-	{
-		mp_camera->MoveUp(speed);
-	}
-
-	if (m_keyboard_press[GLFW_KEY_LEFT_CONTROL] == true)
-	{
-		mp_camera->MoveDown(speed);
-	}
-
-	mp_camera->UpdatePosition(m_delta_time);
+	mp_camera->UpdatePosition(dt);
 }
 
 uint32_t Controller::getLoadRadius()

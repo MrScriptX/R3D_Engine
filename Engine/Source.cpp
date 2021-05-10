@@ -27,6 +27,9 @@ int main()
 
 		engine.setScene(scene);
 
+		std::function<void()> my_func = []() {std::clog << "Test d'un key bind" << std::endl; };
+		engine.BindKeyToFunc(GLFW_KEY_Q, my_func);
+
 		int init = 0;
 		// running loop
 		do
