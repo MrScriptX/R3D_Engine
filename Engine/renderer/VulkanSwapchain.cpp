@@ -19,6 +19,9 @@ void VulkanSwapchain::createSwapchain()
 	VkPresentModeKHR present_mode = chooseSwapPresentMode(swapchain_support.presentModes);
 	VkExtent2D extent = chooseSwapExtent(swapchain_support.capabilities);
 
+	WIDTH = extent.width;
+	HEIGHT = extent.height;
+
 	uint32_t image_count = swapchain_support.capabilities.minImageCount + 1;
 	if (swapchain_support.capabilities.maxImageCount > 0 && image_count > swapchain_support.capabilities.maxImageCount)
 	{
@@ -77,6 +80,11 @@ void VulkanSwapchain::createSwapchain()
 
 
 	createImagesView();
+}
+
+const uint32_t& VulkanSwapchain::GetHeigth()
+{
+	return HEIGHT;
 }
 
 void VulkanSwapchain::createImagesView()

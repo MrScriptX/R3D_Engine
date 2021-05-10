@@ -14,6 +14,7 @@ public:
 	~VulkanSwapchain();
 
 	void createSwapchain();
+	const uint32_t& GetHeigth();
 private:
 	void createImagesView();
 
