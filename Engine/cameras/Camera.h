@@ -16,6 +16,15 @@ public:
 
 	void updateUBO(const float& width, const float& height);
 
+	void MoveForward(const float& speed);
+	void MoveBackward(const float& speed);
+	void MoveRight(const float& speed);
+	void MoveLeft(const float& speed);
+	void MoveUp(const float& speed);
+	void MoveDown(const float& speed);
+
+	void UpdatePosition(const float& dt);
+
 	void setPosition(const glm::vec3& position);
 	const glm::vec3& getPosition();
 
@@ -36,6 +45,7 @@ private:
 
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
+	glm::vec3 m_delta_position;
 
 	float m_yaw;
 	float m_pitch;

@@ -5,7 +5,7 @@ Engine::Engine()
 	m_last_time = std::chrono::high_resolution_clock::now();
 
 	mp_camera = std::make_shared<Camera>();
-	mp_player = std::make_shared<Player>(mp_camera);
+	mp_player = std::make_shared<Controller>(mp_camera);
 	mp_config = std::make_shared<Config>();
 
 	mp_window = std::make_unique<Window>(mp_config, *mp_player.get());

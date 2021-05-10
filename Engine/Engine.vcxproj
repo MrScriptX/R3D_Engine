@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cameras\Camera.cpp" />
-    <ClCompile Include="cameras\Player.cpp" />
+    <ClCompile Include="cameras\Controller.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="renderer\Renderer.cpp" />
@@ -67,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cameras\Camera.h" />
-    <ClInclude Include="cameras\Player.h" />
+    <ClInclude Include="cameras\Controller.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="errors.h" />
     <ClInclude Include="graphics\Config.h" />

@@ -1,5 +1,5 @@
-#ifndef _PLAYER_H
-#define _PLAYER_H
+#ifndef _CONTROLLER_H
+#define _CONTROLLER_H
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -8,11 +8,11 @@
 
 #include "Camera.h"
 
-class Player
+class Controller
 {
 public:
-	Player(std::shared_ptr<Camera> p_camera);
-	~Player();
+	Controller(std::shared_ptr<Camera> p_camera);
+	~Controller();
 
 	void setDeltaTime(const float& delta_time);
 	void setInput(int32_t key, int32_t scancode, int32_t mods, int32_t action);
@@ -30,4 +30,4 @@ private:
 	std::shared_ptr<Camera> mp_camera;
 };
 
-#endif _PLAYER_H
+#endif //!_CONTROLLER_H
