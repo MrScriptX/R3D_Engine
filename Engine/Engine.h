@@ -28,7 +28,7 @@ public:
 	const std::shared_ptr<GameObject> CreateGameObject(const std::string& object_file);
 
 	// CONTROLLER
-	void BindKeyToFunc(const int& key, std::function<void()>& func);
+	void BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type = ActionType::R3D_PRESS);
 
 	// CAMERA
 	const std::shared_ptr<Camera> GetMainCamera();

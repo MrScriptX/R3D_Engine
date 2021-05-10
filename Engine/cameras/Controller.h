@@ -14,6 +14,13 @@ struct Actions
 	const std::function<void()> func;
 };
 
+enum class ActionType 
+{
+	RED_RELEASE,
+	R3D_PRESS,
+	R3D_HOLD
+};
+
 class Controller
 {
 public:
@@ -21,17 +28,19 @@ public:
 	~Controller();
 
 	void setInput(int32_t key, int32_t scancode, int32_t mods, int32_t action);
-	void SetKeyToFunc(const int32_t& key, std::function<void()>& func);
+	void SetKeyToFunc(const int32_t& key, std::function<void()>& func, const ActionType& type);
 
 	void Update(const float& dt);
 	void updateRotation(const double& xpos, const double& ypos);
 
 	uint32_t getLoadRadius();
 private:
-	std::vector<Actions> m_actions;
-	std::bitset<348> m_keyboard_press;
+	std::vector<Actions> m_hold_actions;
+	std::vector<Actions> m_onpress_actions;
+	std::vector<Actions> m_onrelease_actions;
 
 	uint32_t m_load_radius = 4;
+	std::bitset<348> m_keyboard_press;
 
 	std::shared_ptr<Camera> mp_camera;
 };

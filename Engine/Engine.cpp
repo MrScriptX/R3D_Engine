@@ -80,9 +80,9 @@ const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& ob
 	return go;
 }
 
-void Engine::BindKeyToFunc(const int& key, std::function<void()>& func)
+void Engine::BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type)
 {
-	mp_controller->SetKeyToFunc(key, func);
+	mp_controller->SetKeyToFunc(key, func, type);
 }
 
 const std::shared_ptr<Camera> Engine::GetMainCamera()
