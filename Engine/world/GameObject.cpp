@@ -35,6 +35,13 @@ void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_
 	m_meshes[index].bindMaterial(p_material, m_ubo, mp_renderer);
 }
 
+void GameObject::loadMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
+{
+	Mesh mesh(vertices, indices, mp_renderer);
+	mesh.createBuffer(mp_renderer);
+	m_meshes.push_back(mesh);
+}
+
 void GameObject::loadMesh(const std::string& mesh_path)
 {
 	Mesh mesh(mesh_path, mp_renderer);

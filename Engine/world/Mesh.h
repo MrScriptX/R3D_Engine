@@ -17,7 +17,7 @@
 class Mesh
 {
 public:
-	Mesh(std::shared_ptr<Renderer> p_renderer);
+	Mesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer);
 	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
 	~Mesh();
 

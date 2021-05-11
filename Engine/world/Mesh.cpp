@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
 }
 
