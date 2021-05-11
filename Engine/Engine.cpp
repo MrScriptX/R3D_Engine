@@ -80,25 +80,24 @@ const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& ob
 	return go;
 }
 
-const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, const float& size, const glm::vec3& color)
+const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor)
 {
 	std::shared_ptr<GameObject> cube = std::make_shared<GameObject>(mp_renderer);
 	cube->setPosition(position);
 
-	std::vector<Vertex> cube_vertices;
-	std::vector<uint32_t> cube_indices;
+	Voxel voxel;
 
 	const float half_size = size / 2;
 
-	Voxel voxel;
-	voxel.addVertex({ -half_size, -half_size, -half_size }, color, { .0f, .0f });
-	voxel.addVertex({ half_size, -half_size, -half_size }, color, { .0f, 2.0f });
-	voxel.addVertex({ -half_size, half_size, -half_size }, color, { 2.0f, .0f });
-	voxel.addVertex({ half_size, half_size, -half_size }, color, { 2.0f, .0f });
-	voxel.addVertex({ -half_size, -half_size, half_size }, color, { .0f, .0f });
-	voxel.addVertex({ half_size, -half_size, half_size }, color, { .0f, 2.0f });
-	voxel.addVertex({ -half_size, half_size, half_size }, color, { 2.0f, .0f });
-	voxel.addVertex({ half_size, half_size, half_size }, color, { 2.0f, 2.0f });
+	//vertices
+	voxel.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
+	voxel.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.0f });
+	voxel.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
+	voxel.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
+	voxel.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
+	voxel.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.0f });
+	voxel.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.0f, .0f });
+	voxel.addVertex({ half_size, half_size, half_size }, vcolor, { 2.0f, 2.0f });
 
 	//indices
 	voxel.addIndices(0, 2, 1);
@@ -118,108 +117,6 @@ const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, 
 
 	voxel.addIndices(4, 0, 5);
 	voxel.addIndices(5, 0, 1);
-
-
-	//vertices
-	{
-		Vertex p1;
-	p1.pos = { -half_size, -half_size, -half_size };
-	p1.color = color;
-	p1.texCoord = { 0, 0 };
-
-	Vertex p2;
-	p2.pos = { half_size, -half_size, -half_size };
-	p2.color = color;
-	p2.texCoord = { 0, 2 };
-
-	Vertex p3;
-	p3.pos = { -half_size, half_size, -half_size };
-	p3.color = color;
-	p3.texCoord = { 2, 0 };
-
-	Vertex p4;
-	p4.pos = { half_size, half_size, -half_size };
-	p4.color = color;
-	p4.texCoord = { 2, 0 };
-
-	Vertex p5;
-	p5.pos = { -half_size, -half_size, half_size };
-	p5.color = color;
-	p5.texCoord = { 0, 0 };
-
-	Vertex p6;
-	p6.pos = { half_size, -half_size, half_size };
-	p6.color = color;
-	p6.texCoord = { 0, 2 };
-
-	Vertex p7;
-	p7.pos = { -half_size, half_size, half_size };
-	p7.color = color;
-	p7.texCoord = { 2, 0 };
-
-	Vertex p8;
-	p8.pos = { half_size, half_size, half_size };
-	p8.color = color;
-	p8.texCoord = { 2, 2 };
-
-	cube_vertices.push_back(p1);
-	cube_vertices.push_back(p2);
-	cube_vertices.push_back(p3);
-	cube_vertices.push_back(p4);
-	cube_vertices.push_back(p5);
-	cube_vertices.push_back(p6);
-	cube_vertices.push_back(p7);
-	cube_vertices.push_back(p8);
-	}
-
-	//indices
-	//front
-	/*cube_indices.push_back(0);
-	cube_indices.push_back(2);
-	cube_indices.push_back(1);
-	cube_indices.push_back(1);
-	cube_indices.push_back(2);
-	cube_indices.push_back(3);
-
-	//back
-	cube_indices.push_back(5);
-	cube_indices.push_back(7);
-	cube_indices.push_back(4);
-	cube_indices.push_back(4);
-	cube_indices.push_back(7);
-	cube_indices.push_back(6);
-
-	//right
-	cube_indices.push_back(1);
-	cube_indices.push_back(3);
-	cube_indices.push_back(5);
-	cube_indices.push_back(5);
-	cube_indices.push_back(3);
-	cube_indices.push_back(7);
-
-	//left
-	cube_indices.push_back(4);
-	cube_indices.push_back(6);
-	cube_indices.push_back(0);
-	cube_indices.push_back(0);
-	cube_indices.push_back(6);
-	cube_indices.push_back(2);
-
-	//top
-	cube_indices.push_back(2);
-	cube_indices.push_back(6);
-	cube_indices.push_back(3);
-	cube_indices.push_back(3);
-	cube_indices.push_back(6);
-	cube_indices.push_back(7);
-
-	//bot
-	cube_indices.push_back(4);
-	cube_indices.push_back(0);
-	cube_indices.push_back(5);
-	cube_indices.push_back(5);
-	cube_indices.push_back(0);
-	cube_indices.push_back(1);*/
 
 	cube->loadMesh(voxel.vertices, voxel.indices);
 

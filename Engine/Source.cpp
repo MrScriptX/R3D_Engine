@@ -22,7 +22,7 @@ int main()
 		room2->setPosition({ 6.0f, 0.0f, 0.0f });
 
 		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
-		std::shared_ptr<GameObject> cube = engine.CreateCube({ .0f, .0f, .0f }, 1.f, {1.f, .0f, .0f});
+		std::shared_ptr<GameObject> cube = engine.CreateCube({ 2.0f, .0f, .0f }, 1.f, {1.f, .0f, .0f});
 		cube->bindMatToMesh(0, cube_texture);
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();

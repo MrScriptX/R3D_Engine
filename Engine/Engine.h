@@ -29,7 +29,7 @@ public:
 	const std::shared_ptr<GameObject> CreateGameObject();
 	const std::shared_ptr<GameObject> CreateGameObject(const std::string& object_file);
 	
-	const std::shared_ptr<GameObject> CreateCube(const glm::vec3& position, const float& size, const glm::vec3& color);
+	const std::shared_ptr<GameObject> CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor);
 
 	// CONTROLLER
 	void BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type = ActionType::R3D_PRESS);
