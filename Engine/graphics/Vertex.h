@@ -11,7 +11,6 @@
 #include <glm/gtx/hash.hpp>
 
 
-
 struct Vertex
 {
 	glm::vec3 pos;

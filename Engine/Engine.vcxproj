@@ -71,6 +71,7 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="errors.h" />
     <ClInclude Include="graphics\Config.h" />
+    <ClInclude Include="graphics\Geometry.h" />
     <ClInclude Include="graphics\Graphics.h" />
     <ClInclude Include="graphics\Math.h" />
     <ClInclude Include="graphics\Shaders.h" />

@@ -6,6 +6,8 @@
 #include "world/Scene.h"
 #include "world/GameObject.h"
 
+#include "graphics/Geometry.h"
+
 class Engine
 {
 public:
