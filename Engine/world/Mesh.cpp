@@ -101,6 +101,11 @@ void Mesh::destroyMesh()
 	vkFreeMemory(mp_renderer->getDevice(), m_buffer.vertex_memory, nullptr);
 }
 
+void Mesh::SetVertices(std::vector<Vertex> vertices)
+{
+	m_vertices = vertices;
+}
+
 std::vector<Vertex>& Mesh::get_vertices()
 {
 	return m_vertices;

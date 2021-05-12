@@ -28,6 +28,8 @@ public:
 
 	void destroyMesh();
 
+	void SetVertices(std::vector<Vertex> vertices);
+
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
 	Buffer& getBuffer();

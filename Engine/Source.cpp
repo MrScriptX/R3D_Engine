@@ -25,6 +25,41 @@ int main()
 		std::shared_ptr<GameObject> cube = engine.CreateCube({ 2.0f, .0f, .0f }, 1.f, {1.f, .0f, .0f});
 		cube->bindMatToMesh(0, cube_texture);
 
+		const float half_size = 1.f / 2.f;
+		Voxel voxel;
+
+		//vertices
+		uint32_t index_0 = voxel.addVertex({ 0.f - half_size, 0.f - half_size, -2.f - half_size }, { 0.f, 1.f, 0.f }, { .0f, .0f });
+		uint32_t index_1 = voxel.addVertex({ 0.f + half_size, 0.f - half_size, -2.f - half_size }, { 0.f, 1.f, 0.f }, { .0f, 2.0f });
+		uint32_t index_2 = voxel.addVertex({ 0.f - half_size, 0.f + half_size, -2.f - half_size }, { 0.f, 1.f, 0.f }, { 2.0f, .0f });
+		uint32_t index_3 = voxel.addVertex({ 0.f + half_size, 0.f + half_size, -2.f - half_size }, { 0.f, 1.f, 0.f }, { 2.0f, .0f });
+		uint32_t index_4 = voxel.addVertex({ 0.f - half_size, 0.f - half_size, -2.f + half_size }, { 0.f, 1.f, 0.f }, { .0f, .0f });
+		uint32_t index_5 = voxel.addVertex({ 0.f + half_size, 0.f - half_size, -2.f + half_size }, { 0.f, 1.f, 0.f }, { .0f, 2.0f });
+		uint32_t index_6 = voxel.addVertex({ 0.f - half_size, 0.f + half_size, -2.f + half_size }, { 0.f, 1.f, 0.f }, { 2.0f, .0f });
+		uint32_t index_7 = voxel.addVertex({ 0.f + half_size, 0.f + half_size, -2.f + half_size }, { 0.f, 1.f, 0.f }, { 2.0f, 2.0f });
+
+		//indices
+		voxel.addIndices(index_0, index_2, index_1);
+		voxel.addIndices(index_1, index_2, index_3);
+
+		voxel.addIndices(index_5, index_7, index_4);
+		voxel.addIndices(index_4, index_7, index_6);
+
+		voxel.addIndices(index_1, index_3, index_5);
+		voxel.addIndices(index_5, index_3, index_7);
+
+		voxel.addIndices(index_4, index_6, index_0);
+		voxel.addIndices(index_0, index_6, index_2);
+
+		voxel.addIndices(index_2, index_6, index_3);
+		voxel.addIndices(index_3, index_6, index_7);
+
+		voxel.addIndices(index_4, index_0, index_5);
+		voxel.addIndices(index_5, index_0, index_1);
+
+		cube->LoadMesh(voxel.vertices, voxel.indices);
+		cube->bindMatToMesh(1, cube_texture);
+
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 		scene->addGameObject(room);
 		scene->addGameObject(room2);
@@ -51,7 +86,17 @@ int main()
 		// running loop
 		do
 		{
-			cube->setPosition(cube->getPosition() + glm::vec3{0.0001f, 0.f, 0.f});
+			//cube->setPosition(cube->getPosition() + glm::vec3{0.0001f, 0.f, 0.f});
+
+			if (init++ == 10000)
+			{
+				voxel.vertices[0].color = { .0f, .0f, 1.0f };
+				cube->setMesh(1, voxel.vertices);
+
+				scene->Update();
+
+				std::clog << "changed" << std::endl;
+			}
 
 			engine.update();
 			engine.draw();

@@ -13,7 +13,7 @@ struct Voxel
 	uint32_t addVertex(glm::vec3 pos, glm::vec3 color, glm::vec2 texCoord)
 	{
 		Vertex vertex;
-		vertex.pos = pos; 
+		vertex.pos = pos;
 		vertex.color = color;
 		vertex.texCoord = texCoord;
 

@@ -21,6 +21,7 @@ public:
 	void render(VkCommandBuffer& command_buffer, const int i);
 	void updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer);
 
+	void Update();
 	const bool& isUpdate(const int i);
 	std::vector<std::shared_ptr<GameObject>>& getObjects();
 

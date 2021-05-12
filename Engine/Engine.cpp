@@ -83,7 +83,6 @@ const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& ob
 const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor)
 {
 	std::shared_ptr<GameObject> cube = std::make_shared<GameObject>(mp_renderer);
-	cube->setPosition(position);
 
 	Voxel voxel;
 
@@ -118,7 +117,8 @@ const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, 
 	voxel.addIndices(4, 0, 5);
 	voxel.addIndices(5, 0, 1);
 
-	cube->loadMesh(voxel.vertices, voxel.indices);
+	cube->LoadMesh(voxel.vertices, voxel.indices);
+	cube->setPosition(position);
 
 	return cube;
 }
