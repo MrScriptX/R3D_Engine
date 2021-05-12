@@ -84,40 +84,40 @@ const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, 
 {
 	std::shared_ptr<GameObject> cube = std::make_shared<GameObject>(mp_renderer);
 
-	Voxel voxel;
+	Geometry g;
 
 	const float half_size = size / 2;
 
 	//vertices
-	voxel.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
-	voxel.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.0f });
-	voxel.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
-	voxel.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
-	voxel.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
-	voxel.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.0f });
-	voxel.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.0f, .0f });
-	voxel.addVertex({ half_size, half_size, half_size }, vcolor, { 2.0f, 2.0f });
+	g.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
+	g.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.0f });
+	g.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
+	g.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
+	g.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
+	g.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.0f });
+	g.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.0f, .0f });
+	g.addVertex({ half_size, half_size, half_size }, vcolor, { 2.0f, 2.0f });
 
 	//indices
-	voxel.addIndices(0, 2, 1);
-	voxel.addIndices(1, 2, 3);
+	g.addIndices(0, 2, 1);
+	g.addIndices(1, 2, 3);
 
-	voxel.addIndices(5, 7, 4);
-	voxel.addIndices(4, 7, 6);
+	g.addIndices(5, 7, 4);
+	g.addIndices(4, 7, 6);
 
-	voxel.addIndices(1, 3, 5);
-	voxel.addIndices(5, 3, 7);
+	g.addIndices(1, 3, 5);
+	g.addIndices(5, 3, 7);
 
-	voxel.addIndices(4, 6, 0);
-	voxel.addIndices(0, 6, 2);
+	g.addIndices(4, 6, 0);
+	g.addIndices(0, 6, 2);
 
-	voxel.addIndices(2, 6, 3);
-	voxel.addIndices(3, 6, 7);
+	g.addIndices(2, 6, 3);
+	g.addIndices(3, 6, 7);
 
-	voxel.addIndices(4, 0, 5);
-	voxel.addIndices(5, 0, 1);
+	g.addIndices(4, 0, 5);
+	g.addIndices(5, 0, 1);
 
-	cube->LoadMesh(voxel.vertices, voxel.indices);
+	cube->LoadMesh(g.vertices, g.indices);
 	cube->setPosition(position);
 
 	return cube;

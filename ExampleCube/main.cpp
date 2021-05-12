@@ -1,5 +1,7 @@
 #include "Engine.h"
 
+#include <functional>
+
 int main()
 {
 	try
@@ -22,7 +24,7 @@ int main()
 		room2->setPosition({ 6.0f, 0.0f, 0.0f });
 
 		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
-		std::shared_ptr<GameObject> cube = engine.CreateCube({ 2.0f, .0f, .0f }, 1.f, {1.f, .0f, .0f});
+		std::shared_ptr<GameObject> cube = engine.CreateCube({ 2.0f, .0f, .0f }, 1.f, { 1.f, .0f, .0f });
 		cube->bindMatToMesh(0, cube_texture);
 
 		const float half_size = 1.f / 2.f;
@@ -104,7 +106,7 @@ int main()
 			engine.draw();
 		} while (!engine.shouldClose());
 	}
-	catch(const std::runtime_error& e)
+	catch (const std::runtime_error& e)
 	{
 		std::cerr << e.what() << std::endl;
 		system("pause");//no system pause | try catch should be done more localy depending on where to end 

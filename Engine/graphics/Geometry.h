@@ -3,7 +3,7 @@
 
 #include "Vertex.h"
 
-struct Voxel
+struct Geometry
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
