@@ -30,7 +30,7 @@ Engine::~Engine()
 		for (size_t t = 0; t < mp_scene->getObjects()[i]->getMeshesCount(); t++)
 		{
 			mp_scene->getObjects()[i]->getMesh(t).getMaterial()->DestroyTexture();
-			mp_scene->getObjects()[i]->getMesh(t).destroyMesh();
+			mp_scene->getObjects()[i]->getMesh(t).DestroyBuffers();
 		}
 
 		mp_scene->getObjects()[i]->destroy();
@@ -165,13 +165,18 @@ void Engine::update()
 	m_last_time = current_time;
 
 	const int32_t frame = mp_renderer->AcquireNextImage();
-	if (frame != -1 && (mp_scene->isUpdate(frame) || mp_renderer->IsUpdated(frame)))
+	if (frame != -1 && (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame)))
 	{
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
 		mp_scene->render(mp_renderer->getCommandBuffer(frame), frame);
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
 
-		mp_renderer->SetUpdate(frame);
+		mp_renderer->SetUpdated(frame);
+		
+		if (mp_renderer->IsUpdated())
+		{
+			mp_scene->Clean();
+		}
 	}
 
 	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));

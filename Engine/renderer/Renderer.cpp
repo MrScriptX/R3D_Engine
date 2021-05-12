@@ -16,7 +16,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
 	WIDTH = std::make_unique<uint32_t>(width);
 	HEIGHT = std::make_unique<uint32_t>(height);
-	m_is_updated.fill(false);
+	m_is_updated = { false };
 
 	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_graphic);
 
@@ -223,14 +223,19 @@ const int Renderer::getFrameIndex()
 	return m_current_image;
 }
 
-const bool& Renderer::IsUpdated(const size_t& i)
+const bool Renderer::IsUpdated()
+{
+	return m_is_updated == false;
+}
+
+const bool Renderer::NeedUpdate(const size_t& i)
 {
 	return m_is_updated[i];
 }
 
-void Renderer::SetUpdate(const size_t& i)
+void Renderer::SetUpdated(const size_t& i)
 {
-	m_is_updated[i] = false;
+	m_is_updated.set(i, false);
 }
 
 const uint32_t& Renderer::GetHeight()
@@ -668,7 +673,7 @@ void Renderer::recreateSwapchain()
 	createFramebuffer();
 	allocateCommandBuffers();
 
-	m_is_updated.fill(true);
+	m_is_updated.set(true);
 }
 
 void Renderer::cleanSwapchain()

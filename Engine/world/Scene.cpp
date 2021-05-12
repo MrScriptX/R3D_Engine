@@ -77,6 +77,14 @@ void Scene::updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 	}
 }
 
+void Scene::Clean()
+{
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		vp_objects[i]->Clean();
+	}
+}
+
 void Scene::Update()
 {
 	m_changed.fill(true);

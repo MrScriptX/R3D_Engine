@@ -2,6 +2,7 @@
 #define _GAMEOBJECT_H
 
 #include <vector>
+#include <utility>
 
 #include "Mesh.h"
 #include "../errors.h"
@@ -15,6 +16,7 @@ public:
 	void destroy();
 
 	void registerDrawCmd(VkCommandBuffer& command_buffer);
+	void Clean();
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
 	// MESH
