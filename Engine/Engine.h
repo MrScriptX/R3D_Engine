@@ -53,7 +53,7 @@ private:
 	std::shared_ptr<Camera> mp_main_camera;
 	std::shared_ptr<Controller> mp_controller;
 	std::shared_ptr<Config> mp_config;
-	
+
 	std::chrono::steady_clock::time_point m_last_time;
 };
 

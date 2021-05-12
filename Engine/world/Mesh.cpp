@@ -2,10 +2,15 @@
 
 Mesh::Mesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
+	m_buffer = nullptr;
+	m_old_buffer = nullptr;
 }
 
 Mesh::Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_obj_path(obj_path), mp_renderer(p_renderer)
 {
+	m_buffer = nullptr;
+	m_old_buffer = nullptr;
+
 	loadModel();
 }
 
@@ -17,11 +22,11 @@ void Mesh::draw(const VkCommandBuffer& command_buffer)
 {
 	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().handle);
 
-	VkBuffer vertex_buffer[] = { m_buffer.vertex };
+	VkBuffer vertex_buffer[] = { m_buffer->vertex };
 	VkDeviceSize offsets[] = { 0 };
 
 	vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffer, offsets);
-	vkCmdBindIndexBuffer(command_buffer, m_buffer.index, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdBindIndexBuffer(command_buffer, m_buffer->index, 0, VK_INDEX_TYPE_UINT32);
 
 	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, &p_material->getDescriptorSet(), 0, nullptr);
 
@@ -86,19 +91,47 @@ void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::share
 	p_material = mat;
 }
 
-void Mesh::createBuffer(std::shared_ptr<Renderer> engine)
+void Mesh::CreateBuffers(std::shared_ptr<Renderer> engine)
 {
-	engine->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer);
-	engine->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer);
+	m_old_buffer = m_buffer;
+	m_buffer = new Buffer();
+
+	engine->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), *m_buffer);
+	engine->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), *m_buffer);
 }
 
-void Mesh::destroyMesh()
+void Mesh::DestroyOldBuffers()
 {
-	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer.index, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_buffer.index_memory, nullptr);
+	if (m_old_buffer == nullptr)
+		return;
 
-	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer.vertex, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_buffer.vertex_memory, nullptr);
+	vkDestroyBuffer(mp_renderer->getDevice(), m_old_buffer->index, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_old_buffer->index_memory, nullptr);
+
+	vkDestroyBuffer(mp_renderer->getDevice(), m_old_buffer->vertex, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_old_buffer->vertex_memory, nullptr);
+
+	delete(m_old_buffer);
+	m_old_buffer = nullptr;
+}
+
+void Mesh::DestroyBuffers()
+{
+	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer->index, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_buffer->index_memory, nullptr);
+
+	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer->vertex, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_buffer->vertex_memory, nullptr);
+}
+
+void Mesh::SetVertices(const std::vector<Vertex>& vertices)
+{
+	m_vertices = vertices;
+}
+
+void Mesh::SetIndices(const std::vector<uint32_t>& indices)
+{
+	m_indices = indices;
 }
 
 void Mesh::SetVertices(const std::vector<Vertex>& vertices)
@@ -123,7 +156,12 @@ std::vector<uint32_t>& Mesh::get_indices()
 
 Buffer & Mesh::getBuffer()
 {
-	return m_buffer;
+	return *m_buffer;
+}
+
+Buffer* Mesh::GetOldBuffer()
+{
+	return m_old_buffer;
 }
 
 std::shared_ptr<Material> Mesh::getMaterial()
