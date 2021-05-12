@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
+Mesh::Mesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
 }
 
@@ -99,6 +99,16 @@ void Mesh::destroyMesh()
 
 	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer.vertex, nullptr);
 	vkFreeMemory(mp_renderer->getDevice(), m_buffer.vertex_memory, nullptr);
+}
+
+void Mesh::SetVertices(const std::vector<Vertex>& vertices)
+{
+	m_vertices = vertices;
+}
+
+void Mesh::SetIndices(const std::vector<uint32_t>& indices)
+{
+	m_indices = indices;
 }
 
 std::vector<Vertex>& Mesh::get_vertices()

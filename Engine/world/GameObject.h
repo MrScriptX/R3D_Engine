@@ -17,8 +17,17 @@ public:
 	void registerDrawCmd(VkCommandBuffer& command_buffer);
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
+	// MESH
+	void LoadMesh(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 	void loadMesh(const std::string& mesh_path);
+	
+	void UpdateMesh(const size_t& index, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+
+	std::vector<Vertex> GetVertices(const size_t& index);
+	std::vector<uint32_t> GetIndices(const size_t& index);
+
 	Mesh& getMesh(const size_t& index);
+	void setMesh(const size_t& index, std::vector<Vertex> vertices);
 
 	void setPosition(const glm::vec3& pos);
 	const glm::vec3& getPosition();
