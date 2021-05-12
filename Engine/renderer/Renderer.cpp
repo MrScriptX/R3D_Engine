@@ -235,7 +235,7 @@ const bool Renderer::NeedUpdate(const size_t& i)
 
 void Renderer::SetUpdated(const size_t& i)
 {
-	m_is_updated.set(i, false);
+	m_is_updated[i] = false;
 }
 
 const uint32_t& Renderer::GetHeight()
@@ -673,7 +673,7 @@ void Renderer::recreateSwapchain()
 	createFramebuffer();
 	allocateCommandBuffers();
 
-	m_is_updated.set(true);
+	m_is_updated.set();
 }
 
 void Renderer::cleanSwapchain()
