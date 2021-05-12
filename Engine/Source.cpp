@@ -58,6 +58,7 @@ int main()
 		voxel.addIndices(index_5, index_0, index_1);
 
 		cube->LoadMesh(voxel.vertices, voxel.indices);
+
 		cube->bindMatToMesh(1, cube_texture);
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
@@ -90,8 +91,10 @@ int main()
 
 			if (init++ == 10000)
 			{
-				voxel.vertices[0].color = { .0f, .0f, 1.0f };
-				cube->setMesh(1, voxel.vertices);
+				std::shared_ptr<std::vector<Vertex>> cube_vertices = cube->getMesh(1).get_vertices();
+				cube_vertices->at(0).color = { .0f, .0f, 1.0f };
+				cube->UpdateMesh(1);
+				//cube->setMesh(1, voxel.vertices);
 
 				scene->Update();
 

@@ -35,9 +35,9 @@ void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_
 	m_meshes[index].bindMaterial(p_material, m_ubo, mp_renderer);
 }
 
-void GameObject::LoadMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
+void GameObject::LoadMesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices)
 {
-	Mesh mesh(vertices, indices, mp_renderer);
+	Mesh mesh(std::make_shared<std::vector<Vertex>>(vertices), indices, mp_renderer);
 	mesh.createBuffer(mp_renderer);
 
 	m_meshes.push_back(mesh);
@@ -51,12 +51,17 @@ void GameObject::loadMesh(const std::string& mesh_path)
 	m_meshes.push_back(mesh);
 }
 
+void GameObject::UpdateMesh(const size_t& index)
+{
+	m_meshes[index].createBuffer(mp_renderer);
+}
+
 Mesh& GameObject::getMesh(const size_t& index)
 {
 	return m_meshes[index];
 }
 
-void GameObject::setMesh(const size_t& index, std::vector<Vertex>& vertices)
+void GameObject::setMesh(const size_t& index, std::shared_ptr<std::vector<Vertex>> vertices)
 {
 	m_meshes[index].SetVertices(vertices);
 	m_meshes[index].createBuffer(mp_renderer);

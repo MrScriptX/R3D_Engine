@@ -1,11 +1,13 @@
 #include "Mesh.h"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
+Mesh::Mesh(std::shared_ptr<std::vector<Vertex>> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
 }
 
 Mesh::Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_obj_path(obj_path), mp_renderer(p_renderer)
 {
+	m_vertices = std::make_shared<std::vector<Vertex>>();
+
 	loadModel();
 }
 
@@ -56,7 +58,7 @@ void Mesh::loadModel()
 
 			vertex.color = { 1.0f, 1.0f, 1.0f };
 
-			m_vertices.push_back(vertex);
+			m_vertices->push_back(vertex);
 		}
 
 		for (unsigned int t = 0; t < mesh->mNumFaces; ++t)
@@ -88,7 +90,7 @@ void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::share
 
 void Mesh::createBuffer(std::shared_ptr<Renderer> engine)
 {
-	engine->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer);
+	engine->createVerticesBuffer(m_vertices, m_buffer);
 	engine->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer);
 }
 
@@ -101,12 +103,12 @@ void Mesh::destroyMesh()
 	vkFreeMemory(mp_renderer->getDevice(), m_buffer.vertex_memory, nullptr);
 }
 
-void Mesh::SetVertices(std::vector<Vertex> vertices)
+void Mesh::SetVertices(std::shared_ptr<std::vector<Vertex>> vertices)
 {
 	m_vertices = vertices;
 }
 
-std::vector<Vertex>& Mesh::get_vertices()
+std::shared_ptr<std::vector<Vertex>> Mesh::get_vertices()
 {
 	return m_vertices;
 }

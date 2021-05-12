@@ -17,7 +17,7 @@
 class Mesh
 {
 public:
-	Mesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer);
+	Mesh(std::shared_ptr<std::vector<Vertex>> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer);
 	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
 	~Mesh();
 
@@ -28,9 +28,9 @@ public:
 
 	void destroyMesh();
 
-	void SetVertices(std::vector<Vertex> vertices);
+	void SetVertices(std::shared_ptr<std::vector<Vertex>> vertices);
 
-	std::vector<Vertex>& get_vertices();
+	std::shared_ptr<std::vector<Vertex>> get_vertices();
 	std::vector<uint32_t>& get_indices();
 	Buffer& getBuffer();
 	std::shared_ptr<Material> getMaterial();
@@ -38,7 +38,7 @@ public:
 private:
 	const std::string m_obj_path;
 
-	std::vector<Vertex> m_vertices;
+	std::shared_ptr<std::vector<Vertex>> m_vertices;
 	std::vector<uint32_t> m_indices;
 
 	Buffer m_buffer;
