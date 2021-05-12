@@ -91,14 +91,13 @@ int main()
 
 			if (init++ == 10000)
 			{
-				std::shared_ptr<std::vector<Vertex>> cube_vertices = cube->getMesh(1).get_vertices();
-				cube_vertices->at(0).color = { .0f, .0f, 1.0f };
-				cube->UpdateMesh(1);
-				//cube->setMesh(1, voxel.vertices);
+				Voxel v;
+				v.vertices = cube->GetVertices(1);
+				v.indices = cube->GetIndices(1);
+				v.vertices[0].color = { .0f, .0f, 1.0f };
 
+				cube->UpdateMesh(1, v.vertices, v.indices);
 				scene->Update();
-
-				std::clog << "changed" << std::endl;
 			}
 
 			engine.update();
