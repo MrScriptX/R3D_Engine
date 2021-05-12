@@ -176,6 +176,9 @@
     <ClInclude Include="graphics\Shaders.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="graphics\Geometry.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\HLSL\no_texture_shader.frag">

@@ -13,6 +13,7 @@
 #include <iostream>
 #include <memory>
 #include <algorithm>
+#include <bitset>
 
 #include "VulkanInstance.h"
 #include "VulkanDevice.h"
@@ -57,9 +58,11 @@ public:
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
 	std::unique_ptr<VulkanPipeline>& GetPipelineFactory();
 	const int getFrameIndex();
-	const bool& IsUpdated(const size_t& i);
-	void SetUpdate(const size_t& i);
 	const uint32_t& GetHeight();
+
+	const bool IsUpdated();
+	const bool NeedUpdate(const size_t& i);
+	void SetUpdated(const size_t& i);
 
 	//rendering
 	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
@@ -148,7 +151,7 @@ private:
 
 	uint32_t m_current_image = 0;
 	uint32_t m_last_image = 0;
-	std::array<bool, 3> m_is_updated;
+	std::bitset<3> m_is_updated;
 };
 
 #endif _RENDERER_H

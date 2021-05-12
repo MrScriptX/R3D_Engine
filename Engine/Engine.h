@@ -3,8 +3,10 @@
 
 #include "Window.h"
 
-#include "world/GameObject.h"
 #include "world/Scene.h"
+#include "world/GameObject.h"
+
+#include "graphics/Geometry.h"
 
 class Engine
 {
@@ -26,6 +28,8 @@ public:
 	// CREATE GAMEOBJECT
 	const std::shared_ptr<GameObject> CreateGameObject();
 	const std::shared_ptr<GameObject> CreateGameObject(const std::string& object_file);
+	
+	const std::shared_ptr<GameObject> CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor);
 
 	// CONTROLLER
 	void BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type = ActionType::R3D_PRESS);
@@ -49,7 +53,7 @@ private:
 	std::shared_ptr<Camera> mp_main_camera;
 	std::shared_ptr<Controller> mp_controller;
 	std::shared_ptr<Config> mp_config;
-	
+
 	std::chrono::steady_clock::time_point m_last_time;
 };
 

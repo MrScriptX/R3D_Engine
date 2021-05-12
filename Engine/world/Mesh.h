@@ -17,20 +17,25 @@
 class Mesh
 {
 public:
-	Mesh(std::shared_ptr<Renderer> p_renderer);
+	Mesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer);
 	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
 	~Mesh();
 
 	void draw(const VkCommandBuffer& command_buffer);
 	void loadModel();
 	void bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
-	void createBuffer(std::shared_ptr<Renderer> engine);
 
-	void destroyMesh();
+	void CreateBuffers(std::shared_ptr<Renderer> engine);
+	void DestroyOldBuffers();
+	void DestroyBuffers();
+
+	void SetVertices(const std::vector<Vertex>& vertices);
+	void SetIndices(const std::vector<uint32_t>& indices);
 
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
 	Buffer& getBuffer();
+	Buffer* GetOldBuffer();
 	std::shared_ptr<Material> getMaterial();
 
 private:
@@ -39,10 +44,10 @@ private:
 	std::vector<Vertex> m_vertices;
 	std::vector<uint32_t> m_indices;
 
-	Buffer m_buffer;
+	Buffer* m_buffer;
+	Buffer* m_old_buffer;
 
 	std::shared_ptr<Material> p_material;
-
 	std::shared_ptr<Renderer> mp_renderer;
 };
 
