@@ -36,7 +36,7 @@ public:
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
 	Buffer& GetBuffer(const int32_t frame);
-	Buffer* GetOldBuffer(const int32_t frame);
+	Buffer& GetOldBuffer(const int32_t frame);
 	std::shared_ptr<Material> getMaterial();
 	const bool IsDestroyed();
 	const bool IsCleaned();
@@ -47,8 +47,8 @@ private:
 	std::vector<Vertex> m_vertices;
 	std::vector<uint32_t> m_indices;
 
-	std::array<Buffer*, MAX_FRAMES_IN_FLIGHT> m_buffer;
-	std::array<Buffer*, MAX_FRAMES_IN_FLIGHT> m_old_buffer;
+	std::array<Buffer, MAX_FRAMES_IN_FLIGHT> m_buffer;
+	std::array<Buffer, MAX_FRAMES_IN_FLIGHT> m_old_buffer;
 
 	std::shared_ptr<Material> p_material;
 	std::shared_ptr<Renderer> mp_renderer;
