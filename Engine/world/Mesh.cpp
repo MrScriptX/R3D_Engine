@@ -77,8 +77,6 @@ void Mesh::loadModel()
 
 void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer)
 {
-	renderer->allocateDescriptorSet(mat->getDescriptorSet());
-
 	if (mat->getTexture() == nullptr)
 	{
 		renderer->updateDescriptorSet(ubo, mat->getDescriptorSet());

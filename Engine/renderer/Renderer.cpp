@@ -502,7 +502,7 @@ void Renderer::createDescriptorPool()
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 20;
+	poolInfo.maxSets = 4;
 
 	if (vkCreateDescriptorPool(m_graphic.device, &poolInfo, nullptr, &m_graphic.descriptor_pool) != VK_SUCCESS)
 	{
