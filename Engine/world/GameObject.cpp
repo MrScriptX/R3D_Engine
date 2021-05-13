@@ -81,23 +81,6 @@ std::vector<uint32_t> GameObject::GetIndices(const size_t& index)
 	return m_meshes[index].get_indices();
 }
 
-void GameObject::UpdateMesh(const size_t& index, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
-{
-	m_meshes[index].SetVertices(vertices);
-	m_meshes[index].SetIndices(indices);
-	m_meshes[index].createBuffer(mp_renderer);
-}
-
-std::vector<Vertex> GameObject::GetVertices(const size_t& index)
-{
-	return m_meshes[index].get_vertices();
-}
-
-std::vector<uint32_t> GameObject::GetIndices(const size_t& index)
-{
-	return m_meshes[index].get_indices();
-}
-
 Mesh& GameObject::getMesh(const size_t& index)
 {
 	return m_meshes[index];

@@ -33,9 +33,6 @@ public:
 	void SetVertices(const std::vector<Vertex>& vertices);
 	void SetIndices(const std::vector<uint32_t>& indices);
 
-	void SetVertices(const std::vector<Vertex>& vertices);
-	void SetIndices(const std::vector<uint32_t>& indices);
-
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
 	Buffer& getBuffer();

@@ -139,16 +139,6 @@ void Mesh::SetIndices(const std::vector<uint32_t>& indices)
 	m_indices = indices;
 }
 
-void Mesh::SetVertices(const std::vector<Vertex>& vertices)
-{
-	m_vertices = vertices;
-}
-
-void Mesh::SetIndices(const std::vector<uint32_t>& indices)
-{
-	m_indices = indices;
-}
-
 std::vector<Vertex>& Mesh::get_vertices()
 {
 	return m_vertices;
