@@ -4,12 +4,14 @@ Mesh::Mesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices, s
 {
 	m_buffer = nullptr;
 	m_old_buffer = nullptr;
+	m_destroyed = false;
 }
 
 Mesh::Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_obj_path(obj_path), mp_renderer(p_renderer)
 {
 	m_buffer = nullptr;
 	m_old_buffer = nullptr;
+	m_destroyed = false;
 
 	loadModel();
 }
@@ -77,8 +79,6 @@ void Mesh::loadModel()
 
 void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer)
 {
-	renderer->allocateDescriptorSet(mat->getDescriptorSet());
-
 	if (mat->getTexture() == nullptr)
 	{
 		renderer->updateDescriptorSet(ubo, mat->getDescriptorSet());
@@ -89,6 +89,11 @@ void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::share
 	}
 
 	p_material = mat;
+}
+
+void Mesh::Delete()
+{
+	m_destroyed = true;
 }
 
 void Mesh::CreateBuffers(std::shared_ptr<Renderer> engine)
@@ -167,4 +172,9 @@ Buffer* Mesh::GetOldBuffer()
 std::shared_ptr<Material> Mesh::getMaterial()
 {
 	return p_material;
+}
+
+const bool Mesh::IsDestroyed()
+{
+	return m_destroyed;
 }

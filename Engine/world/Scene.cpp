@@ -3,7 +3,7 @@
 
 Scene::Scene()
 {
-	m_changed.fill(false);
+	m_changed.reset();
 }
 
 Scene::~Scene()
@@ -23,7 +23,7 @@ R3DResult Scene::addGameObject(std::shared_ptr<GameObject> gameobject)
 
 	// add object to scene
 	vp_objects.push_back(gameobject);
-	m_changed.fill(true);
+	m_changed.set();
 
 	return R3DResult::R3D_SUCCESS;
 }
@@ -34,8 +34,11 @@ R3DResult Scene::removeGameObject(std::shared_ptr<GameObject> gameobject)
 	{
 		if (vp_objects[i] == gameobject)
 		{
+			vp_delete_queue.push_back(vp_objects[i]);
+
 			vp_objects.erase(vp_objects.begin() + i);
-			m_changed.fill(true);
+
+			m_changed.set();
 
 			return R3DResult::R3D_SUCCESS;
 		}
@@ -51,15 +54,37 @@ void Scene::render(VkCommandBuffer& command_buffer, const int i)
 		vp_objects[i]->registerDrawCmd(command_buffer);
 	}
 
-	m_changed[i] = false;
+	m_changed.set(i, false);
 }
 
-void Scene::updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer)
+void Scene::Clean()
+{
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		vp_objects[i]->Clean();
+	}
+
+	if (m_changed == false)
+	{
+		for (size_t i = 0; i < vp_delete_queue.size(); i++)
+		{
+			for (size_t t = 0; t < vp_delete_queue[i]->getMeshesCount(); t++)
+			{
+				vp_delete_queue[i]->getMesh(t).DestroyBuffers();
+			}
+
+			vp_delete_queue[i]->Clean();
+			vp_delete_queue.erase(vp_delete_queue.begin() + i);
+		}
+	}
+}
+
+void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
 		UniformBufferObject ubo = p_camera->getUBO();
-		
+
 		glm::mat4 matrix = glm::mat4(1.0f);
 
 		matrix = glm::translate(matrix, vp_objects[i]->getPosition());
@@ -77,22 +102,19 @@ void Scene::updateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 	}
 }
 
-void Scene::Clean()
-{
-	for (size_t i = 0; i < vp_objects.size(); i++)
-	{
-		vp_objects[i]->Clean();
-	}
-}
-
 void Scene::Update()
 {
-	m_changed.fill(true);
+	m_changed.set();
 }
 
 const bool& Scene::isUpdate(const int i)
 {
 	return m_changed[i];
+}
+
+const bool Scene::IsUpdated()
+{
+	return m_changed == false;
 }
 
 std::vector<std::shared_ptr<GameObject>>& Scene::getObjects()

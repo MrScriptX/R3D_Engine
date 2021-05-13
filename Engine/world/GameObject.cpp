@@ -35,6 +35,11 @@ void GameObject::Clean()
 	for (size_t i = 0; i < m_meshes.size(); i++)
 	{
 		m_meshes[i].DestroyOldBuffers();
+
+		if (m_meshes[i].IsDestroyed())
+		{
+			m_meshes[i].DestroyBuffers();
+		}
 	}
 }
 

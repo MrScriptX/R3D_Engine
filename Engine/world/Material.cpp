@@ -3,11 +3,16 @@
 Material::Material(const TSHADER shader, std::shared_ptr<Renderer> p_renderer) : m_shader(shader), mp_renderer(p_renderer)
 {
 	m_descriptor_set = VK_NULL_HANDLE;
+	m_texture = nullptr;
+	m_color = nullptr;
+
+	mp_renderer->allocateDescriptorSet(m_descriptor_set);
 }
 
 Material::~Material()
 {
 	m_texture.reset();
+
 }
 
 void Material::setColor(glm::vec3 color)
