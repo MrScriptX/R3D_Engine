@@ -167,9 +167,6 @@ void Engine::update()
 	const int32_t frame = mp_renderer->AcquireNextImage();
 	if (frame != -1 && (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame)))
 	{
-		if(mp_renderer->NeedUpdate(frame))
-			std::clog << frame << std::endl;
-
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
 		mp_scene->render(mp_renderer->getCommandBuffer(frame), frame);
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
