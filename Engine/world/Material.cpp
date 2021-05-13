@@ -12,6 +12,7 @@ Material::Material(const TSHADER shader, std::shared_ptr<Renderer> p_renderer) :
 Material::~Material()
 {
 	m_texture.reset();
+
 }
 
 void Material::setColor(glm::vec3 color)

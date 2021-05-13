@@ -4,7 +4,7 @@ int main()
 {
 	try
 	{
-		Engine engine;
+		Engine engine(1280, 720);
 		Logger::init();
 
 		std::shared_ptr<Material> room_texture = engine.CreateMaterial(TSHADER::TEXTURE);
@@ -57,10 +57,6 @@ int main()
 		voxel.addIndices(index_4, index_0, index_5);
 		voxel.addIndices(index_5, index_0, index_1);
 
-		cube->LoadMesh(voxel.vertices, voxel.indices);
-
-		cube->bindMatToMesh(1, cube_texture);
-
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 		scene->addGameObject(room);
 		scene->addGameObject(room2);
@@ -89,7 +85,14 @@ int main()
 		{
 			//cube->setPosition(cube->getPosition() + glm::vec3{0.0001f, 0.f, 0.f});
 
-			if (init++ == 10000)
+			if (init == 10000)
+			{
+				cube->LoadMesh(voxel.vertices, voxel.indices);
+				cube->bindMatToMesh(1, cube_texture);
+				scene->Update();
+			}
+
+			if (init++ == 15000)
 			{
 				Geometry v;
 				v.vertices = cube->GetVertices(1);
@@ -98,6 +101,11 @@ int main()
 
 				cube->UpdateMesh(1, v.vertices, v.indices);
 				scene->Update();
+			}
+
+			if (init == 20000)
+			{
+				scene->removeGameObject(cube);
 			}
 
 			engine.update();

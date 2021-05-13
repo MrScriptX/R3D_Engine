@@ -24,6 +24,7 @@ public:
 	void draw(const VkCommandBuffer& command_buffer);
 	void loadModel();
 	void bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
+	void Delete();
 
 	void CreateBuffers(std::shared_ptr<Renderer> engine);
 	void DestroyOldBuffers();
@@ -37,6 +38,7 @@ public:
 	Buffer& getBuffer();
 	Buffer* GetOldBuffer();
 	std::shared_ptr<Material> getMaterial();
+	const bool IsDestroyed();
 
 private:
 	const std::string m_obj_path;
@@ -49,6 +51,8 @@ private:
 
 	std::shared_ptr<Material> p_material;
 	std::shared_ptr<Renderer> mp_renderer;
+
+	bool m_destroyed;
 };
 
 #endif//!_MODEL_H
