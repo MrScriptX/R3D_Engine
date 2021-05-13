@@ -85,7 +85,7 @@ int main()
 		{
 			//cube->setPosition(cube->getPosition() + glm::vec3{0.0001f, 0.f, 0.f});
 
-			if (init == 10000)
+			/*if (init == 10000)
 			{
 				cube->LoadMesh(voxel.vertices, voxel.indices);
 				cube->bindMatToMesh(1, cube_texture);
@@ -106,7 +106,7 @@ int main()
 			if (init == 20000)
 			{
 				scene->removeGameObject(cube);
-			}
+			}*/
 
 			engine.update();
 			engine.draw();

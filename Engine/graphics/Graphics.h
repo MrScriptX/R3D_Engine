@@ -4,6 +4,7 @@
 #include "vulkan\vulkan.h"
 #include <vector>
 
+constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 3;
 
 struct Extensions
 {

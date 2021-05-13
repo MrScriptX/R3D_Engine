@@ -21,33 +21,34 @@ public:
 	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
 	~Mesh();
 
-	void draw(const VkCommandBuffer& command_buffer);
+	void draw(const VkCommandBuffer& command_buffer, const int32_t frame);
 	void loadModel();
 	void bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
 	void Delete();
 
 	void CreateBuffers(std::shared_ptr<Renderer> engine);
 	void DestroyOldBuffers();
-	void DestroyBuffers();
+	void DestroyBuffers(const int32_t frame);
 
 	void SetVertices(const std::vector<Vertex>& vertices);
 	void SetIndices(const std::vector<uint32_t>& indices);
 
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
-	Buffer& getBuffer();
-	Buffer* GetOldBuffer();
+	Buffer& GetBuffer(const int32_t frame);
+	Buffer* GetOldBuffer(const int32_t frame);
 	std::shared_ptr<Material> getMaterial();
 	const bool IsDestroyed();
+	const bool IsCleaned();
 
 private:
-	const std::string m_obj_path;
+	std::string m_obj_path;
 
 	std::vector<Vertex> m_vertices;
 	std::vector<uint32_t> m_indices;
 
-	Buffer* m_buffer;
-	Buffer* m_old_buffer;
+	std::array<Buffer*, MAX_FRAMES_IN_FLIGHT> m_buffer;
+	std::array<Buffer*, MAX_FRAMES_IN_FLIGHT> m_old_buffer;
 
 	std::shared_ptr<Material> p_material;
 	std::shared_ptr<Renderer> mp_renderer;

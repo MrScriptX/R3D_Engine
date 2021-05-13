@@ -13,10 +13,9 @@ public:
 	GameObject(std::shared_ptr<Renderer> p_renderer);
 	~GameObject();
 
-	void destroy();
+	void Destroy(const int32_t frame);
 
-	void registerDrawCmd(VkCommandBuffer& command_buffer);
-	void Clean();
+	void registerDrawCmd(VkCommandBuffer& command_buffer, const int32_t frame);
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
 	// MESH
@@ -37,16 +36,17 @@ public:
 	void setRotation(const glm::vec3& rot);
 	const glm::vec3& getRotation();
 
-	VkBuffer& getUBO();
-	VkDeviceMemory& getUBOMemory();
+	VkBuffer& GetUBO(const int32_t frame);
+	VkDeviceMemory& GetUBOMemory(const int32_t frame);
 
 	const size_t& getMeshesCount();
+	const bool Deleted();
 	
 private:
 	std::vector<Mesh> m_meshes;
 
-	VkBuffer m_ubo;
-	VkDeviceMemory m_ubo_memory;
+	std::array<VkBuffer, MAX_FRAMES_IN_FLIGHT> m_ubo;
+	std::array<VkDeviceMemory, MAX_FRAMES_IN_FLIGHT> m_ubo_memory;
 
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
