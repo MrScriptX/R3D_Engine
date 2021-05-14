@@ -13,6 +13,7 @@ public:
 	GameObject(std::shared_ptr<Renderer> p_renderer);
 	~GameObject();
 
+	void Update(const int32_t frame);
 	void Destroy(const int32_t frame);
 
 	void registerDrawCmd(VkCommandBuffer& command_buffer, const int32_t frame);
@@ -43,6 +44,7 @@ public:
 	const bool Deleted();
 	
 private:
+	std::vector<int32_t> m_mesh_to_update;
 	std::vector<std::unique_ptr<Mesh>> m_meshes;
 
 	std::array<VkBuffer, MAX_FRAMES_IN_FLIGHT> m_ubo;

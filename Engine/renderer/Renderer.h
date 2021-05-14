@@ -36,6 +36,7 @@ public:
 
 	int32_t draw();
 	int32_t AcquireNextImage();
+	void WaitForSwapchainImageFence();
 
 	void setupInstance(GLFWwindow& window);
 	void setupDevice();

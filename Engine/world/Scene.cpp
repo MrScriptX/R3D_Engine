@@ -11,11 +11,13 @@ Scene::~Scene()
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
 		vp_objects.erase(vp_objects.begin() + i);
+		--i;
 	}
 
 	for (size_t i = 0; i < vp_delete_queue.size(); i++)
 	{
 		vp_delete_queue.erase(vp_objects.begin() + i);
+		--i;
 	}
 }
 
@@ -72,7 +74,8 @@ void Scene::Clean(const int32_t frame)
 		vp_delete_queue[i]->Destroy(frame);
 		if (vp_delete_queue[i]->Deleted())
 		{
-			vp_objects.erase(vp_delete_queue.begin() + i);
+			vp_delete_queue.erase(vp_delete_queue.begin() + i);
+			--i;
 		}
 	}
 }
@@ -100,9 +103,17 @@ void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 	}
 }
 
-void Scene::Update()
+void Scene::ToUpdate()
 {
 	m_changed.set();
+}
+
+void Scene::Update(const int32_t frame)
+{
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		vp_objects[i]->Update(frame);
+	}
 }
 
 const bool& Scene::isUpdate(const int i)

@@ -161,6 +161,10 @@ void Engine::update()
 
 	if (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame))
 	{
+		mp_renderer->WaitForSwapchainImageFence();
+
+		mp_scene->Update(frame);
+
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
 		mp_scene->Render(mp_renderer->getCommandBuffer(frame), frame);
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));

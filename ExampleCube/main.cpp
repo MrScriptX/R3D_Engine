@@ -87,33 +87,35 @@ int main()
 
 			if (init++ == 10000)
 			{
-				std::clog << "new cube" << std::endl;
+				std::clog << "Add New Mesh" << std::endl;
 				cube->LoadMesh(voxel.vertices, voxel.indices);
 				cube->bindMatToMesh(1, cube_texture);
-				scene->Update();
+				scene->ToUpdate();
 			}
 
-			/*if (init++ == 15000)
+			if (init == 15000)
 			{
 				Geometry v;
 				v.vertices = cube->GetVertices(1);
 				v.indices = cube->GetIndices(1);
 				v.vertices[0].color = { .0f, .0f, 1.0f };
 
+				std::clog << "Update Mesh" << std::endl;
 				cube->UpdateMesh(1, v.vertices, v.indices);
-				scene->Update();
+				scene->ToUpdate();
 			}
 
 			if (init == 20000)
 			{
+				std::clog << "Remove Gameobject" << std::endl;
 				scene->removeGameObject(cube);
-			}*/
+			}
 
 			engine.update();
 			engine.draw();
 		} while (!engine.shouldClose());
 	}
-	catch (const std::runtime_error& e)
+	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 		system("pause");//no system pause | try catch should be done more localy depending on where to end 

@@ -24,7 +24,8 @@ public:
 
 	void UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer, const int32_t frame);
 
-	void Update();
+	void ToUpdate();
+	void Update(const int32_t frame);
 	const bool& isUpdate(const int i);
 	const bool IsUpdated();
 	std::vector<std::shared_ptr<GameObject>>& getObjects();
