@@ -19,12 +19,13 @@ public:
 	R3DResult addGameObject(std::shared_ptr<GameObject> gameobject);
 	R3DResult removeGameObject(std::shared_ptr<GameObject> gameobject);
 
-	void render(VkCommandBuffer& command_buffer, const int i);
-	void Clean();
+	void Render(VkCommandBuffer& command_buffer, const int32_t frame);
+	void Clean(const int32_t frame);
 
-	void UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer);
+	void UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer, const int32_t frame);
 
-	void Update();
+	void ToUpdate();
+	void Update(const int32_t frame);
 	const bool& isUpdate(const int i);
 	const bool IsUpdated();
 	std::vector<std::shared_ptr<GameObject>>& getObjects();

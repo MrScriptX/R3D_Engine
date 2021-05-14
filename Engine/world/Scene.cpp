@@ -8,6 +8,17 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		vp_objects.erase(vp_objects.begin() + i);
+		--i;
+	}
+
+	for (size_t i = 0; i < vp_delete_queue.size(); i++)
+	{
+		vp_delete_queue.erase(vp_objects.begin() + i);
+		--i;
+	}
 }
 
 R3DResult Scene::addGameObject(std::shared_ptr<GameObject> gameobject)
@@ -34,8 +45,7 @@ R3DResult Scene::removeGameObject(std::shared_ptr<GameObject> gameobject)
 	{
 		if (vp_objects[i] == gameobject)
 		{
-			vp_delete_queue.push_back(vp_objects[i]);
-
+			vp_delete_queue.push_back(std::move(vp_objects[i]));
 			vp_objects.erase(vp_objects.begin() + i);
 
 			m_changed.set();
@@ -47,43 +57,34 @@ R3DResult Scene::removeGameObject(std::shared_ptr<GameObject> gameobject)
 	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }
 
-void Scene::render(VkCommandBuffer& command_buffer, const int i)
+void Scene::Render(VkCommandBuffer& command_buffer, const int32_t frame)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
-		vp_objects[i]->registerDrawCmd(command_buffer);
+		vp_objects[i]->registerDrawCmd(command_buffer, frame);
 	}
 
-	m_changed.set(i, false);
+	m_changed.set(frame, false);
 }
 
-void Scene::Clean()
+void Scene::Clean(const int32_t frame)
 {
-	for (size_t i = 0; i < vp_objects.size(); i++)
+	for (size_t i = 0; i < vp_delete_queue.size(); i++)
 	{
-		vp_objects[i]->Clean();
-	}
-
-	if (m_changed == false)
-	{
-		for (size_t i = 0; i < vp_delete_queue.size(); i++)
+		vp_delete_queue[i]->Destroy(frame);
+		if (vp_delete_queue[i]->Deleted())
 		{
-			for (size_t t = 0; t < vp_delete_queue[i]->getMeshesCount(); t++)
-			{
-				vp_delete_queue[i]->getMesh(t).DestroyBuffers();
-			}
-
-			vp_delete_queue[i]->Clean();
 			vp_delete_queue.erase(vp_delete_queue.begin() + i);
+			--i;
 		}
 	}
 }
 
-void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer)
+void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer, const int32_t frame)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
-		UniformBufferObject ubo = p_camera->getUBO();
+		UniformBufferObject ubo = p_camera->GetUBO(frame);
 
 		glm::mat4 matrix = glm::mat4(1.0f);
 
@@ -96,15 +97,23 @@ void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 		ubo.model = matrix;
 
 		void* data;
-		vkMapMemory(p_renderer->getDevice(), vp_objects[i]->getUBOMemory(), 0, sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(p_camera->getUBO()));
-		vkUnmapMemory(p_renderer->getDevice(), vp_objects[i]->getUBOMemory());
+		vkMapMemory(p_renderer->getDevice(), vp_objects[i]->GetUBOMemory(frame), 0, sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(p_camera->GetUBO(frame)));
+		vkUnmapMemory(p_renderer->getDevice(), vp_objects[i]->GetUBOMemory(frame));
 	}
 }
 
-void Scene::Update()
+void Scene::ToUpdate()
 {
 	m_changed.set();
+}
+
+void Scene::Update(const int32_t frame)
+{
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		vp_objects[i]->Update(frame);
+	}
 }
 
 const bool& Scene::isUpdate(const int i)

@@ -3,93 +3,120 @@
 
 GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
 {
-	m_ubo = VK_NULL_HANDLE;
-	m_ubo_memory = VK_NULL_HANDLE;
+	m_ubo.fill(VK_NULL_HANDLE);
+	m_ubo_memory.fill(VK_NULL_HANDLE);
 
 	m_position = { 0, 0, 0 };
 	m_rotation = { 0, 0, 0 };
 
-	mp_renderer->createUBO(m_ubo, m_ubo_memory);
+	for (size_t i = 0; i < m_ubo.size(); i++)
+	{
+		mp_renderer->createUBO(m_ubo[i], m_ubo_memory[i]);
+	}
 }
 
 GameObject::~GameObject()
 {
-}
-
-void GameObject::destroy()
-{
-	vkDestroyBuffer(mp_renderer->getDevice(), m_ubo, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory, nullptr);
-}
-
-void GameObject::registerDrawCmd(VkCommandBuffer& command_buffer)
-{
 	for (size_t i = 0; i < m_meshes.size(); i++)
 	{
-		m_meshes[i].draw(command_buffer);
+		m_meshes.erase(m_meshes.begin() + i);
+	}
+
+	for (size_t i = 0; i < m_ubo.size(); i++)
+	{
+		vkDestroyBuffer(mp_renderer->getDevice(), m_ubo[i], nullptr);
+		vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory[i], nullptr);
 	}
 }
 
-void GameObject::Clean()
+void GameObject::Update(const int32_t frame)
+{
+	for (size_t i = 0; i < m_mesh_to_update.size(); i++)
+	{
+		m_meshes[m_mesh_to_update[i]]->UpdateBuffers(frame);
+
+		if (m_meshes[m_mesh_to_update[i]]->IsUpdated())
+		{
+			m_mesh_to_update.erase(m_mesh_to_update.begin() + i);
+			--i;
+		}
+	}
+}
+
+void GameObject::Destroy(const int32_t frame)
 {
 	for (size_t i = 0; i < m_meshes.size(); i++)
 	{
-		m_meshes[i].DestroyOldBuffers();
-
-		if (m_meshes[i].IsDestroyed())
+		m_meshes[i]->DestroyBuffers(frame);
+		if (m_meshes[i]->IsCleaned())
 		{
-			m_meshes[i].DestroyBuffers();
+			m_meshes.erase(m_meshes.begin() + i);
+			--i;
 		}
+	}
+
+	vkDestroyBuffer(mp_renderer->getDevice(), m_ubo[frame], nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory[frame], nullptr);
+
+	m_ubo[frame] = VK_NULL_HANDLE;
+	m_ubo_memory[frame] = VK_NULL_HANDLE;
+}
+
+void GameObject::registerDrawCmd(VkCommandBuffer& command_buffer, const int32_t frame)
+{
+	for (size_t i = 0; i < m_meshes.size(); i++)
+	{
+		m_meshes[i]->draw(command_buffer, frame);
 	}
 }
 
 void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material)
 {
-	m_meshes[index].bindMaterial(p_material, m_ubo, mp_renderer);
+	for (size_t i = 0; i < m_ubo.size(); i++)
+	{
+		m_meshes[index]->bindMaterial(p_material, m_ubo[i], mp_renderer);
+	}
 }
 
-void GameObject::LoadMesh(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
+void GameObject::LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
 {
-	Mesh mesh(vertices, indices, mp_renderer);
-	mesh.CreateBuffers(mp_renderer);
-
-	m_meshes.push_back(std::move(mesh));
+	m_meshes.push_back(std::make_unique<Mesh>(vertices, indices, mp_renderer));
+	m_meshes[m_meshes.size() - 1]->CreateBuffers(mp_renderer);
 }
 
 void GameObject::loadMesh(const std::string& mesh_path)
 {
-	Mesh mesh(mesh_path, mp_renderer);
-	mesh.CreateBuffers(mp_renderer);
-
-	m_meshes.push_back(std::move(mesh));
+	m_meshes.push_back(std::make_unique<Mesh>(mesh_path, mp_renderer));
+	m_meshes[m_meshes.size() - 1]->CreateBuffers(mp_renderer);
 }
 
 void GameObject::UpdateMesh(const size_t& index, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
 {
-	m_meshes[index].SetVertices(vertices);
-	m_meshes[index].SetIndices(indices);
-	m_meshes[index].CreateBuffers(mp_renderer);
+	m_meshes[index]->SetVertices(vertices);
+	m_meshes[index]->SetIndices(indices);
+
+	m_mesh_to_update.push_back(index);
 }
 
 std::vector<Vertex> GameObject::GetVertices(const size_t& index)
 {
-	return m_meshes[index].get_vertices();
+	return m_meshes[index]->get_vertices();
 }
 
 std::vector<uint32_t> GameObject::GetIndices(const size_t& index)
 {
-	return m_meshes[index].get_indices();
+	return m_meshes[index]->get_indices();
 }
 
-Mesh& GameObject::getMesh(const size_t& index)
+const std::unique_ptr<Mesh>& GameObject::getMesh(const size_t& index)
 {
 	return m_meshes[index];
 }
 
 void GameObject::setMesh(const size_t& index, std::vector<Vertex> vertices)
 {
-	m_meshes[index].SetVertices(vertices);
-	m_meshes[index].CreateBuffers(mp_renderer);
+	m_meshes[index]->SetVertices(vertices);
+	m_meshes[index]->CreateBuffers(mp_renderer);
 }
 
 void GameObject::setPosition(const glm::vec3& pos)
@@ -112,18 +139,23 @@ const glm::vec3& GameObject::getRotation()
 	return m_rotation;
 }
 
-VkBuffer& GameObject::getUBO()
+VkBuffer& GameObject::GetUBO(const int32_t frame)
 {
-	return m_ubo;
+	return m_ubo[frame];
 }
 
-VkDeviceMemory& GameObject::getUBOMemory()
+VkDeviceMemory& GameObject::GetUBOMemory(const int32_t frame)
 {
-	return m_ubo_memory;
+	return m_ubo_memory[frame];
 }
 
 const size_t& GameObject::getMeshesCount()
 {
 	return m_meshes.size();
+}
+
+const bool GameObject::Deleted()
+{
+	return m_meshes.size() == 0;
 }
 

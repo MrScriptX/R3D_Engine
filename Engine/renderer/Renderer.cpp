@@ -136,6 +136,11 @@ int32_t Renderer::AcquireNextImage()
 	return m_current_image;
 }
 
+void Renderer::WaitForSwapchainImageFence()
+{
+	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image], VK_TRUE, std::numeric_limits<uint64_t>::max());
+}
+
 void Renderer::setupInstance(GLFWwindow& window)
 {
 	m_instance = std::make_unique<VulkanInstance>(m_graphic);
@@ -329,8 +334,6 @@ void Renderer::allocateCommandBuffers()
 
 void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFramebuffer& frameBuffer)
 {
-	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image], VK_TRUE, std::numeric_limits<uint64_t>::max());
-
 	// reset command buffer
 	if (vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VK_SUCCESS)
 	{

@@ -14,9 +14,7 @@ Camera::Camera()
 	m_rotation = { 0.0f, 0.0f, 0.0f };
 	m_delta_position = { 0.f, 0.f, 0.f };
 
-	m_ubo.model = {};
-	m_ubo.proj = {};
-	m_ubo.view = {};
+	m_ubo.fill({ {},{},{} });
 }
 
 
@@ -24,11 +22,11 @@ Camera::~Camera()
 {
 }
 
-void Camera::UpdateUBO(const float& width, const float& height)
+void Camera::UpdateUBO(const float& width, const float& height, const int32_t frame)
 {
-	m_ubo.view = updateView(m_pitch, m_yaw, m_position);
-	m_ubo.proj = createProjMatrix(width, height);
-	m_ubo.proj[1][1] *= -1;
+	m_ubo[frame].view = updateView(m_pitch, m_yaw, m_position);
+	m_ubo[frame].proj = createProjMatrix(width, height);
+	m_ubo[frame].proj[1][1] *= -1;
 }
 
 void Camera::UpdatePosition(const float& dt)
@@ -136,7 +134,7 @@ const float & Camera::getYaw()
 	return m_yaw;
 }
 
-UniformBufferObject& Camera::getUBO()
+UniformBufferObject& Camera::GetUBO(const int32_t frame)
 {
-	return m_ubo;
+	return m_ubo[frame];
 }

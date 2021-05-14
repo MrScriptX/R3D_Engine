@@ -1,34 +1,36 @@
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
-	m_buffer = nullptr;
-	m_old_buffer = nullptr;
-	m_destroyed = false;
+	m_buffer.fill({VK_NULL_HANDLE});
+	m_to_update.set();
 }
 
 Mesh::Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_obj_path(obj_path), mp_renderer(p_renderer)
 {
-	m_buffer = nullptr;
-	m_old_buffer = nullptr;
-	m_destroyed = false;
+	m_buffer.fill({ VK_NULL_HANDLE });
+	m_to_update.reset();
 
 	loadModel();
 }
 
 Mesh::~Mesh()
 {
+	for (size_t i = 0; i < m_buffer.size(); i++)
+	{
+		DestroyBuffers(i);
+	}
 }
 
-void Mesh::draw(const VkCommandBuffer& command_buffer)
+void Mesh::draw(const VkCommandBuffer& command_buffer, const int32_t frame)
 {
 	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().handle);
 
-	VkBuffer vertex_buffer[] = { m_buffer->vertex };
+	VkBuffer vertex_buffer[] = { m_buffer[frame].vertex };
 	VkDeviceSize offsets[] = { 0 };
 
 	vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffer, offsets);
-	vkCmdBindIndexBuffer(command_buffer, m_buffer->index, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdBindIndexBuffer(command_buffer, m_buffer[frame].index, 0, VK_INDEX_TYPE_UINT32);
 
 	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, &p_material->getDescriptorSet(), 0, nullptr);
 
@@ -75,6 +77,8 @@ void Mesh::loadModel()
 			}
 		}
 	}
+
+	m_to_update.set();
 }
 
 void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer)
@@ -91,52 +95,53 @@ void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::share
 	p_material = mat;
 }
 
-void Mesh::Delete()
-{
-	m_destroyed = true;
-}
-
 void Mesh::CreateBuffers(std::shared_ptr<Renderer> engine)
 {
-	m_old_buffer = m_buffer;
-	m_buffer = new Buffer();
+	for (size_t i = 0; i < m_buffer.size(); i++)
+	{
+		engine->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer[i]);
+		engine->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer[i]);
+	}
 
-	engine->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), *m_buffer);
-	engine->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), *m_buffer);
+	m_to_update.reset();
 }
 
-void Mesh::DestroyOldBuffers()
+void Mesh::UpdateBuffers(const int32_t frame)
 {
-	if (m_old_buffer == nullptr)
-		return;
+	DestroyBuffers(frame);
 
-	vkDestroyBuffer(mp_renderer->getDevice(), m_old_buffer->index, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_old_buffer->index_memory, nullptr);
+	mp_renderer->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer[frame]);
+	mp_renderer->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer[frame]);
 
-	vkDestroyBuffer(mp_renderer->getDevice(), m_old_buffer->vertex, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_old_buffer->vertex_memory, nullptr);
-
-	delete(m_old_buffer);
-	m_old_buffer = nullptr;
+	m_to_update.set(frame, false);
 }
 
-void Mesh::DestroyBuffers()
+void Mesh::DestroyBuffers(const int32_t frame)
 {
-	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer->index, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_buffer->index_memory, nullptr);
+	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer[frame].index, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_buffer[frame].index_memory, nullptr);
 
-	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer->vertex, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_buffer->vertex_memory, nullptr);
+	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer[frame].vertex, nullptr);
+	vkFreeMemory(mp_renderer->getDevice(), m_buffer[frame].vertex_memory, nullptr);
+
+	m_buffer[frame].index = VK_NULL_HANDLE;
+	m_buffer[frame].index_memory = VK_NULL_HANDLE;
+	m_buffer[frame].vertex = VK_NULL_HANDLE;
+	m_buffer[frame].vertex_memory = VK_NULL_HANDLE;
 }
 
 void Mesh::SetVertices(const std::vector<Vertex>& vertices)
 {
 	m_vertices = vertices;
+
+	m_to_update.set();
 }
 
 void Mesh::SetIndices(const std::vector<uint32_t>& indices)
 {
 	m_indices = indices;
+
+	m_to_update.set();
 }
 
 std::vector<Vertex>& Mesh::get_vertices()
@@ -149,14 +154,9 @@ std::vector<uint32_t>& Mesh::get_indices()
 	return m_indices;
 }
 
-Buffer & Mesh::getBuffer()
+Buffer& Mesh::GetBuffer(const int32_t frame)
 {
-	return *m_buffer;
-}
-
-Buffer* Mesh::GetOldBuffer()
-{
-	return m_old_buffer;
+	return m_buffer[frame];
 }
 
 std::shared_ptr<Material> Mesh::getMaterial()
@@ -164,7 +164,18 @@ std::shared_ptr<Material> Mesh::getMaterial()
 	return p_material;
 }
 
-const bool Mesh::IsDestroyed()
+const bool Mesh::IsCleaned()
 {
-	return m_destroyed;
+	bool result = true;
+	for (size_t i = 0; i < m_buffer.size(); i++)
+	{
+		result = result && (m_buffer[i].vertex == VK_NULL_HANDLE);
+	}
+
+	return result;
+}
+
+const bool Mesh::IsUpdated()
+{
+	return m_to_update == false;
 }
