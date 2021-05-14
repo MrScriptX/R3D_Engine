@@ -17,41 +17,40 @@
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer);
+	Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer);
 	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
-	~Mesh();
+	~Mesh();//two destructors | one for move contrutor and one for classic destruction
 
-	void draw(const VkCommandBuffer& command_buffer);
+	void draw(const VkCommandBuffer& command_buffer, const int32_t frame);
 	void loadModel();
 	void bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
 
 	void CreateBuffers(std::shared_ptr<Renderer> engine);
-	void DestroyOldBuffers();
-	void DestroyBuffers();
-
-	void SetVertices(const std::vector<Vertex>& vertices);
-	void SetIndices(const std::vector<uint32_t>& indices);
+	void UpdateBuffers(const int32_t frame);
+	void DestroyBuffers(const int32_t frame);
 
 	void SetVertices(const std::vector<Vertex>& vertices);
 	void SetIndices(const std::vector<uint32_t>& indices);
 
 	std::vector<Vertex>& get_vertices();
 	std::vector<uint32_t>& get_indices();
-	Buffer& getBuffer();
-	Buffer* GetOldBuffer();
+	Buffer& GetBuffer(const int32_t frame);
 	std::shared_ptr<Material> getMaterial();
+	const bool IsCleaned();
+	const bool IsUpdated();
 
 private:
-	const std::string m_obj_path;
+	std::string m_obj_path;
 
 	std::vector<Vertex> m_vertices;
 	std::vector<uint32_t> m_indices;
 
-	Buffer* m_buffer;
-	Buffer* m_old_buffer;
+	std::array<Buffer, MAX_FRAMES_IN_FLIGHT> m_buffer;
 
 	std::shared_ptr<Material> p_material;
 	std::shared_ptr<Renderer> mp_renderer;
+
+	std::bitset<MAX_FRAMES_IN_FLIGHT> m_to_update;
 };
 
 #endif//!_MODEL_H

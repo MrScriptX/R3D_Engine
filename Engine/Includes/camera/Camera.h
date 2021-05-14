@@ -14,7 +14,7 @@ public:
 	Camera();
 	~Camera();
 
-	void UpdateUBO(const float& width, const float& height);
+	void UpdateUBO(const float& width, const float& height, const int32_t frame);
 	void UpdatePosition(const float& dt);
 
 	void MoveForward(const float& speed);
@@ -36,7 +36,7 @@ public:
 	void setYaw(const float& yaw);
 	const float& getYaw();
 
-	UniformBufferObject& getUBO();
+	UniformBufferObject& GetUBO(const int32_t frame);
 
 private:
 
@@ -50,7 +50,7 @@ private:
 	float m_pitch;
 	glm::vec2 last_mouse_pos;
 
-	UniformBufferObject m_ubo;
+	std::array<UniformBufferObject, MAX_FRAMES_IN_FLIGHT> m_ubo;
 };
 
 #endif // !_CAMERA_H

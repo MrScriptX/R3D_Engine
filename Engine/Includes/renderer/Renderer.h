@@ -28,8 +28,6 @@
 
 #include "../Logger.h"
 
-constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 3;
-
 class Renderer
 {
 public:
@@ -38,6 +36,7 @@ public:
 
 	int32_t draw();
 	int32_t AcquireNextImage();
+	void WaitForSwapchainImageFence();
 
 	void setupInstance(GLFWwindow& window);
 	void setupDevice();

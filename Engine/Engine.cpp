@@ -1,12 +1,14 @@
-#include "Engine.h"
+#include "Includes\Engine.h"
 
-Engine::Engine()
+Engine::Engine(uint32_t width, uint32_t height)
 {
 	m_last_time = std::chrono::high_resolution_clock::now();
 
 	mp_main_camera = std::make_shared<Camera>();
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
 	mp_config = std::make_shared<Config>();
+	mp_config->width = width;
+	mp_config->height = height;
 
 	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
 
@@ -25,17 +27,6 @@ Engine::~Engine()
 
 	mp_renderer->cleanSwapchain();
 
-	for (size_t i = 0; i < mp_scene->getObjects().size(); i++)
-	{
-		for (size_t t = 0; t < mp_scene->getObjects()[i]->getMeshesCount(); t++)
-		{
-			mp_scene->getObjects()[i]->getMesh(t).getMaterial()->DestroyTexture();
-			mp_scene->getObjects()[i]->getMesh(t).DestroyBuffers();
-		}
-
-		mp_scene->getObjects()[i]->destroy();
-	}
-
 	mp_scene.reset();
 
 	vkDestroyDescriptorPool(mp_renderer->getDevice(), mp_renderer->getDescriptorPool(), nullptr);
@@ -53,7 +44,7 @@ void Engine::setScene(std::shared_ptr<Scene> p_scene)
 
 void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
 {
-	mp_scene->addGameObject(gameobject);
+	mp_scene->AddGameObject(gameobject);
 }
 
 const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader)
@@ -76,7 +67,7 @@ const std::shared_ptr<GameObject> Engine::CreateGameObject()
 const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& object_file)
 {
 	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(mp_renderer);
-	go->loadMesh(object_file);
+	go->LoadMesh(object_file);
 	return go;
 }
 
@@ -165,25 +156,25 @@ void Engine::update()
 	m_last_time = current_time;
 
 	const int32_t frame = mp_renderer->AcquireNextImage();
-	if (frame != -1 && (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame)))
+	if (frame == -1)
+		return;
+
+	if (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame))
 	{
-		if(mp_renderer->NeedUpdate(frame))
-			std::clog << frame << std::endl;
+		mp_renderer->WaitForSwapchainImageFence();
+
+		mp_scene->Update(frame);
 
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
-		mp_scene->render(mp_renderer->getCommandBuffer(frame), frame);
+		mp_scene->Render(mp_renderer->getCommandBuffer(frame), frame);
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
 
+		mp_scene->Clean(frame);
 		mp_renderer->SetUpdated(frame);
-		
-		if (mp_renderer->IsUpdated())
-		{
-			mp_scene->Clean();
-		}
 	}
 
-	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height));
-	mp_scene->updateUBO(mp_main_camera, mp_renderer);
+	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
+	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 
 	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }

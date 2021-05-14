@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "..\Includes\renderer\Renderer.h"
 
 
 #include <set>
@@ -134,6 +134,11 @@ int32_t Renderer::AcquireNextImage()
 	}
 
 	return m_current_image;
+}
+
+void Renderer::WaitForSwapchainImageFence()
+{
+	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image], VK_TRUE, std::numeric_limits<uint64_t>::max());
 }
 
 void Renderer::setupInstance(GLFWwindow& window)
@@ -329,7 +334,11 @@ void Renderer::allocateCommandBuffers()
 
 void Renderer::beginRecordCommandBuffers(VkCommandBuffer & commandBuffer, VkFramebuffer& frameBuffer)
 {
-	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image], VK_TRUE, std::numeric_limits<uint64_t>::max());
+	// reset command buffer
+	if (vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Failed to reset command buffer!");
+	}
 
 	std::array<VkClearValue, 2> clear_values = {};
 	clear_values[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };

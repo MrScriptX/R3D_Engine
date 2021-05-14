@@ -4,20 +4,20 @@ int main()
 {
 	try
 	{
-		Engine engine;
+		Engine engine(1280, 720);
 		Logger::init();
 
 		std::shared_ptr<Material> room_texture = engine.CreateMaterial(TSHADER::TEXTURE);
 		room_texture->LoadTexture("assets/textures/viking_room.png");
 
 		std::shared_ptr<GameObject> room = engine.CreateGameObject();
-		room->loadMesh("assets/models/viking_room.obj");
+		room->LoadMesh("assets/models/viking_room.obj");
 		room->bindMatToMesh(0, room_texture);
 		room->setPosition({ 3.0f, 0.0f, 3.0f });
 
 		std::shared_ptr<Material> room2_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
 		std::shared_ptr<GameObject> room2 = engine.CreateGameObject();
-		room2->loadMesh("assets/models/viking_room.obj");
+		room2->LoadMesh("assets/models/viking_room.obj");
 		room2->bindMatToMesh(0, room2_texture);
 		room2->setPosition({ 6.0f, 0.0f, 0.0f });
 
@@ -57,14 +57,10 @@ int main()
 		voxel.addIndices(index_4, index_0, index_5);
 		voxel.addIndices(index_5, index_0, index_1);
 
-		cube->LoadMesh(voxel.vertices, voxel.indices);
-
-		cube->bindMatToMesh(1, cube_texture);
-
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-		scene->addGameObject(room);
-		scene->addGameObject(room2);
-		scene->addGameObject(cube);
+		scene->AddGameObject(room);
+		scene->AddGameObject(room2);
+		scene->AddGameObject(cube);
 
 		engine.setScene(scene);
 
@@ -91,20 +87,42 @@ int main()
 
 			if (init++ == 10000)
 			{
+				std::clog << "Add New Mesh" << std::endl;
+				cube->LoadMesh(voxel.vertices, voxel.indices);
+				cube->bindMatToMesh(1, cube_texture);
+				scene->ToUpdate();
+			}
+
+			if (init == 15000)
+			{
 				Geometry v;
 				v.vertices = cube->GetVertices(1);
 				v.indices = cube->GetIndices(1);
 				v.vertices[0].color = { .0f, .0f, 1.0f };
 
+				std::clog << "Update Mesh" << std::endl;
 				cube->UpdateMesh(1, v.vertices, v.indices);
-				scene->Update();
+				scene->ToUpdate();
+			}
+
+			if (init == 20000)
+			{
+				std::clog << "Remove Mesh" << std::endl;
+				cube->RemoveMesh(1);
+				scene->ToUpdate();
+			}
+
+			if (init == 25000)
+			{
+				std::clog << "Remove Gameobject" << std::endl;
+				scene->RemoveGameObject(cube);
 			}
 
 			engine.update();
 			engine.draw();
 		} while (!engine.shouldClose());
 	}
-	catch (const std::runtime_error& e)
+	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 		system("pause");//no system pause | try catch should be done more localy depending on where to end 
