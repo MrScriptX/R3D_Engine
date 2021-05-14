@@ -85,14 +85,15 @@ int main()
 		{
 			//cube->setPosition(cube->getPosition() + glm::vec3{0.0001f, 0.f, 0.f});
 
-			/*if (init == 10000)
+			if (init++ == 10000)
 			{
+				std::clog << "new cube" << std::endl;
 				cube->LoadMesh(voxel.vertices, voxel.indices);
 				cube->bindMatToMesh(1, cube_texture);
 				scene->Update();
 			}
 
-			if (init++ == 15000)
+			/*if (init++ == 15000)
 			{
 				Geometry v;
 				v.vertices = cube->GetVertices(1);

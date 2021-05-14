@@ -1,13 +1,13 @@
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
+Mesh::Mesh(const int ID, std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer) : m_ID(ID), m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
 	m_buffer.fill({VK_NULL_HANDLE});
 	m_old_buffer.fill({ VK_NULL_HANDLE });
 	m_destroyed = false;
 }
 
-Mesh::Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_obj_path(obj_path), mp_renderer(p_renderer)
+Mesh::Mesh(const int ID, const std::string& obj_path, std::shared_ptr<Renderer> p_renderer) : m_ID(ID), m_obj_path(obj_path), mp_renderer(p_renderer)
 {
 	m_buffer.fill({ VK_NULL_HANDLE });
 	m_old_buffer.fill({ VK_NULL_HANDLE });

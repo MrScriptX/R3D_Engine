@@ -19,7 +19,7 @@ public:
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
 	// MESH
-	void LoadMesh(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+	void LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
 	void loadMesh(const std::string& mesh_path);
 	
 	void UpdateMesh(const size_t& index, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
@@ -27,7 +27,7 @@ public:
 	std::vector<Vertex> GetVertices(const size_t& index);
 	std::vector<uint32_t> GetIndices(const size_t& index);
 
-	Mesh& getMesh(const size_t& index);
+	const std::unique_ptr<Mesh>& getMesh(const size_t& index);
 	void setMesh(const size_t& index, std::vector<Vertex> vertices);
 
 	void setPosition(const glm::vec3& pos);
@@ -43,7 +43,7 @@ public:
 	const bool Deleted();
 	
 private:
-	std::vector<Mesh> m_meshes;
+	std::vector<std::unique_ptr<Mesh>> m_meshes;
 
 	std::array<VkBuffer, MAX_FRAMES_IN_FLIGHT> m_ubo;
 	std::array<VkDeviceMemory, MAX_FRAMES_IN_FLIGHT> m_ubo_memory;

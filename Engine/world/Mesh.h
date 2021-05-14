@@ -17,9 +17,9 @@
 class Mesh
 {
 public:
-	Mesh(std::vector<Vertex> vertices, const std::vector<uint32_t>& indices, std::shared_ptr<Renderer> p_renderer);
-	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
-	~Mesh();
+	Mesh(const int ID, std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer);
+	Mesh(const int ID, const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
+	~Mesh();//two destructors | one for move contrutor and one for classic destruction
 
 	void draw(const VkCommandBuffer& command_buffer, const int32_t frame);
 	void loadModel();
@@ -42,6 +42,7 @@ public:
 	const bool IsCleaned();
 
 private:
+	int m_ID;
 	std::string m_obj_path;
 
 	std::vector<Vertex> m_vertices;
