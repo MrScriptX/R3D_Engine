@@ -21,7 +21,7 @@ Scene::~Scene()
 	}
 }
 
-R3DResult Scene::addGameObject(std::shared_ptr<GameObject> gameobject)
+R3DResult Scene::AddGameObject(std::shared_ptr<GameObject> gameobject)
 {
 	// check if object is not in the scene
 	for (size_t i = 0; i < vp_objects.size(); i++)
@@ -39,7 +39,7 @@ R3DResult Scene::addGameObject(std::shared_ptr<GameObject> gameobject)
 	return R3DResult::R3D_SUCCESS;
 }
 
-R3DResult Scene::removeGameObject(std::shared_ptr<GameObject> gameobject)
+R3DResult Scene::RemoveGameObject(std::shared_ptr<GameObject> gameobject)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
@@ -61,7 +61,7 @@ void Scene::Render(VkCommandBuffer& command_buffer, const int32_t frame)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
-		vp_objects[i]->registerDrawCmd(command_buffer, frame);
+		vp_objects[i]->RegisterDrawCmd(command_buffer, frame);
 	}
 
 	m_changed.set(frame, false);
@@ -69,6 +69,11 @@ void Scene::Render(VkCommandBuffer& command_buffer, const int32_t frame)
 
 void Scene::Clean(const int32_t frame)
 {
+	for (size_t i = 0; i < vp_objects.size(); i++)
+	{
+		vp_objects[i]->Clean(frame);
+	}
+
 	for (size_t i = 0; i < vp_delete_queue.size(); i++)
 	{
 		vp_delete_queue[i]->Destroy(frame);

@@ -44,7 +44,7 @@ void Engine::setScene(std::shared_ptr<Scene> p_scene)
 
 void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
 {
-	mp_scene->addGameObject(gameobject);
+	mp_scene->AddGameObject(gameobject);
 }
 
 const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader)
@@ -67,7 +67,7 @@ const std::shared_ptr<GameObject> Engine::CreateGameObject()
 const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& object_file)
 {
 	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(mp_renderer);
-	go->loadMesh(object_file);
+	go->LoadMesh(object_file);
 	return go;
 }
 

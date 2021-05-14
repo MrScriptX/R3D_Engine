@@ -43,6 +43,19 @@ void GameObject::Update(const int32_t frame)
 	}
 }
 
+void GameObject::Clean(const size_t frame)
+{
+	for (size_t i = 0; i < m_mesh_to_delete.size(); i++)
+	{
+		m_mesh_to_delete[i]->DestroyBuffers(frame);
+		if (m_mesh_to_delete[i]->IsCleaned())
+		{
+			m_mesh_to_delete.erase(m_mesh_to_delete.begin() + i);
+			--i;
+		}
+	}
+}
+
 void GameObject::Destroy(const int32_t frame)
 {
 	for (size_t i = 0; i < m_meshes.size(); i++)
@@ -62,7 +75,7 @@ void GameObject::Destroy(const int32_t frame)
 	m_ubo_memory[frame] = VK_NULL_HANDLE;
 }
 
-void GameObject::registerDrawCmd(VkCommandBuffer& command_buffer, const int32_t frame)
+void GameObject::RegisterDrawCmd(VkCommandBuffer& command_buffer, const int32_t frame)
 {
 	for (size_t i = 0; i < m_meshes.size(); i++)
 	{
@@ -84,7 +97,7 @@ void GameObject::LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> in
 	m_meshes[m_meshes.size() - 1]->CreateBuffers(mp_renderer);
 }
 
-void GameObject::loadMesh(const std::string& mesh_path)
+void GameObject::LoadMesh(const std::string& mesh_path)
 {
 	m_meshes.push_back(std::make_unique<Mesh>(mesh_path, mp_renderer));
 	m_meshes[m_meshes.size() - 1]->CreateBuffers(mp_renderer);
@@ -96,6 +109,12 @@ void GameObject::UpdateMesh(const size_t& index, const std::vector<Vertex>& vert
 	m_meshes[index]->SetIndices(indices);
 
 	m_mesh_to_update.push_back(index);
+}
+
+void GameObject::RemoveMesh(const size_t index)
+{
+	m_mesh_to_delete.push_back(std::move(m_meshes[index]));
+	m_meshes.erase(m_meshes.begin() + index);
 }
 
 std::vector<Vertex> GameObject::GetVertices(const size_t& index)
