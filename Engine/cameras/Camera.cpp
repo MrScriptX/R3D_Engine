@@ -1,6 +1,6 @@
-#include "Camera.h"
+#include "..\Includes\camera\Camera.h"
 
-#include "../graphics/Math.h"
+#include "..\Includes\graphics\Math.h"
 
 Camera::Camera()
 {
