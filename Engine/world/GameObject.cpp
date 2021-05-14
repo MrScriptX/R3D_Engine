@@ -1,4 +1,4 @@
-#include "GameObject.h"
+#include "..\Includes\world\GameObject.h"
 
 
 GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
