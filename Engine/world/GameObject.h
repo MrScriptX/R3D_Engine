@@ -14,16 +14,19 @@ public:
 	~GameObject();
 
 	void Update(const int32_t frame);
+	void Clean(const size_t frame);
 	void Destroy(const int32_t frame);
 
-	void registerDrawCmd(VkCommandBuffer& command_buffer, const int32_t frame);
+	void RegisterDrawCmd(VkCommandBuffer& command_buffer, const int32_t frame);
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
 	// MESH
 	void LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
-	void loadMesh(const std::string& mesh_path);
+	void LoadMesh(const std::string& mesh_path);
 	
 	void UpdateMesh(const size_t& index, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+
+	void RemoveMesh(const size_t index);
 
 	std::vector<Vertex> GetVertices(const size_t& index);
 	std::vector<uint32_t> GetIndices(const size_t& index);
@@ -45,6 +48,7 @@ public:
 	
 private:
 	std::vector<int32_t> m_mesh_to_update;
+	std::vector<std::unique_ptr<Mesh>> m_mesh_to_delete;
 	std::vector<std::unique_ptr<Mesh>> m_meshes;
 
 	std::array<VkBuffer, MAX_FRAMES_IN_FLIGHT> m_ubo;

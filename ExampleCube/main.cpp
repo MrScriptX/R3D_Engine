@@ -11,13 +11,13 @@ int main()
 		room_texture->LoadTexture("assets/textures/viking_room.png");
 
 		std::shared_ptr<GameObject> room = engine.CreateGameObject();
-		room->loadMesh("assets/models/viking_room.obj");
+		room->LoadMesh("assets/models/viking_room.obj");
 		room->bindMatToMesh(0, room_texture);
 		room->setPosition({ 3.0f, 0.0f, 3.0f });
 
 		std::shared_ptr<Material> room2_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
 		std::shared_ptr<GameObject> room2 = engine.CreateGameObject();
-		room2->loadMesh("assets/models/viking_room.obj");
+		room2->LoadMesh("assets/models/viking_room.obj");
 		room2->bindMatToMesh(0, room2_texture);
 		room2->setPosition({ 6.0f, 0.0f, 0.0f });
 
@@ -58,9 +58,9 @@ int main()
 		voxel.addIndices(index_5, index_0, index_1);
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-		scene->addGameObject(room);
-		scene->addGameObject(room2);
-		scene->addGameObject(cube);
+		scene->AddGameObject(room);
+		scene->AddGameObject(room2);
+		scene->AddGameObject(cube);
 
 		engine.setScene(scene);
 
@@ -107,8 +107,15 @@ int main()
 
 			if (init == 20000)
 			{
+				std::clog << "Remove Mesh" << std::endl;
+				cube->RemoveMesh(1);
+				scene->ToUpdate();
+			}
+
+			if (init == 25000)
+			{
 				std::clog << "Remove Gameobject" << std::endl;
-				scene->removeGameObject(cube);
+				scene->RemoveGameObject(cube);
 			}
 
 			engine.update();

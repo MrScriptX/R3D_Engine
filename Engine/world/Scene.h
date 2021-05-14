@@ -16,8 +16,8 @@ public:
 	Scene();
 	~Scene();
 
-	R3DResult addGameObject(std::shared_ptr<GameObject> gameobject);
-	R3DResult removeGameObject(std::shared_ptr<GameObject> gameobject);
+	R3DResult AddGameObject(std::shared_ptr<GameObject> gameobject);
+	R3DResult RemoveGameObject(std::shared_ptr<GameObject> gameobject);
 
 	void Render(VkCommandBuffer& command_buffer, const int32_t frame);
 	void Clean(const int32_t frame);
