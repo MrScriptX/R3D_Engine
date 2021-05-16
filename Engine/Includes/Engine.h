@@ -1,5 +1,5 @@
-#ifndef _ENGINE_H
-#define _ENGINE_H
+#ifndef R3DENGINE_INCLUDES_ENGINE_H_
+#define R3DENGINE_INCLUDES_ENGINE_H_
 
 #include "Window.h"
 
@@ -57,4 +57,4 @@ private:
 	std::chrono::steady_clock::time_point m_last_time;
 };
 
-#endif // !_ENGINE_H
+#endif // !R3DENGINE_INCLUDES_ENGINE_H_
