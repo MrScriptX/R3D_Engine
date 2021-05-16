@@ -1,3 +1,5 @@
+[![Mega-Linter](https://github.com/MrScriptX/R3D_Engine/workflows/Mega-Linter/badge.svg?branch=master)](https://github.com/MrScriptX/R3D_Engine/actions?query=workflow%3AMega-Linter+branch%3Amaster)
+
 # R3D Engine
 
 R3D Engine est un moteur de rendu graphique qui s'appuie sur Vulkan. L'objectif est d'en apprendre plus sur les moteurs de rendu et leur fonctionnement et leur architecture. C'est également l'occasion de découvrir l'API [Vulkan](https://www.vulkan.org/).
