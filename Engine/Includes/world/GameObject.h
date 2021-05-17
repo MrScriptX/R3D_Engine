@@ -2,6 +2,7 @@
 #define _GAMEOBJECT_H
 
 #include <vector>
+#include <map>
 #include <utility>
 
 #include "Mesh.h"
@@ -49,7 +50,7 @@ public:
 private:
 	std::vector<int32_t> m_mesh_to_update;
 	std::vector<std::unique_ptr<Mesh>> m_mesh_to_delete;
-	std::vector<std::unique_ptr<Mesh>> m_meshes;
+	std::map<int32_t, std::unique_ptr<Mesh>> m_meshes;
 
 	std::array<VkBuffer, MAX_FRAMES_IN_FLIGHT> m_ubo;
 	std::array<VkDeviceMemory, MAX_FRAMES_IN_FLIGHT> m_ubo_memory;
