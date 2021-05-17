@@ -22,8 +22,8 @@ public:
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
 	// MESH
-	void LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
-	void LoadMesh(const std::string& mesh_path);
+	int32_t LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
+	int32_t LoadMesh(const std::string& mesh_path);
 	
 	void UpdateMesh(const size_t& index, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 

@@ -91,18 +91,22 @@ void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_
 	}
 }
 
-void GameObject::LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
+int32_t GameObject::LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
 {
 	int32_t i = m_meshes.rbegin() != m_meshes.rend() ? m_meshes.rbegin()->first + 1 : 0;
 	m_meshes.insert({ i ,std::make_unique<Mesh>(vertices, indices, mp_renderer) });
 	m_meshes.at(i)->CreateBuffers(mp_renderer);
+
+	return i;
 }
 
-void GameObject::LoadMesh(const std::string& mesh_path)
+int32_t GameObject::LoadMesh(const std::string& mesh_path)
 {
 	int32_t i = m_meshes.rbegin() != m_meshes.rend() ? m_meshes.rbegin()->first + 1 : 0;
 	m_meshes.insert({ i, std::make_unique<Mesh>(mesh_path, mp_renderer) });
 	m_meshes[i]->CreateBuffers(mp_renderer);
+
+	return i;
 }
 
 void GameObject::UpdateMesh(const size_t& index, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
