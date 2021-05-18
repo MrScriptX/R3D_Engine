@@ -1,10 +1,11 @@
-#ifndef _VULKAN_INSTANCE_H
-#define _VULKAN_INSTANCE_H
+#ifndef R3DENGINE_VULKAN_INSTANCE_H_
+#define R3DENGINE_VULKAN_INSTANCE_H_
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <cstring>
 
 #include "../graphics/Graphics.h"
 
@@ -23,4 +24,4 @@ private:
 	Graphics & m_graphic;
 };
 
-#endif //!_VULKAN_INSTANCE_H
+#endif //!R3DENGINE_VULKAN_INSTANCE_H_
