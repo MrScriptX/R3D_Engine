@@ -5,8 +5,7 @@ on: [push, pull_request]
 jobs:
   linux_gcc:
     runs-on: ubuntu-latest
-    env:
-      VULKAN_SDK: 0
+    
     steps:
     - uses: actions/checkout@v1
     - uses: lukka/get-cmake@v3.19.0
@@ -45,6 +44,7 @@ jobs:
         CC: gcc-10
         CXX: g++-10
         LD_LIBRARY_PATH: /usr/bin/g++-10/lib
+        VULKAN_SDK: /home/runner/work/R3D_Engine/R3D_Engine/VULKAN_SDK
       run: |
         cmake --version
         ninja --version
