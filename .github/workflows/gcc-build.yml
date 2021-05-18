@@ -5,13 +5,15 @@ on: [push, pull_request]
 jobs:
   linux_gcc:
     runs-on: ubuntu-latest
+    env:
+      VULKAN_SDK: 0
     steps:
     - uses: actions/checkout@v1
     - uses: lukka/get-cmake@v3.19.0
     - name: Download Dependencies
       run: |
         sudo apt-get install -y build-essential pkg-config gcc-10 g++-10 xorg-dev libglu1-mesa-dev libopenal-dev libvulkan-dev wget libwayland-dev libxrandr-dev ninja-build
-        test -d VULKAN_SDK || mkdir VULKAN_SDK || true
+        mkdir VULKAN_SDK
         BRANCH=$(curl https://sdk.lunarg.com/sdk/download/1.2.170.0/linux/SDK-1.2.170.0-CONFIG.json | jq '.repos["Vulkan-Headers"].branch' --raw-output)
         echo BRANCH=$BRANCH >&2
         mkdir VULKAN_SDK/_build
@@ -30,7 +32,7 @@ jobs:
           popd >&2
         popd >&2
         export VULKAN_SDK_VERSION=$BRANCH
-        export VULKAN_SDK=$PWD/VULKAN_SDK
+        VULKAN_SDK=$PWD/VULKAN_SDK
         echo VULKAN_SDK_VERSION=$VULKAN_SDK_VERSION
         echo VULKAN_SDK=$VULKAN_SDK
         rm -rf VULKAN_SDK/_build >&2
@@ -46,5 +48,5 @@ jobs:
       run: |
         cmake --version
         ninja --version
-        cmake -B Build -GNinja -DCMAKE_BUILD_TYPE=Release
+        cmake -B Build -DCMAKE_BUILD_TYPE=Debug
         cmake --build Build
