@@ -54,7 +54,7 @@ private:
 	std::shared_ptr<Controller> mp_controller;
 	std::shared_ptr<Config> mp_config;
 
-	std::chrono::steady_clock::time_point m_last_time;
+	std::chrono::time_point<std::chrono::high_resolution_clock> m_last_time;
 };
 
 #endif // !R3DENGINE_INCLUDES_ENGINE_H_
