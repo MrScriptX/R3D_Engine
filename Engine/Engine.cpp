@@ -134,7 +134,7 @@ const bool& Engine::shouldClose() {
 void Engine::update() {
 	glfwPollEvents();
 
-	std::chrono::time_point current_time = std::chrono::high_resolution_clock::now();
+	std::chrono::time_point<std::chrono::high_resolution_clock> current_time = std::chrono::high_resolution_clock::now();
 	float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_last_time).count();
 
 	mp_controller->Update(delta_time);
