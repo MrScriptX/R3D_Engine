@@ -31,6 +31,6 @@ target_include_directories(R3DEngine PUBLIC $ENV{VULKAN_SDK}/Include)
 
 target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/lib/Debug/assimp-vc142-mtd.lib")
 target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/lib/glfw3.lib")
-target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glew-2.1.0/lib/Release/x64/glew32.lib")
+target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glew-2.1.0/lib/Release/glew32.lib")
 target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/Lib/vulkan-1.lib")
 target_link_libraries(ExampleCube R3DEngine)
