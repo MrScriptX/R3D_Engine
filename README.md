@@ -1,4 +1,4 @@
-[![Mega-Linter](https://github.com/MrScriptX/R3D_Engine/workflows/Mega-Linter/badge.svg?branch=master)](https://github.com/MrScriptX/R3D_Engine/actions?query=workflow%3AMega-Linter+branch%3Amaster)
+[![Mega-Linter](https://github.com/MrScriptX/R3D_Engine/workflows/Mega-Linter/badge.svg?branch=master)](https://github.com/MrScriptX/R3D_Engine/actions?query=workflow%3AMega-Linter+branch%3Amaster) ![GCC](https://github.com/MrScriptX/R3D_Engine/actions/workflows/gcc-build.yml/badge.svg)
 
 # R3D Engine
 

@@ -1,7 +1,7 @@
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
 
-#include "vulkan\vulkan.h"
+#include "vulkan/vulkan.h"
 #include <vector>
 
 constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 3;
