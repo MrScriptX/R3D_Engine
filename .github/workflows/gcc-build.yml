@@ -10,7 +10,7 @@ jobs:
     - uses: lukka/get-cmake@v3.19.0
     - name: Download Dependencies
       run: |
-        sudo apt-get install -y build-essential pkg-config gcc-10 g++-10 xorg-dev libglu1-mesa-dev libopenal-dev libvulkan-dev wget
+        sudo apt-get install -y build-essential pkg-config gcc-10 g++-10 xorg-dev libglu1-mesa-dev libopenal-dev libvulkan-dev wget libwayland-dev libxrandr-dev ninja-build
         test -d VULKAN_SDK || mkdir VULKAN_SDK || true
         BRANCH=$(curl https://sdk.lunarg.com/sdk/download/1.2.170.0/linux/SDK-1.2.170.0-CONFIG.json | jq '.repos["Vulkan-Headers"].branch' --raw-output)
         echo BRANCH=$BRANCH >&2
