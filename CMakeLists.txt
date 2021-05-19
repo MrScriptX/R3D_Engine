@@ -14,14 +14,30 @@ ENDIF()
 
 file(GLOB_RECURSE ENGINE_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "Engine/*.cpp")
 
-# compile Engine
 add_library(R3DEngine STATIC ${ENGINE_SOURCES})
 
-# compile exe
-add_executable(ExampleCube ExampleCube/main.cpp)
+IF(UNIX)
+    #target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/lib/Debug/libassimp.so.5.0.0")
+    target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/lib/unix/libglfw3.a")
+    target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/lib/libvulkan.so.1")
+    target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/lib/libvulkan.so")
+    
+    if(CMAKE_DL_LIBS)
+        target_link_libraries(R3DEngine PUBLIC ${CMAKE_DL_LIBS})
+    endif()
+
+    target_link_libraries(R3DEngine PUBLIC pthread -lX11 -lassimp)
+ENDIF()
+
+IF(WIN32)
+    target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/lib/Debug/assimp-vc142-mtd.lib")
+    target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/lib/win/glfw3.lib")
+    target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/Lib/vulkan-1.lib")
+ENDIF()
 
 target_include_directories(R3DEngine PUBLIC "${PROJECT_BINARY_DIR}")
 target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/Engine/Includes")
+target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/include")
 target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/include")
 target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glew-2.1.0/include")
 target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/include")
@@ -31,23 +47,7 @@ target_include_directories(R3DEngine PUBLIC $ENV{VULKAN_SDK}/Include)
 
 target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glew-2.1.0/lib/Release/glew32.lib")
 
-IF(WIN32)
-    target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/lib/Debug/assimp-vc142-mtd.lib")
-    target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/lib/win/glfw3.lib")
-    target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/Lib/vulkan-1.lib")
-ENDIF()
 
-IF(UNIX)
-target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/lib/Debug/libassimp.so.5.0.0")
-    target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/lib/unix/libglfw3.a")
-    target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/lib/libvulkan.so.1")
-    target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/lib/libvulkan.so")
-    
-    if(CMAKE_DL_LIBS)
-        target_link_libraries(R3DEngine PUBLIC ${CMAKE_DL_LIBS})
-    endif()
-
-    target_link_libraries(R3DEngine PUBLIC pthread -lX11)
-ENDIF()
+add_executable(ExampleCube ExampleCube/main.cpp)
 
 target_link_libraries(ExampleCube R3DEngine)
