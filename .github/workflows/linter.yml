@@ -1,4 +1,4 @@
-name: gcc_linux
+name: Linter
 
 on: [push]
 
