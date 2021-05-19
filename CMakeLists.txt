@@ -29,11 +29,10 @@ target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/
 target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/stb_image")
 target_include_directories(R3DEngine PUBLIC $ENV{VULKAN_SDK}/Include)
 
-target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/lib/Debug/assimp-vc142-mtd.lib")
-
 target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glew-2.1.0/lib/Release/glew32.lib")
 
 IF(WIN32)
+    target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/lib/Debug/assimp-vc142-mtd.lib")
     target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/lib/win/glfw3.lib")
     target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/Lib/vulkan-1.lib")
 ENDIF()
@@ -42,6 +41,12 @@ IF(UNIX)
     target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/lib/unix/libglfw3.a")
     target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/lib/libvulkan.so.1")
     target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/lib/libvulkan.so")
+    
+    if(CMAKE_DL_LIBS)
+        target_link_libraries(R3DEngine PUBLIC ${CMAKE_DL_LIBS})
+    endif()
+
+    target_link_libraries(R3DEngine PUBLIC pthread -lX11)
 ENDIF()
 
 target_link_libraries(ExampleCube R3DEngine)
