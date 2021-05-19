@@ -1,5 +1,5 @@
-#ifndef _ENGINE_H
-#define _ENGINE_H
+#ifndef R3DENGINE_INCLUDES_ENGINE_H_
+#define R3DENGINE_INCLUDES_ENGINE_H_
 
 #include "Window.h"
 
@@ -54,7 +54,7 @@ private:
 	std::shared_ptr<Controller> mp_controller;
 	std::shared_ptr<Config> mp_config;
 
-	std::chrono::steady_clock::time_point m_last_time;
+	std::chrono::time_point<std::chrono::high_resolution_clock> m_last_time;
 };
 
-#endif // !_ENGINE_H
+#endif // !R3DENGINE_INCLUDES_ENGINE_H_

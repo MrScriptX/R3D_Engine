@@ -46,6 +46,7 @@
     <ClCompile Include="cameras\Camera.cpp" />
     <ClCompile Include="cameras\Controller.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="graphics\Math.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="renderer\Renderer.cpp" />
     <ClCompile Include="renderer\VulkanBuffer.cpp" />

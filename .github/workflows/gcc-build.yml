@@ -1,0 +1,52 @@
+name: gcc_linux
+
+on: [push, pull_request]
+
+jobs:
+  linux_gcc:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - uses: lukka/get-cmake@v3.19.0
+    - name: Download Dependencies
+      run: |
+        sudo apt-get install -y build-essential pkg-config gcc-10 g++-10 xorg-dev libglu1-mesa-dev libopenal-dev libvulkan-dev wget libwayland-dev libxrandr-dev libassimp-dev ninja-build
+        mkdir VULKAN_SDK
+        BRANCH=$(curl https://sdk.lunarg.com/sdk/download/1.2.170.0/linux/SDK-1.2.170.0-CONFIG.json | jq '.repos["Vulkan-Headers"].branch' --raw-output)
+        echo BRANCH=$BRANCH >&2
+        mkdir VULKAN_SDK/_build
+        pushd VULKAN_SDK/_build >&2
+          git clone https://github.com/KhronosGroup/Vulkan-Headers.git --branch $BRANCH >&2
+          pushd Vulkan-Headers >&2
+            cmake -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release . >&2
+            cmake --build . --config Release >&2
+            cmake --install . >&2
+          popd >&2
+          git clone https://github.com/KhronosGroup/Vulkan-Loader.git --branch $BRANCH >&2
+          pushd Vulkan-Loader >&2
+            cmake -DVULKAN_HEADERS_INSTALL_DIR=../.. -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release . >&2
+            cmake --build . --config Release >&2
+            cmake --install . >&2
+          popd >&2
+        popd >&2
+        export VULKAN_SDK_VERSION=$BRANCH
+        VULKAN_SDK=$PWD/VULKAN_SDK
+        echo VULKAN_SDK_VERSION=$VULKAN_SDK_VERSION
+        echo VULKAN_SDK=$VULKAN_SDK
+        rm -rf VULKAN_SDK/_build >&2
+        echo "VULKAN_SDK/" >&2
+        ls VULKAN_SDK >&2
+        du -hs VULKAN_SDK >&2
+        
+    - name: Build
+      env:
+        CC: gcc-10
+        CXX: g++-10
+        LD_LIBRARY_PATH: /usr/bin/g++-10/lib
+        VULKAN_SDK: /home/runner/work/R3D_Engine/R3D_Engine/VULKAN_SDK
+      run: |
+        cmake --version
+        ninja --version
+        cmake -B Build -DCMAKE_BUILD_TYPE=Debug
+        cmake --build Build

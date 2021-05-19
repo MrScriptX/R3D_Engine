@@ -1,4 +1,4 @@
-#include "..\Includes\world\Mesh.h"
+#include "../Includes/world/Mesh.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {

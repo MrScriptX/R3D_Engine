@@ -5,6 +5,7 @@
 #include <bitset>
 #include <iostream>
 
+#include "../graphics/Math.h"
 #include "../graphics/Graphics.h"
 #include "../graphics/Vertex.h"
 
