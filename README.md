@@ -1,3 +1,5 @@
+![Linter](https://github.com/MrScriptX/R3D_Engine/actions/workflows/linter.yml/badge.svg) ![GCC Build](https://github.com/MrScriptX/R3D_Engine/actions/workflows/gcc-build.yml/badge.svg)
+
 # R3D Engine
 
 R3D Engine est un moteur de rendu graphique qui s'appuie sur Vulkan. L'objectif est d'en apprendre plus sur les moteurs de rendu et leur fonctionnement et leur architecture. C'est également l'occasion de découvrir l'API [Vulkan](https://www.vulkan.org/).

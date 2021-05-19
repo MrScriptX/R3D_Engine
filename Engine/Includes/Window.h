@@ -4,7 +4,7 @@
 #define _GLFW3_
 
 #define GLFW_INCLUDE_VULKAN
-#include <GLFW\glfw3.h>
+#include <GLFW/glfw3.h>
 
 #endif // !_GLFW3_
 
