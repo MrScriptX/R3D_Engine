@@ -17,7 +17,6 @@ file(GLOB_RECURSE ENGINE_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "Engine/*.cpp")
 add_library(R3DEngine STATIC ${ENGINE_SOURCES})
 
 IF(UNIX)
-    #target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/assimp-5.0.1/lib/Debug/libassimp.so.5.0.0")
     target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/lib/unix/libglfw3.a")
     target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/lib/libvulkan.so.1")
     target_link_libraries(R3DEngine PUBLIC "$ENV{VULKAN_SDK}/lib/libvulkan.so")

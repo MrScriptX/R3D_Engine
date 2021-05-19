@@ -1,0 +1,17 @@
+name: gcc_linux
+
+on: [push]
+
+jobs:
+  cpp_style_check:
+    runs-on: ubuntu-latest
+    name: Check C++ Style
+    steps:
+    - name: Checkout this commit
+      uses: actions/checkout@v2
+    - name: Run clang-format style check for C/C++ programs.
+      uses: jidicula/clang-format-action@v3.4.0
+      with:
+        clang-format-version: '13'
+        check-path: 'Engine'
+        fallback-style: 'GNU'
