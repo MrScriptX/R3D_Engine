@@ -97,11 +97,11 @@
     <ClInclude Include="Includes\world\Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\HLSL\normalmap.vert" />
-    <None Include="assets\shaders\HLSL\no_texture_shader.frag" />
-    <None Include="assets\shaders\HLSL\shader.vert" />
-    <None Include="assets\shaders\HLSL\shader_compiler.bat" />
-    <None Include="assets\shaders\HLSL\texture_shader.frag" />
+    <None Include="..\assets\shaders\HLSL\normalmap.vert" />
+    <None Include="..\assets\shaders\HLSL\no_texture_shader.frag" />
+    <None Include="..\assets\shaders\HLSL\shader.vert" />
+    <None Include="..\assets\shaders\HLSL\shader_compiler.bat" />
+    <None Include="..\assets\shaders\HLSL\texture_shader.frag" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
