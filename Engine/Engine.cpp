@@ -74,13 +74,13 @@ const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, 
 
 	//vertices
 	g.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
-	g.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.0f });
-	g.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
-	g.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
+	g.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
+	g.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	g.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
 	g.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
-	g.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.0f });
-	g.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.0f, .0f });
-	g.addVertex({ half_size, half_size, half_size }, vcolor, { 2.0f, 2.0f });
+	g.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.f });
+	g.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
+	g.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
 
 	//indices
 	g.addIndices(0, 2, 1);

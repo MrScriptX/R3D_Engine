@@ -50,6 +50,7 @@ void Mesh::loadModel()
 			Vertex vertex = {};
 
 			const aiVector3D* pPos = &(mesh->mVertices[t]);
+			const aiVector3D* pNormal = &(mesh->mNormals[t]);
 			const aiVector3D* pTexCoord = &(mesh->mTextureCoords[0][t]);
 
 			vertex.pos = {
@@ -58,12 +59,18 @@ void Mesh::loadModel()
 				pPos->z
 			};
 
+			vertex.normal = { 
+				pNormal->x, 
+				pNormal->y, 
+				pNormal->z 
+			};
+
 			vertex.texCoord = {
 				pTexCoord->x,
 				1.0f - pTexCoord->y
 			};
 
-			vertex.color = { 1.0f, 1.0f, 1.0f };
+			vertex.color = { std::sin(t), std::cos(t), 1.0f };
 
 			m_vertices.push_back(vertex);
 		}
