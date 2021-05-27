@@ -16,7 +16,7 @@ void VulkanPipeline::CreatePipelines()
 {
 	for (size_t i = 0; i < m_pipelines.size(); i++)
 	{
-		createPipeline(m_pipelines[i], m_shaders.fragment_shader_files[i]);
+		createPipeline(m_pipelines[i], m_shaders.fragment_shader_files[i], m_shaders.vertex_shader_files[static_cast<size_t>(m_graphic.color_map)]);
 	}
 }
 
@@ -42,13 +42,13 @@ const Pipeline& VulkanPipeline::GetPipeline(const TSHADER shader)
 	}
 }
 
-void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& shader_file)
+void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragment_shader_file, const std::string& vertex_shader_file)
 {
 	auto bindingDescription = Vertex::getBindingDescription();
 	auto attributeDescriptions = Vertex::getAttributeDescriptions();
 
-	auto vertShaderCode = readFile("assets/shaders/vert.spv");
-	auto fragShaderCode = readFile(shader_file);
+	auto vertShaderCode = readFile(vertex_shader_file);
+	auto fragShaderCode = readFile(fragment_shader_file);
 
 	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
 	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);

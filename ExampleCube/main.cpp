@@ -79,6 +79,16 @@ int main()
 		};
 		engine.BindKeyToFunc(GLFW_KEY_R, pointmode, ActionType::R3D_PRESS);
 
+		std::function<void()> shownormal = [&engine]() { 
+			engine.SetColorMode(ColorMode::NORMALMAP); 
+		};
+		engine.BindKeyToFunc(GLFW_KEY_T, shownormal, ActionType::R3D_PRESS);
+
+		std::function<void()> hidenormal = [&engine]() { 
+			engine.SetColorMode(ColorMode::DEFAULT); 
+		};
+		engine.BindKeyToFunc(GLFW_KEY_Y, hidenormal, ActionType::R3D_PRESS);
+
 		int init = 0;
 		// running loop
 		do

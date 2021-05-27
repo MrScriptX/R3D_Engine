@@ -41,6 +41,7 @@ public:
 	void SetWireframeMode();
 	void SetPointMode();
 	void SetFillMode();
+	void SetColorMode(const ColorMode color_map);
 
 	const bool& shouldClose();
 

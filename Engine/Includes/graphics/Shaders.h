@@ -11,6 +11,11 @@ struct Shaders
 		"assets/shaders/no_texture_shader.spv",
 		"assets/shaders/texture_shader.spv"
 	};
+
+	std::array<const std::string, 2> vertex_shader_files = { 
+		"assets/shaders/vert.spv",
+		"assets/shaders/normalmap.spv"
+	};
 };
 
 #endif // !_SHADERS_H

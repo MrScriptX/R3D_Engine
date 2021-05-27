@@ -183,6 +183,13 @@ void Renderer::SetPolygonFillingMode(const VkPolygonMode& mode)
 	recreateSwapchain();
 }
 
+void Renderer::SetColorMode(const ColorMode map) 
+{ 
+	m_graphic.color_map = map; 
+
+	recreateSwapchain();
+}
+
 VkDevice& Renderer::getDevice()
 {
 	return m_graphic.device;

@@ -4,6 +4,12 @@
 #include "vulkan/vulkan.h"
 #include <vector>
 
+enum class ColorMode
+{
+	DEFAULT = 0,
+	NORMALMAP = 1
+};
+
 constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 3;
 
 struct Extensions
@@ -82,6 +88,7 @@ struct Graphics
 	VkImageView depth_view;
 
 	VkPolygonMode polygone_mode = VK_POLYGON_MODE_FILL;
+	ColorMode color_map = ColorMode::DEFAULT;
 };
 
 struct Pipeline

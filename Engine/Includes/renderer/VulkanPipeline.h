@@ -26,7 +26,7 @@ public:
 	const Pipeline& GetPipeline(const TSHADER shader);
 
 private:
-	void createPipeline(Pipeline& pipeline, const std::string& shader_file);
+	void createPipeline(Pipeline& pipeline, const std::string& fragment_shader_file, const std::string& vertex_shader_file);
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 
 	std::vector<char> readFile(const std::string& filename);//should be in other file

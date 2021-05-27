@@ -124,7 +124,11 @@ void Engine::SetPointMode() {
 }
 
 void Engine::SetFillMode() {
-	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL);
+	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL); }
+
+void Engine::SetColorMode(const ColorMode color_map) 
+{ 
+	mp_renderer->SetColorMode(color_map);
 }
 
 const bool& Engine::shouldClose() {

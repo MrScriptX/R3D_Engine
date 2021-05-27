@@ -46,6 +46,7 @@ public:
 	void setupCommandPool();
 
 	void SetPolygonFillingMode(const VkPolygonMode& mode);
+	void SetColorMode(const ColorMode map);
 
 	//getters
 	VkDevice& getDevice();
