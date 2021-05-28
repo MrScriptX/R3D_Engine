@@ -4,6 +4,7 @@
 Scene::Scene()
 {
 	m_changed.reset();
+	m_descritorset = VK_NULL_HANDLE;
 }
 
 Scene::~Scene()

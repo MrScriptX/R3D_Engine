@@ -34,6 +34,8 @@ private:
 	std::bitset<3> m_changed;
 	std::vector<std::shared_ptr<GameObject>> vp_objects;
 	std::vector<std::shared_ptr<GameObject>> vp_delete_queue;
+
+	VkDescriptorSet m_descritorset;
 };
 
 #endif //!_SCENE_H

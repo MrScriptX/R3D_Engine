@@ -7,7 +7,7 @@ int main()
 		Engine engine(1280, 720);
 		Logger::init();
 
-		std::shared_ptr<Material> room_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> room_texture = engine.CreateMaterial(TSHADER::TEXTURE, "../assets/textures/viking_room.png");
 		std::shared_ptr<GameObject> room = engine.CreateGameObject();
 		room->LoadMesh("../assets/models/viking_room.obj");
 		room->bindMatToMesh(0, room_texture);
@@ -22,7 +22,7 @@ int main()
 		scene->AddGameObject(cube);
 
 		engine.setScene(scene);
-		engine.SetColorMode(ColorMode::NORMALMAP);
+		//engine.SetColorMode(ColorMode::NORMALMAP);
 
 
 		std::function<void()> wireframemode = [&engine]() { engine.SetWireframeMode(); };
