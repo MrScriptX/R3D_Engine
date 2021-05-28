@@ -5,6 +5,7 @@
 
 #include "world/Scene.h"
 #include "world/GameObject.h"
+#include "world/LightObject.h"
 
 #include "graphics/Geometry.h"
 
@@ -46,6 +47,9 @@ public:
 	const bool& shouldClose();
 
 private:
+	LightObject m_lightobject;
+	VkBuffer m_lightobject_buffer;
+	VkDeviceMemory m_lightobject_memory;
 
 	std::unique_ptr<Window> mp_window;
 	std::shared_ptr<Renderer> mp_renderer;

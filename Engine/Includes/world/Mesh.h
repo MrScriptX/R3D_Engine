@@ -9,6 +9,7 @@
 #include <assimp/postprocess.h>
 
 #include "Material.h"
+#include "LightObject.h"
 
 #include "../graphics/Vertex.h"
 #include "../renderer/Renderer.h"

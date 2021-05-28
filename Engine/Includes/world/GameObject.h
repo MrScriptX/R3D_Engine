@@ -48,6 +48,7 @@ public:
 	const bool Deleted();
 	
 private:
+	
 	std::vector<int32_t> m_mesh_to_update;
 	std::vector<std::unique_ptr<Mesh>> m_mesh_to_delete;
 	std::map<int32_t, std::unique_ptr<Mesh>> m_meshes;

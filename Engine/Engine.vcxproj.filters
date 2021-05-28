@@ -99,6 +99,9 @@
     <ClCompile Include="graphics\Math.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="world\LightObject.cpp">
+      <Filter>Engine\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Includes\world\GameObject.h">
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="Includes\Window.h">
       <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\world\LightObject.h">
+      <Filter>Engine\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

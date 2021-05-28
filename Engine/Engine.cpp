@@ -18,6 +18,18 @@ Engine::Engine(uint32_t width, uint32_t height) {
 
 	mp_renderer->createDescriptorPool();
 	mp_renderer->allocateCommandBuffers();
+
+	Transform transform;
+	transform.position = { .0f, .0f, .0f };
+	transform.rotation = { .0f, .0f, .0f };
+	m_lightobject.SetTransform(transform);
+
+	void* data;
+	vkMapMemory(mp_renderer->getDevice(), m_lightobject_memory, 0, sizeof(Transform), 0, &data);
+	memcpy(data, &transform, sizeof(Transform));
+	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);
+
+	// create buffer
 }
 
 Engine::~Engine() {

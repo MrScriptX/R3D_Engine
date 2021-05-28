@@ -1,7 +1,7 @@
 #ifndef R3DENGINE_LIGHT_H_
 #define R3DENGINE_LIGHT_H_
 
-#include "Mesh.h"
+#include "../graphics/Vertex.h"
 
 class LightObject
 {
@@ -9,9 +9,12 @@ class LightObject
 	LightObject();
 	~LightObject();
 
+	Transform& GetTransform();
+
+	void SetTransform(Transform& transform);
+
   private:
-	glm::vec3 m_position;
-	glm::vec3 m_rotation;
+	Transform m_transform;
 };
 
 #endif // !R3DENGINE_LIGHT_H_

@@ -79,5 +79,10 @@ struct UniformBufferObject
 	glm::mat4 proj;
 };
 
-#endif // !_VERTEX_H
+struct Transform
+{
+	glm::vec3 position;
+	glm::vec3 rotation;
+};
 
+#endif // !_VERTEX_H

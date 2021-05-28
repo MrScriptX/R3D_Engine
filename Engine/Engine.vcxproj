@@ -61,6 +61,7 @@
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="world\GameObject.cpp" />
+    <ClCompile Include="world\LightObject.cpp" />
     <ClCompile Include="world\Material.cpp" />
     <ClCompile Include="world\Mesh.cpp" />
     <ClCompile Include="world\Scene.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="Includes\Window.h" />
     <ClInclude Include="Includes\world\GameObject.h" />
     <ClInclude Include="Includes\world\Geometry.h" />
+    <ClInclude Include="Includes\world\LightObject.h" />
     <ClInclude Include="Includes\world\Material.h" />
     <ClInclude Include="Includes\world\Mesh.h" />
     <ClInclude Include="Includes\world\Scene.h" />

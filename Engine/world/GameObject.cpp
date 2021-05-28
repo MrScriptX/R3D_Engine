@@ -87,7 +87,7 @@ void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_
 {
 	for (size_t i = 0; i < m_ubo.size(); i++)
 	{
-		m_meshes[index]->bindMaterial(p_material, m_ubo[i], mp_renderer);
+		m_meshes[index]->bindMaterial(p_material, m_lightobject.GetTransform(), m_ubo[i], mp_renderer);
 	}
 }
 
