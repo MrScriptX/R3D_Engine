@@ -323,6 +323,11 @@ void Renderer::createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memor
 	m_pBufferFactory->createBuffer(uniform_buffer, uniform_memory, buffer_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 }
 
+void Renderer::CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size)
+{
+	m_pBufferFactory->createBuffer(buffer, memory, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+}
+
 void Renderer::allocateCommandBuffers()
 {
 	m_graphic.command_buffers.resize(m_graphic.framebuffers.size());

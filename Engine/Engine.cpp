@@ -1,6 +1,7 @@
 #include "Includes/Engine.h"
 
-Engine::Engine(uint32_t width, uint32_t height) {
+Engine::Engine(uint32_t width, uint32_t height)
+{
 	m_last_time = std::chrono::high_resolution_clock::now();
 
 	mp_main_camera = std::make_shared<Camera>();
@@ -24,15 +25,20 @@ Engine::Engine(uint32_t width, uint32_t height) {
 	transform.rotation = { .0f, .0f, .0f };
 	m_lightobject.SetTransform(transform);
 
+	// create buffer memory
 	void* data;
 	vkMapMemory(mp_renderer->getDevice(), m_lightobject_memory, 0, sizeof(Transform), 0, &data);
 	memcpy(data, &transform, sizeof(Transform));
 	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);
 
 	// create buffer
+	mp_renderer->CreateUniformBuffer(m_lightobject_buffer, m_lightobject_memory, sizeof(Transform));
+
+	
 }
 
-Engine::~Engine() {
+Engine::~Engine()
+{
 	vkDeviceWaitIdle(mp_renderer->getDevice());
 
 	mp_renderer->cleanSwapchain();
@@ -47,44 +53,51 @@ Engine::~Engine() {
 	mp_config.reset();
 }
 
-void Engine::setScene(std::shared_ptr<Scene> p_scene) {
+void Engine::setScene(std::shared_ptr<Scene> p_scene)
+{
 	mp_scene = p_scene;
 }
 
-void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject) {
+void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
+{
 	mp_scene->AddGameObject(gameobject);
 }
 
-const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader) {
+const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader)
+{
 	return std::make_shared<Material>(shader, mp_renderer);
 }
 
-const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file) {
+const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file)
+{
 	std::shared_ptr<Material> mat = std::make_shared<Material>(shader, mp_renderer);
 	mat->LoadTexture(texture_file);
 
 	return mat;
 }
 
-const std::shared_ptr<GameObject> Engine::CreateGameObject() {
+const std::shared_ptr<GameObject> Engine::CreateGameObject()
+{
 	return std::make_shared<GameObject>(mp_renderer);
 }
 
-const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& object_file) {
+const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& object_file)
+{
 	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(mp_renderer);
 	go->LoadMesh(object_file);
 
 	return go;
 }
 
-const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor) {
+const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor)
+{
 	std::shared_ptr<GameObject> cube = std::make_shared<GameObject>(mp_renderer);
 
 	Geometry g;
 
 	const float half_size = size / 2;
 
-	//vertices
+	// vertices
 	g.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
 	g.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
 	g.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
@@ -94,7 +107,7 @@ const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, 
 	g.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
 	g.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
 
-	//indices
+	// indices
 	g.addIndices(0, 2, 1);
 	g.addIndices(1, 2, 3);
 
@@ -119,35 +132,43 @@ const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, 
 	return cube;
 }
 
-void Engine::BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type) {
+void Engine::BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type)
+{
 	mp_controller->SetKeyToFunc(key, func, type);
 }
 
-const std::shared_ptr<Camera> Engine::GetMainCamera() {
+const std::shared_ptr<Camera> Engine::GetMainCamera()
+{
 	return mp_main_camera;
 }
 
-void Engine::SetWireframeMode() {
+void Engine::SetWireframeMode()
+{
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_LINE);
 }
 
-void Engine::SetPointMode() {
+void Engine::SetPointMode()
+{
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_POINT);
 }
 
-void Engine::SetFillMode() {
-	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL); }
+void Engine::SetFillMode()
+{
+	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL);
+}
 
-void Engine::SetColorMode(const ColorMode color_map) 
-{ 
+void Engine::SetColorMode(const ColorMode color_map)
+{
 	mp_renderer->SetColorMode(color_map);
 }
 
-const bool& Engine::shouldClose() {
+const bool& Engine::shouldClose()
+{
 	return glfwWindowShouldClose(&mp_window->getHandle());
 }
 
-void Engine::update() {
+void Engine::update()
+{
 	glfwPollEvents();
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> current_time = std::chrono::high_resolution_clock::now();
@@ -161,7 +182,8 @@ void Engine::update() {
 	if (frame == -1)
 		return;
 
-	if (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame)) {
+	if (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame))
+	{
 		mp_renderer->WaitForSwapchainImageFence();
 
 		mp_scene->Update(frame);
@@ -177,9 +199,10 @@ void Engine::update() {
 	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 
-	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
+	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }
 
-void Engine::draw() {
+void Engine::draw()
+{
 	mp_renderer->draw();
 }

@@ -69,6 +69,7 @@ public:
 	void createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer);
 	void createUBO();
 	void createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory);
+	void CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size);
 
 	void allocateCommandBuffers();
 	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer);
