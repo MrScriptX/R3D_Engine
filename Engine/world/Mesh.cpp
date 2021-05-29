@@ -2,7 +2,7 @@
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
-	m_buffer.fill({VK_NULL_HANDLE});
+	m_buffer.fill({ VK_NULL_HANDLE });
 	m_to_update.set();
 }
 
@@ -53,23 +53,9 @@ void Mesh::loadModel()
 			const aiVector3D* pNormal = &(mesh->mNormals[t]);
 			const aiVector3D* pTexCoord = &(mesh->mTextureCoords[0][t]);
 
-			vertex.pos = {
-				pPos->x,
-				pPos->y,
-				pPos->z
-			};
-
-			vertex.normal = { 
-				pNormal->x, 
-				pNormal->y, 
-				pNormal->z 
-			};
-
-			vertex.texCoord = {
-				pTexCoord->x,
-				1.0f - pTexCoord->y
-			};
-
+			vertex.pos = { pPos->x, pPos->y, pPos->z };
+			vertex.normal = { pNormal->x, pNormal->y, pNormal->z };
+			vertex.texCoord = { pTexCoord->x, 1.0f - pTexCoord->y };
 			vertex.color = { std::sin(t), std::cos(t), 1.0f };
 
 			m_vertices.push_back(vertex);
