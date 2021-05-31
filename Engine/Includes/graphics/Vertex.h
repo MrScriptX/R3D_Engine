@@ -1,15 +1,14 @@
-#ifndef _VERTEX_H
-#define _VERTEX_H
+#ifndef R3DENGINE_VERTEX_H_
+#define R3DENGINE_VERTEX_H_
 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <array>
 #include <glm/glm.hpp>
 #include <vector>
-#include <array>
 #include <vulkan/vulkan.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
-
 
 struct Vertex
 {
@@ -28,7 +27,7 @@ struct Vertex
 		VkVertexInputBindingDescription bindingDescription = {};
 		bindingDescription.binding = 0;
 		bindingDescription.stride = sizeof(Vertex);
-		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;//VK_VERTEX_INPUT_RATE_INSTANCE
+		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // VK_VERTEX_INPUT_RATE_INSTANCE
 
 		return bindingDescription;
 	}
@@ -63,14 +62,14 @@ struct Vertex
 
 namespace std
 {
-	template<> struct hash<Vertex>
+template <> struct hash<Vertex>
+{
+	size_t operator()(Vertex const& vertex) const
 	{
-		size_t operator()(Vertex const& vertex) const
-		{
-			return ((hash<glm::vec3>()(vertex.pos) ^ (hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^ (hash<glm::vec2>()(vertex.texCoord) << 1);
-		}
-	};
-}
+		return ((hash<glm::vec3>()(vertex.pos) ^ (hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^ (hash<glm::vec2>()(vertex.texCoord) << 1);
+	}
+};
+} // namespace std
 
 struct UniformBufferObject
 {
@@ -85,4 +84,4 @@ struct Transform
 	glm::vec3 rotation;
 };
 
-#endif // !_VERTEX_H
+#endif // !R3DENGINE_VERTEX_H_

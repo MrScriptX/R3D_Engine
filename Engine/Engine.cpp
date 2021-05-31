@@ -25,16 +25,10 @@ Engine::Engine(uint32_t width, uint32_t height)
 	transform.rotation = { .0f, .0f, .0f };
 	m_lightobject.SetTransform(transform);
 
-	// create buffer memory
-	void* data;
-	vkMapMemory(mp_renderer->getDevice(), m_lightobject_memory, 0, sizeof(Transform), 0, &data);
-	memcpy(data, &transform, sizeof(Transform));
-	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);
-
 	// create buffer
 	mp_renderer->CreateUniformBuffer(m_lightobject_buffer, m_lightobject_memory, sizeof(Transform));
-
-	
+	mp_renderer->allocateDescriptorSet(m_descritorset);
+	mp_renderer->updateDescriptorSet(m_lightobject_buffer, m_descritorset);
 }
 
 Engine::~Engine()
@@ -189,7 +183,7 @@ void Engine::update()
 		mp_scene->Update(frame);
 
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
-		mp_scene->Render(mp_renderer->getCommandBuffer(frame), frame);
+		mp_scene->Render(mp_renderer->getCommandBuffer(frame), m_descritorset, frame);
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
 
 		mp_scene->Clean(frame);
@@ -198,6 +192,11 @@ void Engine::update()
 
 	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
+
+	void* data;
+	vkMapMemory(mp_renderer->getDevice(), m_lightobject_memory, 0, sizeof(m_lightobject.GetTransform()), 0, &data);
+	memcpy(data, &m_lightobject.GetTransform(), sizeof(m_lightobject.GetTransform()));
+	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);
 
 	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }

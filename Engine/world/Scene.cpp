@@ -1,10 +1,8 @@
 #include "../Includes/world/Scene.h"
 
-
 Scene::Scene()
 {
 	m_changed.reset();
-	m_descritorset = VK_NULL_HANDLE;
 }
 
 Scene::~Scene()
@@ -58,11 +56,11 @@ R3DResult Scene::RemoveGameObject(std::shared_ptr<GameObject> gameobject)
 	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }
 
-void Scene::Render(VkCommandBuffer& command_buffer, const int32_t frame)
+void Scene::Render(VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
-		vp_objects[i]->RegisterDrawCmd(command_buffer, frame);
+		vp_objects[i]->RegisterDrawCmd(command_buffer, descriptorset, frame);
 	}
 
 	m_changed.set(frame, false);

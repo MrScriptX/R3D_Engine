@@ -22,7 +22,7 @@ Mesh::~Mesh()
 	}
 }
 
-void Mesh::draw(const VkCommandBuffer& command_buffer, const int32_t frame)
+void Mesh::draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame)
 {
 	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().handle);
 
@@ -33,6 +33,7 @@ void Mesh::draw(const VkCommandBuffer& command_buffer, const int32_t frame)
 	vkCmdBindIndexBuffer(command_buffer, m_buffer[frame].index, 0, VK_INDEX_TYPE_UINT32);
 
 	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, &p_material->getDescriptorSet(), 0, nullptr);
+	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, &descriptorset, 0, nullptr);
 
 	vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
 }

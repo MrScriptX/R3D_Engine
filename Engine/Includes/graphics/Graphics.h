@@ -80,6 +80,7 @@ struct Graphics
 	VkBuffer uniform_buffer;
 	VkDeviceMemory uniform_memory;
 
+	VkDescriptorSetLayout light_descriptor_layout = VK_NULL_HANDLE;
 	VkDescriptorSetLayout descriptor_set_layout = VK_NULL_HANDLE;
 	VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
 

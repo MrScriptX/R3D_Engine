@@ -3,21 +3,20 @@
 
 #include "Window.h"
 
-#include "world/Scene.h"
 #include "world/GameObject.h"
 #include "world/LightObject.h"
+#include "world/Scene.h"
 
 #include "graphics/Geometry.h"
 
 class Engine
 {
-public:
+  public:
 	Engine(uint32_t width, uint32_t height);
 	~Engine();
 
 	void update();
 	void draw();
-
 
 	void setScene(std::shared_ptr<Scene> p_scene);
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
@@ -29,7 +28,7 @@ public:
 	// CREATE GAMEOBJECT
 	const std::shared_ptr<GameObject> CreateGameObject();
 	const std::shared_ptr<GameObject> CreateGameObject(const std::string& object_file);
-	
+
 	const std::shared_ptr<GameObject> CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor);
 
 	// CONTROLLER
@@ -46,10 +45,11 @@ public:
 
 	const bool& shouldClose();
 
-private:
+  private:
 	LightObject m_lightobject;
 	VkBuffer m_lightobject_buffer;
 	VkDeviceMemory m_lightobject_memory;
+	VkDescriptorSet m_descritorset;
 
 	std::unique_ptr<Window> mp_window;
 	std::shared_ptr<Renderer> mp_renderer;
