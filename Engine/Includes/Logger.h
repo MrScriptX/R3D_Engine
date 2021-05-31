@@ -1,17 +1,17 @@
 #ifndef _LOGGER_H
 #define _LOGGER_H
 
+#include <chrono>
+#include <cstdlib>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <memory>
 #include <string>
-#include <chrono>
-#include <iomanip>
-#include <cstdlib>
-#include <iostream>
 
 class Logger
 {
-public:
+  public:
 	Logger();
 	~Logger();
 

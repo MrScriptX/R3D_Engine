@@ -1,16 +1,16 @@
-#ifndef _VULKAN_DESCRIPTOR_H
-#define _VULKAN_DESCRIPTOR_H
+#ifndef R3DENGINE_VULKAN_DESCRIPTOR_H_
+#define R3DENGINE_VULKAN_DESCRIPTOR_H_
 
 #include <array>
 #include <stdexcept>
 
-#include "../graphics/Vertex.h"
 #include "../graphics/Graphics.h"
+#include "../graphics/Vertex.h"
 
 class VulkanDescriptor
 {
-public:
-	VulkanDescriptor(Graphics & graphic);
+  public:
+	VulkanDescriptor(Graphics& graphic);
 	~VulkanDescriptor();
 
 	void createDescriptorPool();
@@ -22,9 +22,8 @@ public:
 
 	void bindDescriptorSet(VkCommandBuffer& commandBuffer, VkPipelineLayout& pipelineLayout, VkDescriptorSet& descriptorSet);
 
-private:
-
-	Graphics & m_graphic;
+  private:
+	Graphics& m_graphic;
 };
 
-#endif // !_VULKAN_DESCRIPTOR_H
+#endif // !R3DENGINE_VULKAN_DESCRIPTOR_H

@@ -69,7 +69,7 @@ struct Graphics
 	std::vector<VkFramebuffer> framebuffers;
 
 	VkCommandPool command_pool;
-	std::vector<VkCommandBuffer> command_buffers;//replace VkCommandBuffer with CommandBuffer
+	std::vector<VkCommandBuffer> command_buffers; // replace VkCommandBuffer with CommandBuffer
 
 	std::vector<VkSemaphore> semaphores_render_finished;
 	std::vector<VkSemaphore> semaphores_image_available;
@@ -109,7 +109,7 @@ struct Buffer
 
 struct CommandBuffers
 {
-	bool needUpdate = true;//base state
+	bool needUpdate = true; // base state
 	VkCommandBuffer handle = VK_NULL_HANDLE;
 };
 
