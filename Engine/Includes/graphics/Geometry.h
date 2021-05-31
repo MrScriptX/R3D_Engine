@@ -28,11 +28,9 @@ struct Geometry
 	void addIndices(uint32_t x, uint32_t y, uint32_t z)
 	{
 		// compute face normal
-		glm::vec3 normal = { 
-			vertices[x].pos.y * vertices[y].pos.z - vertices[x].pos.z * vertices[y].pos.y,
-			vertices[x].pos.z * vertices[y].pos.x - vertices[x].pos.x * vertices[y].pos.z,
-			vertices[x].pos.x * vertices[y].pos.y - vertices[x].pos.y * vertices[y].pos.x
-		};
+		glm::vec3 normal = { vertices[x].pos.y * vertices[y].pos.z - vertices[x].pos.z * vertices[y].pos.y,
+			                 vertices[x].pos.z * vertices[y].pos.x - vertices[x].pos.x * vertices[y].pos.z,
+			                 vertices[x].pos.x * vertices[y].pos.y - vertices[x].pos.y * vertices[y].pos.x };
 
 		// compute the new vertex normal
 		vertices[x].normal += normal;
