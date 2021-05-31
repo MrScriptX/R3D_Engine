@@ -1,12 +1,9 @@
 #include "../Includes/renderer/VulkanPipeline.h"
 
-
-
-VulkanPipeline::VulkanPipeline(Graphics & m_graphic) : m_graphic(m_graphic)
+VulkanPipeline::VulkanPipeline(Graphics& m_graphic) : m_graphic(m_graphic)
 {
 	CreatePipelines();
 }
-
 
 VulkanPipeline::~VulkanPipeline()
 {
@@ -76,7 +73,6 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragm
 	vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
 	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
-
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -139,7 +135,6 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragm
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	pipelineLayoutInfo.setLayoutCount = 1;
@@ -191,7 +186,7 @@ VkShaderModule VulkanPipeline::createShaderModule(const std::vector<char>& code)
 	return shaderModule;
 }
 
-std::vector<char> VulkanPipeline::readFile(const std::string & filename)
+std::vector<char> VulkanPipeline::readFile(const std::string& filename)
 {
 	std::ifstream file(filename, std::ios::ate | std::ios::binary);
 

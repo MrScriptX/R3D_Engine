@@ -12,9 +12,8 @@ Camera::Camera()
 	m_rotation = { 0.0f, 0.0f, 0.0f };
 	m_delta_position = { 0.f, 0.f, 0.f };
 
-	m_ubo.fill({ {},{},{} });
+	m_ubo.fill({ {}, {}, {} });
 }
-
 
 Camera::~Camera()
 {
@@ -31,7 +30,7 @@ void Camera::UpdatePosition(const float& dt)
 {
 	m_position += m_delta_position * dt;
 
-	m_delta_position = glm::vec3{ 0.f, 0.f, 0.f };
+	m_delta_position = glm::vec3 { 0.f, 0.f, 0.f };
 }
 
 void Camera::MoveForward(const float& speed)
@@ -117,7 +116,7 @@ void Camera::setPitch(const float& pitch)
 	m_pitch = pitch;
 }
 
-const float & Camera::getPitch()
+const float& Camera::getPitch()
 {
 	return m_pitch;
 }
@@ -127,7 +126,7 @@ void Camera::setYaw(const float& yaw)
 	m_yaw = yaw;
 }
 
-const float & Camera::getYaw()
+const float& Camera::getYaw()
 {
 	return m_yaw;
 }

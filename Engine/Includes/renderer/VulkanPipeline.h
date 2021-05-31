@@ -1,11 +1,11 @@
-#ifndef _VULKAN_PIPELINE_H
-#define _VULKAN_PIPELINE_H
+#ifndef R3DENGINE_VULKAN_PIPELINE_H_
+#define R3DENGINE_VULKAN_PIPELINE_H_
 
 #include <fstream>
 
-#include "../graphics/Vertex.h"
 #include "../graphics/Graphics.h"
 #include "../graphics/Shaders.h"
+#include "../graphics/Vertex.h"
 
 enum class TSHADER
 {
@@ -16,8 +16,8 @@ enum class TSHADER
 
 class VulkanPipeline
 {
-public:
-	VulkanPipeline(Graphics & m_graphic);
+  public:
+	VulkanPipeline(Graphics& m_graphic);
 	~VulkanPipeline();
 
 	void CreatePipelines();
@@ -25,15 +25,15 @@ public:
 
 	const Pipeline& GetPipeline(const TSHADER shader);
 
-private:
+  private:
 	void createPipeline(Pipeline& pipeline, const std::string& fragment_shader_file, const std::string& vertex_shader_file);
 	VkShaderModule createShaderModule(const std::vector<char>& code);
 
-	std::vector<char> readFile(const std::string& filename);//should be in other file
+	std::vector<char> readFile(const std::string& filename); // should be in other file
 
 	std::array<Pipeline, 3> m_pipelines;
-	Graphics & m_graphic;//should be shared ptr
+	Graphics& m_graphic; // should be shared ptr
 	Shaders m_shaders;
 };
 
-#endif _VULKAN_PIPELINE_H
+#endif // !R3DENGINE_VULKAN_PIPELINE_H_

@@ -4,24 +4,24 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
 #include "../graphics/Graphics.h"
 
 class VulkanInstance
 {
-public:
-	VulkanInstance(Graphics & m_graphic);
+  public:
+	VulkanInstance(Graphics& m_graphic);
 	~VulkanInstance();
 
-private:
+  private:
 	void createInstance();
 
 	bool checkValidationLayerSupport();
 	std::vector<const char*> getRequiredExtensions();
 
-	Graphics & m_graphic;
+	Graphics& m_graphic;
 };
 
-#endif //!R3DENGINE_VULKAN_INSTANCE_H_
+#endif //! R3DENGINE_VULKAN_INSTANCE_H_

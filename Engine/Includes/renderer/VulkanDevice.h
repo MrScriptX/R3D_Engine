@@ -1,5 +1,5 @@
-#ifndef _VULKAN_DEVICE_H
-#define _VULKAN_DEVICE_H
+#ifndef R3DENGINE_VULKAN_DEVICE_H_
+#define R3DENGINE_VULKAN_DEVICE_H_
 
 #include <iostream>
 #include <set>
@@ -8,12 +8,11 @@
 
 class VulkanDevice
 {
-public:
+  public:
 	VulkanDevice(Graphics& m_graphic);
 	~VulkanDevice();
 
-
-private:
+  private:
 	void choosePhysicalDevice();
 	void createLogicalDevice();
 
@@ -23,7 +22,7 @@ private:
 	QueueFamilyIndices findQueueFamily(VkPhysicalDevice device);
 	SwapchainDetails querySwapChainSupport(VkPhysicalDevice device);
 
-	Graphics & m_graphic;
+	Graphics& m_graphic;
 };
 
-#endif _VULKAN_DEVICE_H
+#endif // !R3DENGINE_VULKAN_DEVICE_H_

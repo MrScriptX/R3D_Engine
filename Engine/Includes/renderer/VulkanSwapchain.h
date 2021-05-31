@@ -1,5 +1,5 @@
-#ifndef _VULKAN_SWAPCHAIN_H
-#define _VULKAN_SWAPCHAIN_H
+#ifndef R3DENGINE_VULKAN_SWAPCHAIN_H_
+#define R3DENGINE_VULKAN_SWAPCHAIN_H_
 
 #include <algorithm>
 #include <stdexcept>
@@ -9,13 +9,14 @@
 
 class VulkanSwapchain
 {
-public:
-	VulkanSwapchain(Graphics & m_graphic, uint32_t width, uint32_t height);
+  public:
+	VulkanSwapchain(Graphics& m_graphic, uint32_t width, uint32_t height);
 	~VulkanSwapchain();
 
 	void createSwapchain();
 	const uint32_t& GetHeigth();
-private:
+
+  private:
 	void createImagesView();
 
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -26,7 +27,7 @@ private:
 	uint32_t WIDTH;
 	uint32_t HEIGHT;
 
-	Graphics & m_graphic;
+	Graphics& m_graphic;
 };
 
-#endif // !_VULKAN_SWAPCHAIN_H
+#endif // !R3DENGINE_VULKAN_SWAPCHAIN_H_
