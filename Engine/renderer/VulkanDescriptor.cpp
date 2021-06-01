@@ -8,6 +8,26 @@ VulkanDescriptor::~VulkanDescriptor()
 {
 }
 
+void VulkanDescriptor::createDescriptorPool()
+{
+	std::array<VkDescriptorPoolSize, 2> pool_sizes = {};
+	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	pool_sizes[0].descriptorCount = 1;
+	pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	pool_sizes[1].descriptorCount = 1;
+
+	VkDescriptorPoolCreateInfo pool_info = {};
+	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	pool_info.poolSizeCount = static_cast<uint32_t>(pool_sizes.size());
+	pool_info.pPoolSizes = pool_sizes.data();
+	pool_info.maxSets = 4;
+
+	if (vkCreateDescriptorPool(m_graphic.device, &pool_info, nullptr, &m_graphic.descriptor_pool) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create descriptor pool!");
+	}
+}
+
 void VulkanDescriptor::createDescriptorSetLayout()
 {
 	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
@@ -24,14 +44,7 @@ void VulkanDescriptor::createDescriptorSetLayout()
 	samplerLayoutBinding.pImmutableSamplers = nullptr;
 	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	VkDescriptorSetLayoutBinding lightLayoutBinding = {};
-	samplerLayoutBinding.binding = 2;
-	samplerLayoutBinding.descriptorCount = 1;
-	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	samplerLayoutBinding.pImmutableSamplers = nullptr;
-	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-	std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding, lightLayoutBinding };
+	std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
 	VkDescriptorSetLayoutCreateInfo layout_info = {};
 	layout_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	layout_info.bindingCount = static_cast<uint32_t>(bindings.size());
@@ -43,25 +56,24 @@ void VulkanDescriptor::createDescriptorSetLayout()
 	}
 }
 
-void VulkanDescriptor::createDescriptorPool()
+void VulkanDescriptor::createDescriptorSetLayoutLight()
 {
-	std::array<VkDescriptorPoolSize, 3> pool_sizes = {};
-	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	pool_sizes[0].descriptorCount = 1;
-	pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	pool_sizes[1].descriptorCount = 1;
-	pool_sizes[2].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	pool_sizes[2].descriptorCount = 1;
+	VkDescriptorSetLayoutBinding ubo_binding = {};
+	ubo_binding.binding = 0;
+	ubo_binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	ubo_binding.descriptorCount = 1;
+	ubo_binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	ubo_binding.pImmutableSamplers = nullptr;
 
-	VkDescriptorPoolCreateInfo pool_info = {};
-	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	pool_info.poolSizeCount = static_cast<uint32_t>(pool_sizes.size());
-	pool_info.pPoolSizes = pool_sizes.data();
-	pool_info.maxSets = 1;
+	std::array<VkDescriptorSetLayoutBinding, 1> bindings = { ubo_binding };
+	VkDescriptorSetLayoutCreateInfo layout_info = {};
+	layout_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layout_info.bindingCount = static_cast<uint32_t>(bindings.size());
+	layout_info.pBindings = bindings.data();
 
-	if (vkCreateDescriptorPool(m_graphic.device, &pool_info, nullptr, &m_graphic.descriptor_pool) != VK_SUCCESS)
+	if (vkCreateDescriptorSetLayout(m_graphic.device, &layout_info, nullptr, &m_graphic.light_descriptor_layout) != VK_SUCCESS)
 	{
-		throw std::runtime_error("failed to create descriptor pool!");
+		throw std::runtime_error("Failed to create descriptor set layout !");
 	}
 }
 

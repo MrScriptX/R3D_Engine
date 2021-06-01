@@ -168,7 +168,9 @@ void Renderer::setupRenderPass()
 void Renderer::setupDescriptorSetLayout()
 {
 	m_descriptor = std::make_unique<VulkanDescriptor>(m_graphic);
+
 	m_descriptor->createDescriptorSetLayout();
+	m_descriptor->createDescriptorSetLayoutLight(); // create light descriptor set layout
 }
 
 void Renderer::setupCommandPool()
@@ -483,7 +485,9 @@ void Renderer::createSyncObject()
 
 void Renderer::createDescriptorPool()
 {
-	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+	m_descriptor->createDescriptorPool();
+
+	/* std::array<VkDescriptorPoolSize, 2> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 1;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -497,13 +501,29 @@ void Renderer::createDescriptorPool()
 
 	if (vkCreateDescriptorPool(m_graphic.device, &poolInfo, nullptr, &m_graphic.descriptor_pool) != VK_SUCCESS)
 	{
-		throw std::runtime_error("failed to create descriptor pool!");
-	}
+	    throw std::runtime_error("failed to create descriptor pool!");
+	} */
 }
 
 void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
 {
 	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = m_graphic.descriptor_pool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts = layouts;
+
+	VkResult result = vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &descriptor_set);
+	if (result != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to allocate descriptor set!");
+	}
+}
+
+void Renderer::allocateDescriptorSetLight(VkDescriptorSet& descriptor_set)
+{
+	VkDescriptorSetLayout layouts[] = { m_graphic.light_descriptor_layout };
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = m_graphic.descriptor_pool;

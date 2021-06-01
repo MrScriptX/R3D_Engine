@@ -16,6 +16,7 @@ class VulkanDescriptor
 	void createDescriptorPool();
 
 	void createDescriptorSetLayout();
+	void createDescriptorSetLayoutLight();
 
 	void createDescriptorSet(const VkDescriptorPool& descriptor_pool, VkDescriptorSetLayout& layout, VkDescriptorSet& descriptor_set);
 
@@ -25,4 +26,4 @@ class VulkanDescriptor
 	Graphics& m_graphic;
 };
 
-#endif // !R3DENGINE_VULKAN_DESCRIPTOR_H
+#endif // !R3DENGINE_VULKAN_DESCRIPTOR_H_
