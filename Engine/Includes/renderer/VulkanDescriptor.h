@@ -18,7 +18,6 @@ class VulkanDescriptor
 	void createDescriptorSetLayout();
 
 	void createDescriptorSet(const VkDescriptorPool& descriptor_pool, VkDescriptorSetLayout& layout, VkDescriptorSet& descriptor_set);
-	void updateDescriptorSet();
 
 	void bindDescriptorSet(VkCommandBuffer& commandBuffer, VkPipelineLayout& pipelineLayout, VkDescriptorSet& descriptorSet);
 
