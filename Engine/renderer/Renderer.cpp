@@ -544,7 +544,7 @@ void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& d
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = ubo;
 	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(UniformBufferObject);
+	bufferInfo.range = sizeof(Transform);
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = descriptor_set;

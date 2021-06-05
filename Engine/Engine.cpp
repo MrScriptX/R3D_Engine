@@ -26,8 +26,9 @@ Engine::Engine(uint32_t width, uint32_t height)
 	m_lightobject.SetTransform(transform);
 
 	// create buffer
+	mp_renderer->allocateDescriptorSetLight(m_descritorset);
+
 	mp_renderer->CreateUniformBuffer(m_lightobject_buffer, m_lightobject_memory, sizeof(Transform));
-	mp_renderer->allocateDescriptorSet(m_descritorset);
 	mp_renderer->updateDescriptorSet(m_lightobject_buffer, m_descritorset);
 }
 
@@ -193,10 +194,10 @@ void Engine::update()
 	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 
-	void* data;
+	/* void* data;
 	vkMapMemory(mp_renderer->getDevice(), m_lightobject_memory, 0, sizeof(m_lightobject.GetTransform()), 0, &data);
 	memcpy(data, &m_lightobject.GetTransform(), sizeof(m_lightobject.GetTransform()));
-	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);
+	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);*/
 
 	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }
