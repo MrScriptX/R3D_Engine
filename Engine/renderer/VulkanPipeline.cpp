@@ -135,7 +135,6 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragm
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-
 	std::array<VkDescriptorSetLayout, 2> layouts = { m_graphic.descriptor_set_layout, m_graphic.light_descriptor_layout };
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

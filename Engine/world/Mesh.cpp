@@ -35,7 +35,7 @@ void Mesh::draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descript
 	VkDescriptorSet sets[] = { p_material->getDescriptorSet(), descriptorset };
 
 	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 2, sets, 0, nullptr);
-	//vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, , 0, nullptr);
+	// vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, , 0, nullptr);
 
 	vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
 }
