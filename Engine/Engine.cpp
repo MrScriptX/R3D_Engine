@@ -21,7 +21,7 @@ Engine::Engine(uint32_t width, uint32_t height)
 	mp_renderer->allocateCommandBuffers();
 
 	Transform transform;
-	transform.position = { .0f, .0f, .0f };
+	transform.position = { -5.0f, 0.0f, .0f };
 	transform.rotation = { .0f, .0f, .0f };
 	m_lightobject.SetTransform(transform);
 
@@ -194,10 +194,14 @@ void Engine::update()
 	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 
-	/* void* data;
+	Transform transform = m_lightobject.GetTransform();
+	transform.position += glm::vec3(0.0005f, 0.0f, 0.0f);
+	m_lightobject.SetTransform(transform);
+
+	void* data;
 	vkMapMemory(mp_renderer->getDevice(), m_lightobject_memory, 0, sizeof(m_lightobject.GetTransform()), 0, &data);
 	memcpy(data, &m_lightobject.GetTransform(), sizeof(m_lightobject.GetTransform()));
-	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);*/
+	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);
 
 	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }
