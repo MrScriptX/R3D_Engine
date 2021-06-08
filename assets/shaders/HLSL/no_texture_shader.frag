@@ -1,10 +1,14 @@
-#version 450
+#version 460
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(set = 1, binding = 0) uniform Light {
+struct Transform {
     vec3 position;
     vec3 rotation;
-} light;
+};
+
+layout(std170, set = 1, binding = 0) uniform Lights {
+    Transform lights[10];
+} lights;
 
 layout(location = 0) in vec3 fragNormal;
 layout(location = 1) in vec3 fragPosition;
@@ -18,7 +22,7 @@ void main() {
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * light_color;
 
-    vec3 light_pos = light.position;
+    vec3 light_pos = vec3(0.0, 0.0, 0.0);
     vec3 light_dir = normalize(light_pos - fragPosition);
 
     float diff = max(dot(fragNormal, light_dir), 0.0);

@@ -2,6 +2,8 @@
 
 LightObject::LightObject()
 {
+	m_transform.position = { .0f, .0f, .0f };
+	m_transform.rotation = { .0f, .0f, .0f };
 }
 
 LightObject::~LightObject()

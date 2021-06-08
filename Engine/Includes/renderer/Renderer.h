@@ -82,7 +82,7 @@ class Renderer
 	void createDescriptorPool();
 	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
 	void allocateDescriptorSetLight(VkDescriptorSet& descriptor_set);
-	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set);
+	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, VkDeviceSize size);
 	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
 	void createDepthResources();
 

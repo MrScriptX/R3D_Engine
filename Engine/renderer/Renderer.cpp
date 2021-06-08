@@ -537,14 +537,14 @@ void Renderer::allocateDescriptorSetLight(VkDescriptorSet& descriptor_set)
 	}
 }
 
-void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set)
+void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, VkDeviceSize size)
 {
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = ubo;
 	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(Transform);
+	bufferInfo.range = size;
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = descriptor_set;

@@ -18,11 +18,15 @@ class Scene
 
 	R3DResult AddGameObject(std::shared_ptr<GameObject> gameobject);
 	R3DResult RemoveGameObject(std::shared_ptr<GameObject> gameobject);
+	R3DResult AddLight(std::shared_ptr<LightObject> lightobject);
+	R3DResult RemoveLight(std::shared_ptr<LightObject> lightobject);
 
-	void Render(VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame);
+	void Load(std::shared_ptr<Renderer> p_renderer);
+	void Render(VkCommandBuffer& command_buffer, const int32_t frame);
 	void Clean(const int32_t frame);
 
 	void UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer, const int32_t frame);
+	void UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer);
 
 	void ToUpdate();
 	void Update(const int32_t frame);
@@ -32,8 +36,17 @@ class Scene
 
   private:
 	std::bitset<3> m_changed;
+	bool m_light_changed;
+
+	// game object
 	std::vector<std::shared_ptr<GameObject>> vp_objects;
 	std::vector<std::shared_ptr<GameObject>> vp_delete_queue;
+
+	// light
+	std::array<std::shared_ptr<LightObject>, 10> vp_lights;
+	VkBuffer m_light_buffer;
+	VkDeviceMemory m_light_mem;
+	VkDescriptorSet m_descriptorset;
 };
 
 #endif // !R3DENGINE_SCENE_H_

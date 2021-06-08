@@ -81,7 +81,7 @@ void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::share
 {
 	if (mat->getTexture() == nullptr)
 	{
-		renderer->updateDescriptorSet(ubo, mat->getDescriptorSet());
+		renderer->updateDescriptorSet(ubo, mat->getDescriptorSet(), sizeof(UniformBufferObject));
 	}
 	else
 	{

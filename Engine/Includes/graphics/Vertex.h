@@ -80,8 +80,8 @@ struct UniformBufferObject
 
 struct Transform
 {
-	glm::vec3 position;
-	glm::vec3 rotation;
+	alignas(16) glm::vec3 position;
+	alignas(16) glm::vec3 rotation;
 };
 
 #endif // !R3DENGINE_VERTEX_H_

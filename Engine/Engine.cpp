@@ -20,7 +20,7 @@ Engine::Engine(uint32_t width, uint32_t height)
 	mp_renderer->createDescriptorPool();
 	mp_renderer->allocateCommandBuffers();
 
-	Transform transform;
+	/* Transform transform;
 	transform.position = { -5.0f, 0.0f, .0f };
 	transform.rotation = { .0f, .0f, .0f };
 	m_lightobject.SetTransform(transform);
@@ -29,7 +29,7 @@ Engine::Engine(uint32_t width, uint32_t height)
 	mp_renderer->allocateDescriptorSetLight(m_descritorset);
 
 	mp_renderer->CreateUniformBuffer(m_lightobject_buffer, m_lightobject_memory, sizeof(Transform));
-	mp_renderer->updateDescriptorSet(m_lightobject_buffer, m_descritorset);
+	mp_renderer->updateDescriptorSet(m_lightobject_buffer, m_descritorset);*/
 }
 
 Engine::~Engine()
@@ -51,6 +51,7 @@ Engine::~Engine()
 void Engine::setScene(std::shared_ptr<Scene> p_scene)
 {
 	mp_scene = p_scene;
+	mp_scene->Load(mp_renderer);
 }
 
 void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
@@ -184,7 +185,7 @@ void Engine::update()
 		mp_scene->Update(frame);
 
 		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
-		mp_scene->Render(mp_renderer->getCommandBuffer(frame), m_descritorset, frame);
+		mp_scene->Render(mp_renderer->getCommandBuffer(frame), frame);
 		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
 
 		mp_scene->Clean(frame);
@@ -193,15 +194,17 @@ void Engine::update()
 
 	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
+	mp_scene->UpdateSceneUBO(mp_renderer);
 
-	Transform transform = m_lightobject.GetTransform();
+	// fix size light array
+	/*Transform transform = m_lightobject.GetTransform();
 	transform.position += glm::vec3(0.0005f, 0.0f, 0.0f);
 	m_lightobject.SetTransform(transform);
 
 	void* data;
 	vkMapMemory(mp_renderer->getDevice(), m_lightobject_memory, 0, sizeof(m_lightobject.GetTransform()), 0, &data);
 	memcpy(data, &m_lightobject.GetTransform(), sizeof(m_lightobject.GetTransform()));
-	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);
+	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);*/
 
 	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }
