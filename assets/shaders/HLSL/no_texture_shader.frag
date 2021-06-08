@@ -6,7 +6,8 @@ struct Transform {
     vec3 rotation;
 };
 
-layout(std170, set = 1, binding = 0) uniform Lights {
+layout(std140, set = 1, binding = 0) uniform Lights {
+    uint nb_light;
     Transform lights[10];
 } lights;
 

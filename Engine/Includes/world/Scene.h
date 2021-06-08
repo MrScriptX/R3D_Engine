@@ -43,7 +43,7 @@ class Scene
 	std::vector<std::shared_ptr<GameObject>> vp_delete_queue;
 
 	// light
-	std::array<std::shared_ptr<LightObject>, 10> vp_lights;
+	std::array<std::shared_ptr<LightObject>, MAX_LIGHT> vp_lights;
 	VkBuffer m_light_buffer;
 	VkDeviceMemory m_light_mem;
 	VkDescriptorSet m_descriptorset;

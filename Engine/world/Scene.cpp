@@ -100,8 +100,8 @@ R3DResult Scene::RemoveLight(std::shared_ptr<LightObject> lightobject)
 void Scene::Load(std::shared_ptr<Renderer> p_renderer)
 {
 	p_renderer->allocateDescriptorSetLight(m_descriptorset);
-	p_renderer->CreateUniformBuffer(m_light_buffer, m_light_mem, sizeof(Transform) * vp_lights.max_size());
-	p_renderer->updateDescriptorSet(m_light_buffer, m_descriptorset, sizeof(Transform) * vp_lights.max_size());
+	p_renderer->CreateUniformBuffer(m_light_buffer, m_light_mem, sizeof(SceneUBO));
+	p_renderer->updateDescriptorSet(m_light_buffer, m_descriptorset, sizeof(SceneUBO));
 }
 
 void Scene::Render(VkCommandBuffer& command_buffer, const int32_t frame)
@@ -157,16 +157,19 @@ void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 
 void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
 {
-	Transform transforms[10];
+	SceneUBO ubo;
 	for (size_t i = 0; i < vp_lights.max_size(); i++)
 	{
 		if (vp_lights[i] != nullptr)
-			transforms[i] = vp_lights[i]->GetTransform();
+		{
+			ubo.lights[i] = vp_lights[i]->GetTransform();
+			++ubo.nb_lights;
+		}
 	}
 
 	void* data;
-	vkMapMemory(p_renderer->getDevice(), m_light_mem, 0, sizeof(Transform) * vp_lights.max_size(), 0, &data);
-	memcpy(data, transforms, sizeof(Transform) * vp_lights.max_size());
+	vkMapMemory(p_renderer->getDevice(), m_light_mem, 0, sizeof(SceneUBO), 0, &data);
+	memcpy(data, &ubo, sizeof(SceneUBO));
 	vkUnmapMemory(p_renderer->getDevice(), m_light_mem);
 
 	m_light_changed = false;
