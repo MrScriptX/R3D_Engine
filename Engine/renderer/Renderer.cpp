@@ -31,6 +31,10 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 
 Renderer::~Renderer()
 {
+	vkDestroyDescriptorPool(m_graphic.device, m_graphic.descriptor_pool, nullptr);
+	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.descriptor_set_layout, nullptr);
+	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.light_descriptor_layout, nullptr);
+
 	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 	{
 		vkDestroySemaphore(m_graphic.device, m_graphic.semaphores_image_available[i], nullptr);

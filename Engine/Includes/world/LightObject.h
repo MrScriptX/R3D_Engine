@@ -9,12 +9,12 @@ class LightObject
 	LightObject();
 	~LightObject();
 
-	Transform& GetTransform();
+	Light& GetTransform();
 
-	void SetTransform(Transform& transform);
+	void SetTransform(Light& transform);
 
   private:
-	Transform m_transform;
+	Light m_transform;
 };
 
 #endif // !R3DENGINE_LIGHT_H_

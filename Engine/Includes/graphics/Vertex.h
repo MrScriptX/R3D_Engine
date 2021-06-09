@@ -82,7 +82,7 @@ struct UniformBufferObject
 
 constexpr size_t MAX_LIGHT = 10;
 
-struct Transform
+struct Light
 {
 	alignas(16) glm::vec3 position;
 	alignas(16) glm::vec3 rotation;
@@ -91,7 +91,7 @@ struct Transform
 struct SceneUBO
 {
 	alignas(4) unsigned int nb_lights = 0;
-	Transform lights[MAX_LIGHT];
+	Light lights[MAX_LIGHT];
 };
 
 #endif // !R3DENGINE_VERTEX_H_

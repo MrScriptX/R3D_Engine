@@ -24,6 +24,7 @@ class Scene
 	void Load(std::shared_ptr<Renderer> p_renderer);
 	void Render(VkCommandBuffer& command_buffer, const int32_t frame);
 	void Clean(const int32_t frame);
+	void CleanRessources(std::shared_ptr<Renderer> p_renderer);
 
 	void UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer, const int32_t frame);
 	void UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer);

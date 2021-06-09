@@ -132,6 +132,15 @@ void Scene::Clean(const int32_t frame)
 	}
 }
 
+void Scene::CleanRessources(std::shared_ptr<Renderer> p_renderer)
+{
+	vkDestroyBuffer(p_renderer->getDevice(), m_light_buffer, nullptr);
+	vkFreeMemory(p_renderer->getDevice(), m_light_mem, nullptr);
+
+	m_light_buffer = VK_NULL_HANDLE;
+	m_light_mem = VK_NULL_HANDLE;
+}
+
 void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer> p_renderer, const int32_t frame)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)

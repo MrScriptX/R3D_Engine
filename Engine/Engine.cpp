@@ -27,10 +27,8 @@ Engine::~Engine()
 
 	mp_renderer->cleanSwapchain();
 
+	mp_scene->CleanRessources(mp_renderer);
 	mp_scene.reset();
-
-	vkDestroyDescriptorPool(mp_renderer->getDevice(), mp_renderer->getDescriptorPool(), nullptr);
-	vkDestroyDescriptorSetLayout(mp_renderer->getDevice(), mp_renderer->getDescriptorSetLayout(), nullptr);
 
 	mp_renderer.reset();
 	mp_window.reset();

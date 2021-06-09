@@ -10,12 +10,12 @@ LightObject::~LightObject()
 {
 }
 
-Transform& LightObject::GetTransform()
+Light& LightObject::GetTransform()
 {
 	return m_transform;
 }
 
-void LightObject::SetTransform(Transform& transform)
+void LightObject::SetTransform(Light& transform)
 {
 	m_transform = transform;
 }

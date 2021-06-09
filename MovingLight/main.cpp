@@ -44,7 +44,7 @@ int main()
 
 
 			light_cube->setPosition(light_pos);
-			Transform transform;
+			Light transform;
 			transform.position = light_pos;
 			transform.rotation = glm::vec3(.0f, .0f, .0f);
 			light->SetTransform(transform);
