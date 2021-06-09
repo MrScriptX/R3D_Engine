@@ -22,6 +22,7 @@ Camera::~Camera()
 void Camera::UpdateUBO(const float& width, const float& height, const int32_t frame)
 {
 	m_ubo[frame].view = updateView(m_pitch, m_yaw, m_position);
+	m_ubo[frame].view_inv = glm::inverse(m_ubo[frame].view);
 	m_ubo[frame].proj = createProjMatrix(width, height);
 	m_ubo[frame].proj[1][1] *= -1;
 }

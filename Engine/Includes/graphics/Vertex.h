@@ -76,6 +76,7 @@ struct UniformBufferObject
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 proj;
+	glm::mat4 view_inv;
 };
 
 // Scene Data
@@ -85,6 +86,8 @@ constexpr size_t MAX_LIGHT = 10;
 struct Light
 {
 	alignas(4) float ambient_strength;
+	alignas(4) float diffuse_strength;
+	alignas(4) float specular_strength;
 	alignas(16) glm::vec3 color;
 	alignas(16) glm::vec3 position;
 	alignas(16) glm::vec3 direction;

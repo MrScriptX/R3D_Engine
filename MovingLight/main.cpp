@@ -46,9 +46,11 @@ int main()
 			light_cube->setPosition(light_pos);
 			Light transform;
 			transform.position = light_pos;
-			transform.direction = glm::vec3(.0f, .0f, .0f);
+			transform.direction = glm::normalize(light_pos - cube->getPosition());
 			transform.color = glm::vec3(1.0f, 1.0f, 1.0f);
 			transform.ambient_strength = 0.1f;
+			transform.diffuse_strength = 0.7f;
+			transform.specular_strength = 1.0f;
 			light->SetTransform(transform);
 
 			engine.update();
