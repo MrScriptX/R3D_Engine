@@ -58,43 +58,33 @@ R3DResult Scene::RemoveGameObject(std::shared_ptr<GameObject> gameobject)
 
 R3DResult Scene::AddLight(std::shared_ptr<LightObject> lightobject)
 {
-	int32_t empty_index = -1;
-	for (size_t i = 0; i < vp_lights.max_size(); i++)
+	switch (lightobject->GetType())
 	{
-		if (vp_lights[i] == lightobject)
-		{
-			return R3DResult::R3D_OBJECT_IN_SCENE;
-		}
-		else if (vp_lights[i] == nullptr && empty_index == -1)
-		{
-			empty_index = i;
-		}
+	case TLIGHT::DIRECTIONAL:
+		return addDirectionalLight(lightobject);
+	case TLIGHT::SPOT:
+		return addSpotLight(lightobject);
+	case TLIGHT::POINT:
+		return addPointLight(lightobject);
+	default:
+		return R3DResult::R3D_OBJECT_NOT_ENOUGH_MEMORY; // change error
 	}
-
-	if (empty_index == -1)
-		return R3DResult::R3D_OBJECT_NOT_ENOUGH_MEMORY;
-	else
-		vp_lights[empty_index] = lightobject;
-
-	m_light_changed = true;
-
-	return R3DResult::R3D_SUCCESS;
 }
 
 R3DResult Scene::RemoveLight(std::shared_ptr<LightObject> lightobject)
 {
-	for (size_t i = 0; i < vp_lights.max_size(); i++)
+	switch (lightobject->GetType())
 	{
-		if (vp_lights[i] == lightobject)
-		{
-			vp_lights[i] = nullptr;
-			m_light_changed = true;
-
-			return R3DResult::R3D_SUCCESS;
-		}
+	case TLIGHT::DIRECTIONAL:
+		return removeDirectionalLight(lightobject);
+	case TLIGHT::SPOT:
+		return removeSpotLight(lightobject);
+	case TLIGHT::POINT:
+		return removePointLight(lightobject);
+	default:
+		return R3DResult::R3D_OBJECT_NOT_FOUND; // change error
+		break;
 	}
-
-	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }
 
 void Scene::Load(std::shared_ptr<Renderer> p_renderer)
@@ -167,12 +157,30 @@ void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
 {
 	SceneUBO ubo;
-	for (size_t i = 0; i < vp_lights.max_size(); i++)
+	for (size_t i = 0; i < vp_directional_lights.max_size(); i++)
 	{
-		if (vp_lights[i] != nullptr)
+		if (vp_directional_lights[i] != nullptr)
 		{
-			ubo.lights[i] = vp_lights[i]->GetTransform();
-			++ubo.nb_lights;
+			ubo.directionals[i] = vp_directional_lights[i]->GetTransform();
+			++ubo.nb_directional;
+		}
+	}
+
+	for (size_t i = 0; i < vp_spot_lights.max_size(); i++)
+	{
+		if (vp_spot_lights[i] != nullptr)
+		{
+			ubo.spots[i] = vp_spot_lights[i]->GetTransform();
+			++ubo.nb_spotlight;
+		}
+	}
+
+	for (size_t i = 0; i < vp_point_lights.max_size(); i++)
+	{
+		if (vp_point_lights[i] != nullptr)
+		{
+			ubo.points[i] = vp_point_lights[i]->GetTransform();
+			++ubo.nb_pointlight;
 		}
 	}
 
@@ -210,4 +218,127 @@ const bool Scene::IsUpdated()
 std::vector<std::shared_ptr<GameObject>>& Scene::getObjects()
 {
 	return vp_objects;
+}
+
+R3DResult Scene::addDirectionalLight(std::shared_ptr<LightObject> lightobject)
+{
+	int32_t empty_index = -1;
+	for (size_t i = 0; i < vp_directional_lights.max_size(); i++)
+	{
+		if (vp_directional_lights[i] == lightobject)
+		{
+			return R3DResult::R3D_OBJECT_IN_SCENE;
+		}
+		else if (vp_directional_lights[i] == nullptr && empty_index == -1)
+		{
+			empty_index = i;
+		}
+	}
+
+	if (empty_index == -1)
+		return R3DResult::R3D_OBJECT_NOT_ENOUGH_MEMORY;
+	else
+		vp_directional_lights[empty_index] = lightobject;
+
+	m_light_changed = true;
+
+	return R3DResult::R3D_SUCCESS;
+}
+
+R3DResult Scene::addSpotLight(std::shared_ptr<LightObject> lightobject)
+{
+	int32_t empty_index = -1;
+	for (size_t i = 0; i < vp_spot_lights.max_size(); i++)
+	{
+		if (vp_spot_lights[i] == lightobject)
+		{
+			return R3DResult::R3D_OBJECT_IN_SCENE;
+		}
+		else if (vp_spot_lights[i] == nullptr && empty_index == -1)
+		{
+			empty_index = i;
+		}
+	}
+
+	if (empty_index == -1)
+		return R3DResult::R3D_OBJECT_NOT_ENOUGH_MEMORY;
+	else
+		vp_spot_lights[empty_index] = lightobject;
+
+	m_light_changed = true;
+
+	return R3DResult::R3D_SUCCESS;
+}
+
+R3DResult Scene::addPointLight(std::shared_ptr<LightObject> lightobject)
+{
+	int32_t empty_index = -1;
+	for (size_t i = 0; i < vp_point_lights.max_size(); i++)
+	{
+		if (vp_point_lights[i] == lightobject)
+		{
+			return R3DResult::R3D_OBJECT_IN_SCENE;
+		}
+		else if (vp_point_lights[i] == nullptr && empty_index == -1)
+		{
+			empty_index = i;
+		}
+	}
+
+	if (empty_index == -1)
+		return R3DResult::R3D_OBJECT_NOT_ENOUGH_MEMORY;
+	else
+		vp_point_lights[empty_index] = lightobject;
+
+	m_light_changed = true;
+
+	return R3DResult::R3D_SUCCESS;
+}
+
+R3DResult Scene::removeDirectionalLight(std::shared_ptr<LightObject> lightobject)
+{
+	for (size_t i = 0; i < vp_directional_lights.max_size(); i++)
+	{
+		if (vp_directional_lights[i] == lightobject)
+		{
+			vp_directional_lights[i] = nullptr;
+			m_light_changed = true;
+
+			return R3DResult::R3D_SUCCESS;
+		}
+	}
+
+	return R3DResult::R3D_OBJECT_NOT_FOUND;
+}
+
+R3DResult Scene::removeSpotLight(std::shared_ptr<LightObject> lightobject)
+{
+	for (size_t i = 0; i < vp_spot_lights.max_size(); i++)
+	{
+		if (vp_spot_lights[i] == lightobject)
+		{
+			vp_spot_lights[i] = nullptr;
+			m_light_changed = true;
+
+			return R3DResult::R3D_SUCCESS;
+		}
+	}
+
+	return R3DResult::R3D_OBJECT_NOT_FOUND;
+}
+
+R3DResult Scene::removePointLight(std::shared_ptr<LightObject> lightobject)
+{
+	for (size_t i = 0; i < vp_point_lights.max_size(); i++)
+	{
+		if (vp_point_lights[i] == lightobject)
+		{
+			vp_point_lights[i] = nullptr;
+			m_light_changed = true;
+
+			return R3DResult::R3D_SUCCESS;
+		}
+	}
+
+	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }

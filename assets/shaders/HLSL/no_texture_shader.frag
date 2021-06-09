@@ -1,14 +1,20 @@
 #version 460
 #extension GL_ARB_separate_shader_objects : enable
 
-struct Transform {
+struct Light {
+    float ambient;
+    vec3 color;
     vec3 position;
     vec3 rotation;
 };
 
 layout(std140, set = 1, binding = 0) uniform Lights {
-    uint nb_light;
-    Transform transform[10];
+    uint nb_directionallightl;
+    uint nb_spotlight;
+    uint nb_pointlight;
+    Light directionals[10];
+    Light spots[10];
+    Light points[10];
 } lights;
 
 layout(location = 0) in vec3 fragNormal;
@@ -18,13 +24,12 @@ layout(location = 2) in vec3 fragColor;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    vec3 light_color = vec3(1.0, 1.0, 1.0);
+    float ambient_strength = lights.directionals[0].ambient;
+    vec3 light_color = lights.directionals[0].color;
+    vec3 light_pos = lights.directionals[0].position;
 
     // ambient
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * light_color;
-
-    vec3 light_pos = lights.transform[0].position;
+    vec3 ambient = ambient_strength * light_color;
 
     // diffuse
     vec3 light_dir = normalize(-light_pos - fragPosition);

@@ -84,14 +84,20 @@ constexpr size_t MAX_LIGHT = 10;
 
 struct Light
 {
+	alignas(4) float ambient_strength;
+	alignas(16) glm::vec3 color;
 	alignas(16) glm::vec3 position;
-	alignas(16) glm::vec3 rotation;
+	alignas(16) glm::vec3 direction;
 };
 
 struct SceneUBO
 {
-	alignas(4) unsigned int nb_lights = 0;
-	Light lights[MAX_LIGHT];
+	alignas(4) unsigned int nb_directional = 0;
+	alignas(4) unsigned int nb_spotlight = 0;
+	alignas(4) unsigned int nb_pointlight = 0;
+	Light directionals[MAX_LIGHT];
+	Light spots[MAX_LIGHT];
+	Light points[MAX_LIGHT];
 };
 
 #endif // !R3DENGINE_VERTEX_H_

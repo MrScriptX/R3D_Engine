@@ -36,6 +36,13 @@ class Scene
 	std::vector<std::shared_ptr<GameObject>>& getObjects();
 
   private:
+	R3DResult addDirectionalLight(std::shared_ptr<LightObject> lightobject);
+	R3DResult addSpotLight(std::shared_ptr<LightObject> lightobject);
+	R3DResult addPointLight(std::shared_ptr<LightObject> lightobject);
+	R3DResult removeDirectionalLight(std::shared_ptr<LightObject> lightobject);
+	R3DResult removeSpotLight(std::shared_ptr<LightObject> lightobject);
+	R3DResult removePointLight(std::shared_ptr<LightObject> lightobject);
+
 	std::bitset<3> m_changed;
 	bool m_light_changed;
 
@@ -44,7 +51,10 @@ class Scene
 	std::vector<std::shared_ptr<GameObject>> vp_delete_queue;
 
 	// light
-	std::array<std::shared_ptr<LightObject>, MAX_LIGHT> vp_lights;
+	std::array<std::shared_ptr<LightObject>, MAX_LIGHT> vp_directional_lights;
+	std::array<std::shared_ptr<LightObject>, MAX_LIGHT> vp_spot_lights;
+	std::array<std::shared_ptr<LightObject>, MAX_LIGHT> vp_point_lights;
+
 	VkBuffer m_light_buffer;
 	VkDeviceMemory m_light_mem;
 	VkDescriptorSet m_descriptorset;

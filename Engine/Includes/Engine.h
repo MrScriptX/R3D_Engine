@@ -46,11 +46,6 @@ class Engine
 	const bool& shouldClose();
 
   private:
-	LightObject m_lightobject;
-	VkBuffer m_lightobject_buffer;
-	VkDeviceMemory m_lightobject_memory;
-	VkDescriptorSet m_descritorset;
-
 	std::unique_ptr<Window> mp_window;
 	std::shared_ptr<Renderer> mp_renderer;
 	std::shared_ptr<Scene> mp_scene;

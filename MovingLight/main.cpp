@@ -20,7 +20,7 @@ int main()
 		scene->AddGameObject(cube);
 		scene->AddGameObject(light_cube);
 
-		std::shared_ptr<LightObject> light = std::make_shared<LightObject>();
+		std::shared_ptr<LightObject> light = std::make_shared<LightObject>(TLIGHT::DIRECTIONAL);
 		scene->AddLight(light);
 
 		engine.setScene(scene);
@@ -46,7 +46,9 @@ int main()
 			light_cube->setPosition(light_pos);
 			Light transform;
 			transform.position = light_pos;
-			transform.rotation = glm::vec3(.0f, .0f, .0f);
+			transform.direction = glm::vec3(.0f, .0f, .0f);
+			transform.color = glm::vec3(1.0f, 1.0f, 1.0f);
+			transform.ambient_strength = 0.1f;
 			light->SetTransform(transform);
 
 			engine.update();

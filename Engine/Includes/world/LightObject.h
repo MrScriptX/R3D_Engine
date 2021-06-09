@@ -3,17 +3,26 @@
 
 #include "../graphics/Vertex.h"
 
+enum class TLIGHT
+{
+	DIRECTIONAL = 0,
+	SPOT = 1,
+	POINT = 2
+};
+
 class LightObject
 {
   public:
-	LightObject();
+	LightObject(TLIGHT type);
 	~LightObject();
 
 	Light& GetTransform();
+	const TLIGHT GetType();
 
 	void SetTransform(Light& transform);
 
   private:
+	TLIGHT m_type;
 	Light m_transform;
 };
 
