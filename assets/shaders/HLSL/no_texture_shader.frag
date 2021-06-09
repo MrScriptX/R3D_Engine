@@ -31,7 +31,7 @@ vec3 compute_directional_lighting(Light light, vec3 normal, vec3 viewDir);
 
 void main() {
     vec3 color = vec3(0.0, 0.0, 0.0);
-    vec3 viewDir = normalize(viewPos - fragPosition);
+    vec3 viewDir = normalize(-fragPosition); // bug
 
     for(int i = 0; i < lights.nb_directionallight; i++)
         color += compute_directional_lighting(lights.directionals[i], fragNormal, viewDir);
