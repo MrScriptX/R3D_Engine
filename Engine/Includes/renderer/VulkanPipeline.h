@@ -11,7 +11,8 @@ enum class TSHADER
 {
 	DEFAULT,
 	NO_TEXTURE,
-	TEXTURE
+	TEXTURE,
+	LIGHT_SOURCE
 };
 
 class VulkanPipeline
@@ -31,7 +32,7 @@ class VulkanPipeline
 
 	std::vector<char> readFile(const std::string& filename); // should be in other file
 
-	std::array<Pipeline, 3> m_pipelines;
+	std::array<Pipeline, 4> m_pipelines;
 	Graphics& m_graphic; // should be shared ptr
 	Shaders m_shaders;
 };

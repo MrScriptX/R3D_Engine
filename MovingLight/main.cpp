@@ -13,7 +13,7 @@ int main()
 
 		glm::vec3 light_pos = { 2.0f, .0f, .0f };
 		std::shared_ptr<GameObject> light_cube = engine.CreateCube(light_pos, 0.2f, { 1.f, 1.f, 1.f });
-		std::shared_ptr<Material> cube_texture2 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> cube_texture2 = engine.CreateMaterial(TSHADER::LIGHT_SOURCE);
 		light_cube->bindMatToMesh(0, cube_texture2);
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();

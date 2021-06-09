@@ -34,6 +34,8 @@ const Pipeline& VulkanPipeline::GetPipeline(const TSHADER shader)
 		return m_pipelines[1];
 	case TSHADER::TEXTURE:
 		return m_pipelines[2];
+	case TSHADER::LIGHT_SOURCE:
+		return m_pipelines[3];
 	default:
 		return m_pipelines[0];
 	}
