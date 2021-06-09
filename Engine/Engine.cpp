@@ -19,17 +19,6 @@ Engine::Engine(uint32_t width, uint32_t height)
 
 	mp_renderer->createDescriptorPool();
 	mp_renderer->allocateCommandBuffers();
-
-	/* Transform transform;
-	transform.position = { -5.0f, 0.0f, .0f };
-	transform.rotation = { .0f, .0f, .0f };
-	m_lightobject.SetTransform(transform);
-
-	// create buffer
-	mp_renderer->allocateDescriptorSetLight(m_descritorset);
-
-	mp_renderer->CreateUniformBuffer(m_lightobject_buffer, m_lightobject_memory, sizeof(Transform));
-	mp_renderer->updateDescriptorSet(m_lightobject_buffer, m_descritorset);*/
 }
 
 Engine::~Engine()
@@ -89,40 +78,58 @@ const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, 
 {
 	std::shared_ptr<GameObject> cube = std::make_shared<GameObject>(mp_renderer);
 
-	Geometry g;
+	Geometry geo;
 
 	const float half_size = size / 2;
 
 	// vertices
-	g.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
-	g.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
-	g.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
-	g.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
-	g.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
-	g.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.f });
-	g.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
-	g.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
+	uint32_t a = geo.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
+	uint32_t b = geo.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
+	uint32_t c = geo.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t d = geo.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t e = geo.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
+	uint32_t f = geo.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.f });
+	uint32_t g = geo.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
+	uint32_t h = geo.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
+
+	uint32_t a1 = geo.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
+	uint32_t b1 = geo.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
+	uint32_t c1 = geo.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t d1 = geo.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t e1 = geo.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
+	uint32_t f1 = geo.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.f });
+	uint32_t g1 = geo.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
+	uint32_t h1 = geo.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
+
+	uint32_t a2 = geo.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
+	uint32_t b2 = geo.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
+	uint32_t c2 = geo.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t d2 = geo.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t e2 = geo.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
+	uint32_t f2 = geo.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.f });
+	uint32_t g2 = geo.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
+	uint32_t h2 = geo.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
 
 	// indices
-	g.addIndices(0, 2, 1);
-	g.addIndices(1, 2, 3);
+	geo.addIndices(a, c, b);
+	geo.addIndices(b, c, d);
 
-	g.addIndices(5, 7, 4);
-	g.addIndices(4, 7, 6);
+	geo.addIndices(f, h, e);
+	geo.addIndices(e, h, g);
 
-	g.addIndices(1, 3, 5);
-	g.addIndices(5, 3, 7);
+	geo.addIndices(b1, d1, f1);
+	geo.addIndices(f1, d1, h1);
 
-	g.addIndices(4, 6, 0);
-	g.addIndices(0, 6, 2);
+	geo.addIndices(e1, g1, a1);
+	geo.addIndices(a1, g1, c1);
 
-	g.addIndices(2, 6, 3);
-	g.addIndices(3, 6, 7);
+	geo.addIndices(d2, c2, h1);
+	geo.addIndices(h1, c2, g2);
 
-	g.addIndices(4, 0, 5);
-	g.addIndices(5, 0, 1);
+	geo.addIndices(e2, a2, f2);
+	geo.addIndices(f2, a2, b2);
 
-	cube->LoadMesh(g.vertices, g.indices);
+	cube->LoadMesh(geo.vertices, geo.indices);
 	cube->setPosition(position);
 
 	return cube;
@@ -195,16 +202,6 @@ void Engine::update()
 	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 	mp_scene->UpdateSceneUBO(mp_renderer);
-
-	// fix size light array
-	/*Transform transform = m_lightobject.GetTransform();
-	transform.position += glm::vec3(0.0005f, 0.0f, 0.0f);
-	m_lightobject.SetTransform(transform);
-
-	void* data;
-	vkMapMemory(mp_renderer->getDevice(), m_lightobject_memory, 0, sizeof(m_lightobject.GetTransform()), 0, &data);
-	memcpy(data, &m_lightobject.GetTransform(), sizeof(m_lightobject.GetTransform()));
-	vkUnmapMemory(mp_renderer->getDevice(), m_lightobject_memory);*/
 
 	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }

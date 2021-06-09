@@ -8,7 +8,7 @@ struct Transform {
 
 layout(std140, set = 1, binding = 0) uniform Lights {
     uint nb_light;
-    Transform lights[10];
+    Transform transform[10];
 } lights;
 
 layout(location = 0) in vec3 fragNormal;
@@ -20,20 +20,23 @@ layout(location = 0) out vec4 outColor;
 void main() {
     vec3 light_color = vec3(1.0, 1.0, 1.0);
 
+    // ambient
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * light_color;
 
-    vec3 light_pos = vec3(0.0, 0.0, 0.0);
-    vec3 light_dir = normalize(light_pos - fragPosition);
+    vec3 light_pos = lights.transform[0].position;
 
+    // diffuse
+    vec3 light_dir = normalize(-light_pos - fragPosition);
     float diff = max(dot(fragNormal, light_dir), 0.0);
     vec3 diffuse = diff * light_color;
 
+    // specular
+    float specularStrength = 0.5;
     vec3 viewDir = normalize(vec3(0.0, 0.0, 0.0) - fragPosition);
     vec3 reflectDir = reflect(-light_dir, fragNormal); 
-
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 256);
-    vec3 specular = 1 * spec * vec3(1.0, 1.0, 1.0);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = specularStrength * spec * light_color;
 
     vec3 result = (ambient + diffuse + specular) * fragColor; 
 
