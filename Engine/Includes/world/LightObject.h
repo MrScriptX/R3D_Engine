@@ -16,14 +16,20 @@ class LightObject
 	LightObject(TLIGHT type);
 	~LightObject();
 
-	Light& GetTransform();
-	const TLIGHT GetType();
+	void SetPosition(glm::vec3 position);
+	void SetDirection(glm::vec3 direction);
+	void SetColor(glm::vec3 color);
+	void SetAmbientStrength(const float ambient);
+	void SetDiffuseStrength(const float diffuse);
+	void SetSpecularStrength(const float specular);
+	void SetProperties(const LightProperties properties);
 
-	void SetTransform(Light& transform);
+	const LightProperties& GetProperties();
+	const TLIGHT GetType();
 
   private:
 	TLIGHT m_type;
-	Light m_transform;
+	LightProperties m_properties;
 };
 
 #endif // !R3DENGINE_LIGHT_H_

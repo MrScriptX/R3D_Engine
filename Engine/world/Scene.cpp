@@ -161,7 +161,7 @@ void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
 	{
 		if (vp_directional_lights[i] != nullptr)
 		{
-			ubo.directionals[i] = vp_directional_lights[i]->GetTransform();
+			ubo.directionals[i] = vp_directional_lights[i]->GetProperties();
 			++ubo.nb_directional;
 		}
 	}
@@ -170,7 +170,7 @@ void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
 	{
 		if (vp_spot_lights[i] != nullptr)
 		{
-			ubo.spots[i] = vp_spot_lights[i]->GetTransform();
+			ubo.spots[i] = vp_spot_lights[i]->GetProperties();
 			++ubo.nb_spotlight;
 		}
 	}
@@ -179,7 +179,7 @@ void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
 	{
 		if (vp_point_lights[i] != nullptr)
 		{
-			ubo.points[i] = vp_point_lights[i]->GetTransform();
+			ubo.points[i] = vp_point_lights[i]->GetProperties();
 			++ubo.nb_pointlight;
 		}
 	}

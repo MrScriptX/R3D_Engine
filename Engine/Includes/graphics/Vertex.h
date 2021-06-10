@@ -83,7 +83,7 @@ struct UniformBufferObject
 
 constexpr size_t MAX_LIGHT = 10;
 
-struct Light
+struct LightProperties
 {
 	alignas(4) float ambient_strength;
 	alignas(4) float diffuse_strength;
@@ -98,9 +98,9 @@ struct SceneUBO
 	alignas(4) unsigned int nb_directional = 0;
 	alignas(4) unsigned int nb_spotlight = 0;
 	alignas(4) unsigned int nb_pointlight = 0;
-	Light directionals[MAX_LIGHT];
-	Light spots[MAX_LIGHT];
-	Light points[MAX_LIGHT];
+	LightProperties directionals[MAX_LIGHT];
+	LightProperties spots[MAX_LIGHT];
+	LightProperties points[MAX_LIGHT];
 };
 
 #endif // !R3DENGINE_VERTEX_H_
