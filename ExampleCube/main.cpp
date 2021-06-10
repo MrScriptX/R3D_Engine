@@ -15,20 +15,20 @@ int main()
 		room->bindMatToMesh(0, room_texture);
 		room->setPosition({ 3.0f, 0.0f, 3.0f });
 
-		std::shared_ptr<Material> room2_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> room2_texture = engine.CreateMaterial(TSHADER::LIGHT_SOURCE);
 		std::shared_ptr<GameObject> room2 = engine.CreateGameObject();
 		room2->LoadMesh("../assets/models/viking_room.obj");
 		room2->bindMatToMesh(0, room2_texture);
 		room2->setPosition({ 6.0f, 0.0f, 0.0f });
 
-		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::LIGHT_SOURCE);
 		std::shared_ptr<GameObject> cube = engine.CreateCube({ 2.0f, .0f, .0f }, 1.f, { 1.f, .0f, .0f });
 		cube->bindMatToMesh(0, cube_texture);
 
 		const float half_size = 1.f / 2.f;
 		Geometry voxel;
 
-		//vertices
+		// vertices
 		uint32_t index_0 = voxel.addVertex({ 0.f - half_size, 0.f - half_size, -2.f - half_size }, { 0.f, 1.f, 0.f }, { .0f, .0f });
 		uint32_t index_1 = voxel.addVertex({ 0.f + half_size, 0.f - half_size, -2.f - half_size }, { 0.f, 1.f, 0.f }, { .0f, 2.0f });
 		uint32_t index_2 = voxel.addVertex({ 0.f - half_size, 0.f + half_size, -2.f - half_size }, { 0.f, 1.f, 0.f }, { 2.0f, .0f });
@@ -38,7 +38,7 @@ int main()
 		uint32_t index_6 = voxel.addVertex({ 0.f - half_size, 0.f + half_size, -2.f + half_size }, { 0.f, 1.f, 0.f }, { 2.0f, .0f });
 		uint32_t index_7 = voxel.addVertex({ 0.f + half_size, 0.f + half_size, -2.f + half_size }, { 0.f, 1.f, 0.f }, { 2.0f, 2.0f });
 
-		//indices
+		// indices
 		voxel.addIndices(index_0, index_2, index_1);
 		voxel.addIndices(index_1, index_2, index_3);
 
@@ -64,37 +64,25 @@ int main()
 
 		engine.setScene(scene);
 
-		std::function<void()> wireframemode = [&engine]() {
-			engine.SetWireframeMode();
-		};
+		std::function<void()> wireframemode = [&engine]() { engine.SetWireframeMode(); };
 		engine.BindKeyToFunc(GLFW_KEY_Q, wireframemode, ActionType::R3D_PRESS);
 
-		std::function<void()> fillmode = [&engine]() {
-			engine.SetFillMode();
-		};
+		std::function<void()> fillmode = [&engine]() { engine.SetFillMode(); };
 		engine.BindKeyToFunc(GLFW_KEY_E, fillmode, ActionType::R3D_PRESS);
 
-		std::function<void()> pointmode = [&engine]() {
-			engine.SetPointMode();
-		};
+		std::function<void()> pointmode = [&engine]() { engine.SetPointMode(); };
 		engine.BindKeyToFunc(GLFW_KEY_R, pointmode, ActionType::R3D_PRESS);
 
-		std::function<void()> shownormal = [&engine]() { 
-			engine.SetColorMode(ColorMode::NORMALMAP); 
-		};
+		std::function<void()> shownormal = [&engine]() { engine.SetColorMode(ColorMode::NORMALMAP); };
 		engine.BindKeyToFunc(GLFW_KEY_T, shownormal, ActionType::R3D_PRESS);
 
-		std::function<void()> hidenormal = [&engine]() { 
-			engine.SetColorMode(ColorMode::DEFAULT); 
-		};
+		std::function<void()> hidenormal = [&engine]() { engine.SetColorMode(ColorMode::DEFAULT); };
 		engine.BindKeyToFunc(GLFW_KEY_Y, hidenormal, ActionType::R3D_PRESS);
 
 		int init = 0;
 		// running loop
 		do
 		{
-			//cube->setPosition(cube->getPosition() + glm::vec3{0.0001f, 0.f, 0.f});
-
 			if (init++ == 10000)
 			{
 				std::clog << "Add New Mesh" << std::endl;
@@ -135,7 +123,7 @@ int main()
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		system("pause");//no system pause | try catch should be done more localy depending on where to end 
+		system("pause"); // no system pause | try catch should be done more localy depending on where to end
 		return EXIT_FAILURE;
 	}
 
