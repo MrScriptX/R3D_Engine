@@ -121,8 +121,8 @@ const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, 
 	geo.addIndices(e1, g1, a1);
 	geo.addIndices(a1, g1, c1);
 
-	geo.addIndices(d2, c2, h1);
-	geo.addIndices(h1, c2, g2);
+	geo.addIndices(c2, g2, d2);
+	geo.addIndices(d2, g2, h2);
 
 	geo.addIndices(e2, a2, f2);
 	geo.addIndices(f2, a2, b2);
