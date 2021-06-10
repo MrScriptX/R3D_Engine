@@ -208,5 +208,6 @@
     <None Include="..\assets\shaders\HLSL\texture_shader.frag">
       <Filter>Asset</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

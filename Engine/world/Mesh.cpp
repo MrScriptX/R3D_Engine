@@ -114,11 +114,11 @@ void Mesh::UpdateBuffers(const int32_t frame)
 
 void Mesh::DestroyBuffers(const int32_t frame)
 {
-	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer[frame].index, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_buffer[frame].index_memory, nullptr);
+	vkDestroyBuffer(mp_renderer->GetDevice(), m_buffer[frame].index, nullptr);
+	vkFreeMemory(mp_renderer->GetDevice(), m_buffer[frame].index_memory, nullptr);
 
-	vkDestroyBuffer(mp_renderer->getDevice(), m_buffer[frame].vertex, nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_buffer[frame].vertex_memory, nullptr);
+	vkDestroyBuffer(mp_renderer->GetDevice(), m_buffer[frame].vertex, nullptr);
+	vkFreeMemory(mp_renderer->GetDevice(), m_buffer[frame].vertex_memory, nullptr);
 
 	m_buffer[frame].index = VK_NULL_HANDLE;
 	m_buffer[frame].index_memory = VK_NULL_HANDLE;

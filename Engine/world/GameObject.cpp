@@ -20,8 +20,8 @@ GameObject::~GameObject()
 
 	for (size_t i = 0; i < m_ubo.size(); i++)
 	{
-		vkDestroyBuffer(mp_renderer->getDevice(), m_ubo[i], nullptr);
-		vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory[i], nullptr);
+		vkDestroyBuffer(mp_renderer->GetDevice(), m_ubo[i], nullptr);
+		vkFreeMemory(mp_renderer->GetDevice(), m_ubo_memory[i], nullptr);
 	}
 }
 
@@ -67,8 +67,8 @@ void GameObject::Destroy(const int32_t frame)
 		}
 	}
 
-	vkDestroyBuffer(mp_renderer->getDevice(), m_ubo[frame], nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory[frame], nullptr);
+	vkDestroyBuffer(mp_renderer->GetDevice(), m_ubo[frame], nullptr);
+	vkFreeMemory(mp_renderer->GetDevice(), m_ubo_memory[frame], nullptr);
 
 	m_ubo[frame] = VK_NULL_HANDLE;
 	m_ubo_memory[frame] = VK_NULL_HANDLE;

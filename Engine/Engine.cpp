@@ -13,17 +13,11 @@ Engine::Engine(uint32_t width, uint32_t height)
 	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
 
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
-
-	mp_renderer->createDepthResources();
-	mp_renderer->createFramebuffer();
-
-	mp_renderer->createDescriptorPool();
-	mp_renderer->allocateCommandBuffers();
 }
 
 Engine::~Engine()
 {
-	vkDeviceWaitIdle(mp_renderer->getDevice());
+	vkDeviceWaitIdle(mp_renderer->GetDevice());
 
 	mp_renderer->cleanSwapchain();
 
@@ -189,9 +183,9 @@ void Engine::update()
 
 		mp_scene->Update(frame);
 
-		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
-		mp_scene->Render(mp_renderer->getCommandBuffer(frame), frame);
-		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
+		mp_renderer->beginRecordCommandBuffers(mp_renderer->GetCommandBuffer(frame), mp_renderer->GetFrameBuffer(frame));
+		mp_scene->Render(mp_renderer->GetCommandBuffer(frame), frame);
+		mp_renderer->endRecordCommandBuffers(mp_renderer->GetCommandBuffer(frame));
 
 		mp_scene->Clean(frame);
 		mp_renderer->SetUpdated(frame);
