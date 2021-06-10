@@ -1,7 +1,5 @@
 #include "Includes/Window.h"
 
-
-
 Window::Window(std::shared_ptr<Config>& config, Controller& controller)
 {
 	glfwInit();
@@ -18,14 +16,13 @@ Window::Window(std::shared_ptr<Config>& config, Controller& controller)
 	glfwSetCursorPos(m_handle, 0.0, 0.0);
 }
 
-
 Window::~Window()
 {
 	glfwDestroyWindow(m_handle);
 	glfwTerminate();
 }
 
-void Window::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	Controller* pController = static_cast<Controller*>(glfwGetWindowUserPointer(window));
 
@@ -37,7 +34,7 @@ void Window::key_callback(GLFWwindow * window, int key, int scancode, int action
 	}
 }
 
-void Window::mouse_callback(GLFWwindow * window, double xpos, double ypos)
+void Window::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	Controller* pController = static_cast<Controller*>(glfwGetWindowUserPointer(window));
 
@@ -46,7 +43,7 @@ void Window::mouse_callback(GLFWwindow * window, double xpos, double ypos)
 	glfwSetCursorPos(window, 0.0, 0.0);
 }
 
-GLFWwindow & Window::getHandle()
+GLFWwindow& Window::getHandle()
 {
 	return *m_handle;
 }

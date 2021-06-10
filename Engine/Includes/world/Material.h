@@ -9,7 +9,7 @@
 
 class Material
 {
-public:
+  public:
 	Material(const TSHADER shader, std::shared_ptr<Renderer> p_renderer);
 	~Material();
 
@@ -23,7 +23,8 @@ public:
 	std::shared_ptr<Texture> getTexture();
 	const Pipeline& GetPipeline();
 	VkDescriptorSet& getDescriptorSet();
-private:
+
+  private:
 	std::shared_ptr<Texture> m_texture;
 	std::shared_ptr<glm::vec3> m_color;
 

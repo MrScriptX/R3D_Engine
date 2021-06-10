@@ -48,5 +48,10 @@ target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glew-
 
 
 add_executable(ExampleCube ExampleCube/main.cpp)
-
 target_link_libraries(ExampleCube R3DEngine)
+
+add_executable(MovingLight MovingLight/main.cpp)
+target_link_libraries(MovingLight R3DEngine)
+
+add_executable(NormalMap NormalMap/main.cpp)
+target_link_libraries(NormalMap R3DEngine)

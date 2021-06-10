@@ -1,4 +1,4 @@
-![Linter](https://github.com/MrScriptX/R3D_Engine/actions/workflows/linter.yml/badge.svg) ![GCC Build](https://github.com/MrScriptX/R3D_Engine/actions/workflows/gcc-build.yml/badge.svg)
+![Linter](https://github.com/MrScriptX/R3D_Engine/actions/workflows/linter.yml/badge.svg) ![GCC Build](https://github.com/MrScriptX/R3D_Engine/actions/workflows/gcc-build.yml/badge.svg) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/79a0d84088bb4a20b72eeb81d4920f04)](https://www.codacy.com/gh/MrScriptX/R3D_Engine/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrScriptX/R3D_Engine&amp;utm_campaign=Badge_Grade)
 
 # R3D Engine
 

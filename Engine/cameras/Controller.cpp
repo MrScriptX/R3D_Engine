@@ -1,6 +1,5 @@
 #include "../Includes/camera/Controller.h"
 
-
 Controller::Controller(std::shared_ptr<Camera> p_camera)
 {
 	mp_camera = p_camera;
@@ -28,7 +27,6 @@ Controller::Controller(std::shared_ptr<Camera> p_camera)
 	m_onrelease_actions = std::make_unique<std::array<std::function<void()>, 348>>();
 }
 
-
 Controller::~Controller()
 {
 }
@@ -39,14 +37,14 @@ void Controller::setInput(int32_t key, int32_t scancode, int32_t mods, int32_t a
 	{
 		m_keyboard_press.set(key, true);
 
-		if(m_onpress_actions->at(key))
+		if (m_onpress_actions->at(key))
 			m_onpress_actions->at(key)();
 	}
 	else if (action == GLFW_RELEASE)
 	{
 		m_keyboard_press.set(key, false);
 
-		if(m_onrelease_actions->at(key))
+		if (m_onrelease_actions->at(key))
 			m_onrelease_actions->at(key)();
 	}
 }

@@ -1,6 +1,6 @@
 name: gcc_linux
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   linux_gcc:

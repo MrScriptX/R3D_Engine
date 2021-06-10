@@ -1,21 +1,19 @@
-#ifndef _VULKAN_COMMANDBUFFER_H
-#define _VULKAN_COMMANDBUFFER_H
+#ifndef R3DENGINE_VULKAN_COMMANDBUFFER_H_
+#define R3DENGINE_VULKAN_COMMANDBUFFER_H_
 
 #include "../graphics/Graphics.h"
 #include <stdexcept>
 
 class VulkanCommandBuffer
 {
-public:
+  public:
 	VulkanCommandBuffer(Graphics& m_graphic);
 	~VulkanCommandBuffer();
 
 	void allocateCommandBuffer();
-	void recordCommandBuffer();
 
-private:
-
-	Graphics & m_graphic;
+  private:
+	Graphics& m_graphic;
 };
 
-#endif // !_VULKAN_COMMANDBUFFER_H
+#endif // !R3DENGINE_VULKAN_COMMANDBUFFER_H_

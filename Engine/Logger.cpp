@@ -1,10 +1,8 @@
 #include "Includes/Logger.h"
 
-
 Logger::Logger()
 {
 }
-
 
 Logger::~Logger()
 {
@@ -38,7 +36,7 @@ void Logger::registerError(std::string errorMsg)
 
 		log.close();
 	}
-	catch(std::ios_base::iostate& e)
+	catch (std::ios_base::iostate& e)
 	{
 		throw std::runtime_error("Log.txt could not be used!");
 	}
