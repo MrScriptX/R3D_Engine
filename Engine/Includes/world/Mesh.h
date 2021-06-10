@@ -1,27 +1,27 @@
-#ifndef _MODEL_H
-#define _MODEL_H
+#ifndef R3DENGINE_MODEL_H_
+#define R3DENGINE_MODEL_H_
 
 #include <memory>
 #include <unordered_map>
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
+#include "LightObject.h"
 #include "Material.h"
 
 #include "../graphics/Vertex.h"
 #include "../renderer/Renderer.h"
 
-
 class Mesh
 {
-public:
+  public:
 	Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer);
 	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
-	~Mesh();//two destructors | one for move contrutor and one for classic destruction
+	~Mesh(); // two destructors | one for move contrutor and one for classic destruction
 
-	void draw(const VkCommandBuffer& command_buffer, const int32_t frame);
+	void draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame);
 	void loadModel();
 	void bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
 
@@ -39,7 +39,7 @@ public:
 	const bool IsCleaned();
 	const bool IsUpdated();
 
-private:
+  private:
 	std::string m_obj_path;
 
 	std::vector<Vertex> m_vertices;
@@ -53,4 +53,4 @@ private:
 	std::bitset<MAX_FRAMES_IN_FLIGHT> m_to_update;
 };
 
-#endif//!_MODEL_H
+#endif // !R3DENGINE_MODEL_H_

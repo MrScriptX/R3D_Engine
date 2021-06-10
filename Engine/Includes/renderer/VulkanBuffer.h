@@ -1,5 +1,5 @@
-#ifndef _VULKANBUFFER_H
-#define _VULKANBUFFER_H
+#ifndef R3DENGINE_VULKANBUFFER_H_
+#define R3DENGINE_VULKANBUFFER_H_
 
 #include <memory>
 #include <stdexcept>
@@ -8,17 +8,16 @@
 
 class VulkanBuffer
 {
-public:
-	VulkanBuffer(Graphics & graphic);
+  public:
+	VulkanBuffer(Graphics& graphic);
 	~VulkanBuffer();
 
-	void createBuffer(VkBuffer & buffer, VkDeviceMemory & bufferMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
+	void createBuffer(VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
 
-private:
-
+  private:
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
-	Graphics & m_graphic;
+	Graphics& m_graphic;
 };
 
-#endif // !_VULKANBUFFER_H
+#endif // !R3DENGINE_VULKANBUFFER_H_

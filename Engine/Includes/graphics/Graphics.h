@@ -4,6 +4,12 @@
 #include "vulkan/vulkan.h"
 #include <vector>
 
+enum class ColorMode
+{
+	DEFAULT = 0,
+	NORMALMAP = 1
+};
+
 constexpr unsigned int MAX_FRAMES_IN_FLIGHT = 3;
 
 struct Extensions
@@ -63,7 +69,7 @@ struct Graphics
 	std::vector<VkFramebuffer> framebuffers;
 
 	VkCommandPool command_pool;
-	std::vector<VkCommandBuffer> command_buffers;//replace VkCommandBuffer with CommandBuffer
+	std::vector<VkCommandBuffer> command_buffers; // replace VkCommandBuffer with CommandBuffer
 
 	std::vector<VkSemaphore> semaphores_render_finished;
 	std::vector<VkSemaphore> semaphores_image_available;
@@ -74,6 +80,7 @@ struct Graphics
 	VkBuffer uniform_buffer;
 	VkDeviceMemory uniform_memory;
 
+	VkDescriptorSetLayout light_descriptor_layout = VK_NULL_HANDLE;
 	VkDescriptorSetLayout descriptor_set_layout = VK_NULL_HANDLE;
 	VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
 
@@ -82,6 +89,7 @@ struct Graphics
 	VkImageView depth_view;
 
 	VkPolygonMode polygone_mode = VK_POLYGON_MODE_FILL;
+	ColorMode color_map = ColorMode::DEFAULT;
 };
 
 struct Pipeline
@@ -101,7 +109,7 @@ struct Buffer
 
 struct CommandBuffers
 {
-	bool needUpdate = true;//base state
+	bool needUpdate = true; // base state
 	VkCommandBuffer handle = VK_NULL_HANDLE;
 };
 

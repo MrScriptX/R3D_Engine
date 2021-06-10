@@ -8,16 +8,16 @@ int main()
 		Logger::init();
 
 		std::shared_ptr<Material> room_texture = engine.CreateMaterial(TSHADER::TEXTURE);
-		room_texture->LoadTexture("assets/textures/viking_room.png");
+		room_texture->LoadTexture("../assets/textures/viking_room.png");
 
 		std::shared_ptr<GameObject> room = engine.CreateGameObject();
-		room->LoadMesh("assets/models/viking_room.obj");
+		room->LoadMesh("../assets/models/viking_room.obj");
 		room->bindMatToMesh(0, room_texture);
 		room->setPosition({ 3.0f, 0.0f, 3.0f });
 
 		std::shared_ptr<Material> room2_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
 		std::shared_ptr<GameObject> room2 = engine.CreateGameObject();
-		room2->LoadMesh("assets/models/viking_room.obj");
+		room2->LoadMesh("../assets/models/viking_room.obj");
 		room2->bindMatToMesh(0, room2_texture);
 		room2->setPosition({ 6.0f, 0.0f, 0.0f });
 
@@ -78,6 +78,16 @@ int main()
 			engine.SetPointMode();
 		};
 		engine.BindKeyToFunc(GLFW_KEY_R, pointmode, ActionType::R3D_PRESS);
+
+		std::function<void()> shownormal = [&engine]() { 
+			engine.SetColorMode(ColorMode::NORMALMAP); 
+		};
+		engine.BindKeyToFunc(GLFW_KEY_T, shownormal, ActionType::R3D_PRESS);
+
+		std::function<void()> hidenormal = [&engine]() { 
+			engine.SetColorMode(ColorMode::DEFAULT); 
+		};
+		engine.BindKeyToFunc(GLFW_KEY_Y, hidenormal, ActionType::R3D_PRESS);
 
 		int init = 0;
 		// running loop

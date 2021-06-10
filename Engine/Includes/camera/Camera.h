@@ -1,17 +1,17 @@
 #ifndef _CAMERA_H
 #define _CAMERA_H
 
-#include <memory>
 #include <bitset>
 #include <iostream>
+#include <memory>
 
-#include "../graphics/Math.h"
 #include "../graphics/Graphics.h"
+#include "../graphics/Math.h"
 #include "../graphics/Vertex.h"
 
 class Camera
 {
-public:
+  public:
 	Camera();
 	~Camera();
 
@@ -39,8 +39,7 @@ public:
 
 	UniformBufferObject& GetUBO(const int32_t frame);
 
-private:
-
+  private:
 	std::bitset<348> m_keyboard_press;
 
 	glm::vec3 m_position;

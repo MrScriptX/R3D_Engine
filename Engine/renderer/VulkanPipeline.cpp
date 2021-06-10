@@ -1,12 +1,9 @@
 #include "../Includes/renderer/VulkanPipeline.h"
 
-
-
-VulkanPipeline::VulkanPipeline(Graphics & m_graphic) : m_graphic(m_graphic)
+VulkanPipeline::VulkanPipeline(Graphics& m_graphic) : m_graphic(m_graphic)
 {
 	CreatePipelines();
 }
-
 
 VulkanPipeline::~VulkanPipeline()
 {
@@ -16,7 +13,7 @@ void VulkanPipeline::CreatePipelines()
 {
 	for (size_t i = 0; i < m_pipelines.size(); i++)
 	{
-		createPipeline(m_pipelines[i], m_shaders.fragment_shader_files[i]);
+		createPipeline(m_pipelines[i], m_shaders.fragment_shader_files[i], m_shaders.vertex_shader_files[static_cast<size_t>(m_graphic.color_map)]);
 	}
 }
 
@@ -37,18 +34,20 @@ const Pipeline& VulkanPipeline::GetPipeline(const TSHADER shader)
 		return m_pipelines[1];
 	case TSHADER::TEXTURE:
 		return m_pipelines[2];
+	case TSHADER::LIGHT_SOURCE:
+		return m_pipelines[3];
 	default:
 		return m_pipelines[0];
 	}
 }
 
-void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& shader_file)
+void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragment_shader_file, const std::string& vertex_shader_file)
 {
 	auto bindingDescription = Vertex::getBindingDescription();
 	auto attributeDescriptions = Vertex::getAttributeDescriptions();
 
-	auto vertShaderCode = readFile("assets/shaders/vert.spv");
-	auto fragShaderCode = readFile(shader_file);
+	auto vertShaderCode = readFile(vertex_shader_file);
+	auto fragShaderCode = readFile(fragment_shader_file);
 
 	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
 	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
@@ -75,7 +74,6 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& shade
 	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 	vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
 	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -139,11 +137,11 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& shade
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-
+	std::array<VkDescriptorSetLayout, 2> layouts = { m_graphic.descriptor_set_layout, m_graphic.light_descriptor_layout };
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = 1;
-	pipelineLayoutInfo.pSetLayouts = &m_graphic.descriptor_set_layout;
+	pipelineLayoutInfo.setLayoutCount = layouts.size();
+	pipelineLayoutInfo.pSetLayouts = layouts.data();
 
 	if (vkCreatePipelineLayout(m_graphic.device, &pipelineLayoutInfo, nullptr, &pipeline.layout) != VK_SUCCESS)
 	{
@@ -191,7 +189,7 @@ VkShaderModule VulkanPipeline::createShaderModule(const std::vector<char>& code)
 	return shaderModule;
 }
 
-std::vector<char> VulkanPipeline::readFile(const std::string & filename)
+std::vector<char> VulkanPipeline::readFile(const std::string& filename)
 {
 	std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
