@@ -16,7 +16,7 @@ class Logger
 	~Logger();
 
 	static void init();
-	static void registerError(std::string errorMsg);
+	static void registerError(const std::string& errorMsg);
 };
 
 #endif //!_LOGGER_H

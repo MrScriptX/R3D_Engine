@@ -23,7 +23,7 @@ void Logger::init()
 	}
 }
 
-void Logger::registerError(std::string errorMsg)
+void Logger::registerError(const std::string& errorMsg)
 {
 	std::fstream log;
 

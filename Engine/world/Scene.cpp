@@ -1,6 +1,6 @@
 #include "../Includes/world/Scene.h"
 
-Scene::Scene()
+Scene::Scene() : m_light_changed(true), m_descriptorset(VK_NULL_HANDLE), m_light_buffer(VK_NULL_HANDLE), m_light_mem(VK_NULL_HANDLE)
 {
 	m_changed.reset();
 }

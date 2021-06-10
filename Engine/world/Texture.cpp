@@ -2,12 +2,10 @@
 
 #include <stb_image.h>
 
-Texture::Texture(const std::string& texture_path, std::shared_ptr<Renderer> p_renderer) : m_texture_path(texture_path), mp_renderer(p_renderer)
+Texture::Texture(const std::string& texture_path, std::shared_ptr<Renderer> p_renderer)
+    : m_texture_path(texture_path), mp_renderer(p_renderer), m_texture_image(VK_NULL_HANDLE), m_texture_view(VK_NULL_HANDLE), m_texture_sampler(VK_NULL_HANDLE),
+      m_texture_memory(VK_NULL_HANDLE)
 {
-	m_texture_image = VK_NULL_HANDLE;
-	m_texture_view = VK_NULL_HANDLE;
-	m_texture_sampler = VK_NULL_HANDLE;
-	m_texture_memory = VK_NULL_HANDLE;
 }
 
 Texture::~Texture()

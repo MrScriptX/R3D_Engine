@@ -1,9 +1,7 @@
 #include "Includes/Engine.h"
 
-Engine::Engine(uint32_t width, uint32_t height)
+Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_resolution_clock::now())
 {
-	m_last_time = std::chrono::high_resolution_clock::now();
-
 	mp_main_camera = std::make_shared<Camera>();
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
 	mp_config = std::make_shared<Config>();
