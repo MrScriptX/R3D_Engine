@@ -10,7 +10,7 @@ GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_ren
 
 	for (size_t i = 0; i < m_ubo.size(); i++)
 	{
-		mp_renderer->createUBO(m_ubo[i], m_ubo_memory[i]);
+		mp_renderer->CreateUniformBuffer(m_ubo[i], m_ubo_memory[i], sizeof(UniformBufferObject));
 	}
 }
 

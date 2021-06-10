@@ -183,9 +183,9 @@ void Engine::update()
 
 		mp_scene->Update(frame);
 
-		mp_renderer->beginRecordCommandBuffers(mp_renderer->GetCommandBuffer(frame), mp_renderer->GetFrameBuffer(frame));
+		mp_renderer->BeginRecordCommandBuffers(mp_renderer->GetCommandBuffer(frame), mp_renderer->GetFrameBuffer(frame));
 		mp_scene->Render(mp_renderer->GetCommandBuffer(frame), frame);
-		mp_renderer->endRecordCommandBuffers(mp_renderer->GetCommandBuffer(frame));
+		mp_renderer->EndRecordCommandBuffers(mp_renderer->GetCommandBuffer(frame));
 
 		mp_scene->Clean(frame);
 		mp_renderer->SetUpdated(frame);

@@ -95,8 +95,8 @@ void Mesh::CreateBuffers(std::shared_ptr<Renderer> engine)
 {
 	for (size_t i = 0; i < m_buffer.size(); i++)
 	{
-		engine->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer[i]);
-		engine->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer[i]);
+		engine->CreateVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer[i]);
+		engine->CreateIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer[i]);
 	}
 
 	m_to_update.reset();
@@ -106,8 +106,8 @@ void Mesh::UpdateBuffers(const int32_t frame)
 {
 	DestroyBuffers(frame);
 
-	mp_renderer->createVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer[frame]);
-	mp_renderer->createIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer[frame]);
+	mp_renderer->CreateVerticesBuffer(std::make_shared<std::vector<Vertex>>(m_vertices), m_buffer[frame]);
+	mp_renderer->CreateIndicesBuffer(std::make_shared<std::vector<uint32_t>>(m_indices), m_buffer[frame]);
 
 	m_to_update.set(frame, false);
 }

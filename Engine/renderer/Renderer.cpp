@@ -257,7 +257,7 @@ void Renderer::destroyBuffers(Buffer& buffer)
 	vkFreeMemory(m_graphic.device, buffer.vertex_memory, nullptr);
 }
 
-void Renderer::createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer)
+void Renderer::CreateVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer)
 {
 	VkDeviceSize buffer_size = sizeof(vertices->at(0)) * vertices->size();
 
@@ -279,7 +279,7 @@ void Renderer::createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertice
 	vkFreeMemory(m_graphic.device, staging_buffer_memory, nullptr);
 }
 
-void Renderer::createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer)
+void Renderer::CreateIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer)
 {
 	VkDeviceSize buffer_size = sizeof(indices->at(0)) * indices->size();
 
@@ -299,13 +299,6 @@ void Renderer::createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indice
 
 	vkDestroyBuffer(m_graphic.device, staging_buffer, nullptr);
 	vkFreeMemory(m_graphic.device, staging_buffer_mem, nullptr);
-}
-
-void Renderer::createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory)
-{
-	VkDeviceSize buffer_size = sizeof(UniformBufferObject);
-	m_pBufferFactory->createBuffer(uniform_buffer, uniform_memory, buffer_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-	                               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 }
 
 void Renderer::CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size)
@@ -329,7 +322,7 @@ void Renderer::allocateCommandBuffers()
 	}
 }
 
-void Renderer::beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer)
+void Renderer::BeginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer)
 {
 	// reset command buffer
 	if (vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VK_SUCCESS)
@@ -365,7 +358,7 @@ void Renderer::beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFrame
 	m_pRenderpass->beginRenderPass(commandBuffer, renderPassInfo);
 }
 
-void Renderer::endRecordCommandBuffers(VkCommandBuffer& commandBuffer)
+void Renderer::EndRecordCommandBuffers(VkCommandBuffer& commandBuffer)
 {
 	m_pRenderpass->endRenderPass(commandBuffer);
 
@@ -688,90 +681,6 @@ void Renderer::cleanSwapchain()
 	vkDestroySwapchainKHR(m_graphic.device, m_graphic.swapchain, nullptr);
 }
 
-bool Renderer::checkDeviceExtensionSupport(VkPhysicalDevice device)
-{
-	uint32_t extension_count;
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
-
-	std::vector<VkExtensionProperties> availableExtensions(extension_count);
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, availableExtensions.data());
-
-	std::set<std::string> requiredExtensions(m_graphic.extensions.device_extensions.begin(), m_graphic.extensions.device_extensions.end());
-
-	for (const auto& extension : availableExtensions)
-	{
-		requiredExtensions.erase(extension.extensionName);
-	}
-
-	return requiredExtensions.empty();
-}
-
-bool Renderer::checkDeviceSuitability(VkPhysicalDevice device)
-{
-	bool swapChainAdequate = false;
-
-	VkPhysicalDeviceProperties deviceProperties;
-	VkPhysicalDeviceFeatures deviceFeatures;
-	vkGetPhysicalDeviceProperties(device, &deviceProperties);
-	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-
-	if (!(deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader))
-	{
-		return false;
-	}
-
-	QueueFamilyIndices indices = findQueueFamily(device);
-
-	bool extensionsSupported = checkDeviceExtensionSupport(device);
-
-	if (extensionsSupported)
-	{
-		SwapchainDetails swapChainSupport = querySwapChainSupport(device);
-		swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
-	}
-
-	VkPhysicalDeviceFeatures supportedFeatures;
-	vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
-
-	return indices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
-}
-
-bool Renderer::checkValidationLayerSupport()
-{
-	uint32_t layer_count = 0;
-	vkEnumerateInstanceLayerProperties(&layer_count, nullptr);
-
-	std::vector<VkLayerProperties> available_layers(layer_count);
-	vkEnumerateInstanceLayerProperties(&layer_count, available_layers.data());
-
-	/*std::cout << "available layer:" << std::endl;
-	for (const auto& extension : available_layers)
-	{
-	    std::cout << "\t" << extension.layerName << std::endl;
-	}*/
-
-	for (const char* layerName : m_graphic.extensions.validationLayers)
-	{
-		bool layerFound = false;
-
-		for (const auto& layerProperties : available_layers)
-		{
-			if (strcmp(layerName, layerProperties.layerName) == 0)
-			{
-				layerFound = true;
-				break;
-			}
-		}
-
-		if (!layerFound)
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
 uint32_t Renderer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
@@ -790,7 +699,7 @@ uint32_t Renderer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags pro
 
 void Renderer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 {
-	VkCommandBuffer commandBuffer = beginCommands();
+	VkCommandBuffer commandBuffer = beginCommands(); // not optimized, should use command buffer of frame instead of new one
 
 	VkBufferCopy copyRegion = {};
 	copyRegion.size = size;
