@@ -1,5 +1,5 @@
-#ifndef _VULKAN_RENDERPASS_H
-#define _VULKAN_RENDERPASS_H
+#ifndef R3DENGINE_VULKAN_RENDERPASS_H_
+#define R3DENGINE_VULKAN_RENDERPASS_H_
 
 #include <array>
 #include <stdexcept>
@@ -8,8 +8,8 @@
 
 class VulkanRenderPass
 {
-public:
-	VulkanRenderPass(Graphics & m_graphic, VkFormat depthFormat);
+  public:
+	VulkanRenderPass(Graphics& m_graphic, VkFormat depthFormat);
 	~VulkanRenderPass();
 
 	void createRenderPass(VkFormat depthFormat);
@@ -17,9 +17,8 @@ public:
 	void beginRenderPass(VkCommandBuffer& commanderBuffer, VkRenderPassBeginInfo& renderPass_info);
 	void endRenderPass(VkCommandBuffer& commandBuffer);
 
-private:
-
-	Graphics & m_graphic;
+  private:
+	Graphics& m_graphic;
 };
 
-#endif // !_VULKAN_RENDERPASS_H
+#endif // !R3DENGINE_VULKAN_RENDERPASS_H_

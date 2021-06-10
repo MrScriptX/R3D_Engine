@@ -1,12 +1,9 @@
 #include "../Includes/renderer/VulkanRenderPass.h"
 
-
-
-VulkanRenderPass::VulkanRenderPass(Graphics & graphic, VkFormat depthFormat) : m_graphic(graphic)
+VulkanRenderPass::VulkanRenderPass(Graphics& graphic, VkFormat depthFormat) : m_graphic(graphic)
 {
 	createRenderPass(depthFormat);
 }
-
 
 VulkanRenderPass::~VulkanRenderPass()
 {
@@ -40,7 +37,7 @@ void VulkanRenderPass::createRenderPass(VkFormat depthFormat)
 
 	VkAttachmentDescription color_attachement = {};
 	color_attachement.format = m_graphic.swapchain_details.format;
-	color_attachement.samples = VK_SAMPLE_COUNT_1_BIT;//use for multisampling
+	color_attachement.samples = VK_SAMPLE_COUNT_1_BIT; // use for multisampling
 	color_attachement.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	color_attachement.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 	color_attachement.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;

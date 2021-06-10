@@ -10,12 +10,12 @@
 
 #include <memory>
 
-#include "graphics/Config.h"
 #include "camera/Controller.h"
+#include "graphics/Config.h"
 
 class Window
 {
-public:
+  public:
 	Window(std::shared_ptr<Config>& config, Controller& controller);
 	~Window();
 
@@ -23,10 +23,8 @@ public:
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 	GLFWwindow& getHandle();
-	//Camera& getCamera();
+	// Camera& getCamera();
 
-private:
-
-	GLFWwindow * m_handle;
+  private:
+	GLFWwindow* m_handle;
 };
-

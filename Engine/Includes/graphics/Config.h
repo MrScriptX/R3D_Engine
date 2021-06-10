@@ -8,4 +8,3 @@ struct Config
 };
 
 #endif // !_CONFIG_H
-

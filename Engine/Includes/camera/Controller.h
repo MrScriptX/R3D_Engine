@@ -3,8 +3,8 @@
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "Camera.h"
 
@@ -14,7 +14,7 @@ struct Actions
 	const std::function<void()> func;
 };
 
-enum class ActionType 
+enum class ActionType
 {
 	RED_RELEASE,
 	R3D_PRESS,
@@ -23,7 +23,7 @@ enum class ActionType
 
 class Controller
 {
-public:
+  public:
 	Controller(std::shared_ptr<Camera> p_camera);
 	~Controller();
 
@@ -34,7 +34,8 @@ public:
 	void updateRotation(const double& xpos, const double& ypos);
 
 	uint32_t getLoadRadius();
-private:
+
+  private:
 	std::vector<Actions> m_hold_actions;
 	std::unique_ptr<std::array<std::function<void()>, 348>> m_onpress_actions;
 	std::unique_ptr<std::array<std::function<void()>, 348>> m_onrelease_actions;

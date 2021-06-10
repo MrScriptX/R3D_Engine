@@ -2,7 +2,7 @@
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
-	m_buffer.fill({VK_NULL_HANDLE});
+	m_buffer.fill({ VK_NULL_HANDLE });
 	m_to_update.set();
 }
 
@@ -22,7 +22,7 @@ Mesh::~Mesh()
 	}
 }
 
-void Mesh::draw(const VkCommandBuffer& command_buffer, const int32_t frame)
+void Mesh::draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame)
 {
 	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().handle);
 
@@ -32,7 +32,10 @@ void Mesh::draw(const VkCommandBuffer& command_buffer, const int32_t frame)
 	vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffer, offsets);
 	vkCmdBindIndexBuffer(command_buffer, m_buffer[frame].index, 0, VK_INDEX_TYPE_UINT32);
 
-	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, &p_material->getDescriptorSet(), 0, nullptr);
+	VkDescriptorSet sets[] = { p_material->getDescriptorSet(), descriptorset };
+
+	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 2, sets, 0, nullptr);
+	// vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, , 0, nullptr);
 
 	vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
 }
@@ -50,20 +53,13 @@ void Mesh::loadModel()
 			Vertex vertex = {};
 
 			const aiVector3D* pPos = &(mesh->mVertices[t]);
+			const aiVector3D* pNormal = &(mesh->mNormals[t]);
 			const aiVector3D* pTexCoord = &(mesh->mTextureCoords[0][t]);
 
-			vertex.pos = {
-				pPos->x,
-				pPos->y,
-				pPos->z
-			};
-
-			vertex.texCoord = {
-				pTexCoord->x,
-				1.0f - pTexCoord->y
-			};
-
-			vertex.color = { 1.0f, 1.0f, 1.0f };
+			vertex.pos = { pPos->x, pPos->y, pPos->z };
+			vertex.normal = { pNormal->x, pNormal->y, pNormal->z };
+			vertex.texCoord = { pTexCoord->x, 1.0f - pTexCoord->y };
+			vertex.color = { std::sin(t), std::cos(t), 1.0f };
 
 			m_vertices.push_back(vertex);
 		}
@@ -85,7 +81,7 @@ void Mesh::bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::share
 {
 	if (mat->getTexture() == nullptr)
 	{
-		renderer->updateDescriptorSet(ubo, mat->getDescriptorSet());
+		renderer->updateDescriptorSet(ubo, mat->getDescriptorSet(), sizeof(UniformBufferObject));
 	}
 	else
 	{

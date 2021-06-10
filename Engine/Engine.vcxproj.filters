@@ -99,6 +99,9 @@
     <ClCompile Include="graphics\Math.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="world\LightObject.cpp">
+      <Filter>Engine\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Includes\world\GameObject.h">
@@ -185,18 +188,24 @@
     <ClInclude Include="Includes\Window.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="Includes\world\LightObject.h">
+      <Filter>Engine\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\HLSL\no_texture_shader.frag">
+    <None Include="..\assets\shaders\HLSL\no_texture_shader.frag">
       <Filter>Asset</Filter>
     </None>
-    <None Include="assets\shaders\HLSL\shader.vert">
+    <None Include="..\assets\shaders\HLSL\normalmap.vert">
       <Filter>Asset</Filter>
     </None>
-    <None Include="assets\shaders\HLSL\shader_compiler.bat">
+    <None Include="..\assets\shaders\HLSL\shader.vert">
       <Filter>Asset</Filter>
     </None>
-    <None Include="assets\shaders\HLSL\texture_shader.frag">
+    <None Include="..\assets\shaders\HLSL\shader_compiler.bat">
+      <Filter>Asset</Filter>
+    </None>
+    <None Include="..\assets\shaders\HLSL\texture_shader.frag">
       <Filter>Asset</Filter>
     </None>
   </ItemGroup>

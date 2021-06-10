@@ -1,12 +1,9 @@
 #include "../Includes/renderer/VulkanInstance.h"
 
-
-
-VulkanInstance::VulkanInstance(Graphics & m_graphic) : m_graphic(m_graphic)
+VulkanInstance::VulkanInstance(Graphics& m_graphic) : m_graphic(m_graphic)
 {
 	createInstance();
 }
-
 
 VulkanInstance::~VulkanInstance()
 {
@@ -47,7 +44,6 @@ void VulkanInstance::createInstance()
 	{
 		create_info.enabledLayerCount = 0;
 	}
-
 
 	if (vkCreateInstance(&create_info, nullptr, &m_graphic.instance) != VK_SUCCESS)
 	{

@@ -1,5 +1,5 @@
-#ifndef _RENDERER_H
-#define _RENDERER_H
+#ifndef R3DENGINE_RENDERER_H_
+#define R3DENGINE_RENDERER_H_
 
 #ifndef _GLFW3_
 #define _GLFW3_
@@ -9,20 +9,19 @@
 
 #endif // !_GLFW3_
 
-
-#include <iostream>
-#include <memory>
 #include <algorithm>
 #include <bitset>
+#include <iostream>
+#include <memory>
 
-#include "VulkanInstance.h"
-#include "VulkanDevice.h"
-#include "VulkanSwapchain.h"
-#include "VulkanRenderPass.h"
-#include "VulkanDescriptor.h"
-#include "VulkanCommandPool.h"
-#include "VulkanPipeline.h"
 #include "VulkanBuffer.h"
+#include "VulkanCommandPool.h"
+#include "VulkanDescriptor.h"
+#include "VulkanDevice.h"
+#include "VulkanInstance.h"
+#include "VulkanPipeline.h"
+#include "VulkanRenderPass.h"
+#include "VulkanSwapchain.h"
 
 #include "../graphics/Graphics.h"
 
@@ -30,7 +29,7 @@
 
 class Renderer
 {
-public:
+  public:
 	Renderer(GLFWwindow& window, uint32_t width, uint32_t height);
 	~Renderer();
 
@@ -46,8 +45,9 @@ public:
 	void setupCommandPool();
 
 	void SetPolygonFillingMode(const VkPolygonMode& mode);
+	void SetColorMode(const ColorMode map);
 
-	//getters
+	// getters
 	VkDevice& getDevice();
 	VkDescriptorPool& getDescriptorPool();
 	VkDescriptorSetLayout& getDescriptorSetLayout();
@@ -63,47 +63,45 @@ public:
 	const bool NeedUpdate(const size_t& i);
 	void SetUpdated(const size_t& i);
 
-	//rendering
+	// rendering
 	void createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
 	void createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer);
-	void createUBO();
 	void createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory);
+	void CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size);
 
 	void allocateCommandBuffers();
 	void beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer);
 	void endRecordCommandBuffers(VkCommandBuffer& commandBuffer);
-	//!rendering
+	//! rendering
 
 	void setupCallback();
 	void createSurface(GLFWwindow& window);
 	void createFramebuffer();
 	void createCommandPool();
 	void createSyncObject();
-	void createDescriptorLayout();
 	void createDescriptorPool();
 	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
-	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set);
+	void allocateDescriptorSetLight(VkDescriptorSet& descriptor_set);
+	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, VkDeviceSize size);
 	void updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler);
 	void createDepthResources();
 
-
-	//cleaning
+	// cleaning
 	void destroyUniformBuffer();
 	void destroyBuffers(Buffer& buffers);
 	void cleanSwapchain();
 
-
-	//init fonctions
+	// init fonctions
 	void recreateSwapchain();
-	
 
-	//helper fonctions
+	// helper fonctions
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	bool checkDeviceSuitability(VkPhysicalDevice device);
 	bool checkValidationLayerSupport();
 
 	VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
-	void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+	void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image,
+	                 VkDeviceMemory& imageMemory);
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
@@ -114,7 +112,8 @@ public:
 	VkCommandBuffer beginCommands();
 	void endCommands(VkCommandBuffer commandBuffer);
 	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-private:
+
+  private:
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes);
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
@@ -122,22 +121,21 @@ private:
 	QueueFamilyIndices findQueueFamily(VkPhysicalDevice device);
 	std::vector<const char*> getRequiredExtensions();
 
-	//static fonctions
-	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType,
-		uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData);
-	
-	//proxy fonctions
-	VkResult CreateDebugReportCallbackEXT(VkInstance& instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback);
+	// static fonctions
+	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code,
+	                                                    const char* layerPrefix, const char* msg, void* userData);
+
+	// proxy fonctions
+	VkResult CreateDebugReportCallbackEXT(VkInstance& instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator,
+	                                      VkDebugReportCallbackEXT* pCallback);
 	void DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
 
-
-	//attributes
+	// attributes
 
 	VkDebugReportCallbackEXT callback;
 	Graphics m_graphic;
 	std::unique_ptr<uint32_t> WIDTH;
 	std::unique_ptr<uint32_t> HEIGHT;
-
 
 	std::unique_ptr<VulkanInstance> m_instance;
 	std::unique_ptr<VulkanDevice> m_device;
@@ -153,4 +151,4 @@ private:
 	std::bitset<3> m_is_updated;
 };
 
-#endif _RENDERER_H
+#endif // !R3DENGINE_RENDERER_H_

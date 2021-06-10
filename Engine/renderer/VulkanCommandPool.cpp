@@ -1,12 +1,9 @@
 #include "../Includes/renderer/VulkanCommandPool.h"
 
-
-
 VulkanCommandPool::VulkanCommandPool(Graphics& m_graphic) : m_graphic(m_graphic)
 {
 	createCommandPool();
 }
-
 
 VulkanCommandPool::~VulkanCommandPool()
 {

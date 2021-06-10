@@ -1,8 +1,6 @@
 #include "../Includes/world/Texture.h"
 
-
 #include <stb_image.h>
-
 
 Texture::Texture(const std::string& texture_path, std::shared_ptr<Renderer> p_renderer) : m_texture_path(texture_path), mp_renderer(p_renderer)
 {
@@ -35,7 +33,8 @@ void Texture::createTextureImage()
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
 
-	mp_renderer->getBufferFactory()->createBuffer(stagingBuffer, stagingBufferMemory, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	mp_renderer->getBufferFactory()->createBuffer(stagingBuffer, stagingBufferMemory, imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+	                                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	void* data;
 	vkMapMemory(mp_renderer->getDevice(), stagingBufferMemory, 0, imageSize, 0, &data);
@@ -44,7 +43,8 @@ void Texture::createTextureImage()
 
 	stbi_image_free(pixels);
 
-	mp_renderer->createImage(tex_width, tex_height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_texture_image, m_texture_memory);
+	mp_renderer->createImage(tex_width, tex_height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+	                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_texture_image, m_texture_memory);
 
 	mp_renderer->transitionImageLayout(m_texture_image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	mp_renderer->copyBufferToImage(stagingBuffer, m_texture_image, static_cast<uint32_t>(tex_width), static_cast<uint32_t>(tex_height));
