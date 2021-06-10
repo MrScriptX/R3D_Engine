@@ -1,5 +1,5 @@
-#ifndef _GEOMETRY_H
-#define _GEOMETRY_H
+#ifndef R3DENGINE_GEOMETRY_H_
+#define R3DENGINE_GEOMETRY_H_
 
 #include "Vertex.h"
 
@@ -28,16 +28,16 @@ struct Geometry
 	void addIndices(uint32_t x, uint32_t y, uint32_t z)
 	{
 		// compute face normal
-		glm::vec3 a = { 
-			vertices[x].pos.x - vertices[y].pos.x, 
-			vertices[x].pos.y - vertices[y].pos.y, 
-			vertices[x].pos.z - vertices[y].pos.z
+		glm::vec3 a = {
+			vertices[x].pos.x - vertices[y].pos.x,
+			vertices[x].pos.y - vertices[y].pos.y,
+			vertices[x].pos.z - vertices[y].pos.z,
 		};
 
-		glm::vec3 b = { 
-			vertices[z].pos.x - vertices[y].pos.x, 
-			vertices[z].pos.y - vertices[y].pos.y, 
-			vertices[z].pos.z - vertices[y].pos.z 
+		glm::vec3 b = {
+			vertices[z].pos.x - vertices[y].pos.x,
+			vertices[z].pos.y - vertices[y].pos.y,
+			vertices[z].pos.z - vertices[y].pos.z,
 		};
 
 		glm::vec3 normal = glm::cross(a, b);
@@ -53,4 +53,4 @@ struct Geometry
 	}
 };
 
-#endif
+#endif // !R3DENGINE_GEOMETRY_H_
