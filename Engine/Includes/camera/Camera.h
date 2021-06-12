@@ -1,13 +1,14 @@
-#ifndef _CAMERA_H
-#define _CAMERA_H
+#ifndef R3DENGINE_CAMERA_H_
+#define R3DENGINE_CAMERA_H_
 
+#include <array>
 #include <bitset>
 #include <iostream>
 #include <memory>
 
+#include "../graphics/CameraUBO.h"
 #include "../graphics/Graphics.h"
 #include "../graphics/Math.h"
-#include "../graphics/Vertex.h"
 
 class Camera
 {
@@ -53,4 +54,4 @@ class Camera
 	std::array<UniformBufferObject, MAX_FRAMES_IN_FLIGHT> m_ubo;
 };
 
-#endif // !_CAMERA_H
+#endif // !R3DENGINE_CAMERA_H_
