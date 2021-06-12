@@ -23,6 +23,7 @@
 #include "VulkanRenderPass.h"
 #include "VulkanSwapchain.h"
 
+#include "../graphics/CameraUBO.h"
 #include "../graphics/Graphics.h"
 
 #include "../Logger.h"

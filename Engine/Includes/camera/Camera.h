@@ -4,10 +4,11 @@
 #include <bitset>
 #include <iostream>
 #include <memory>
+#include <array>
 
 #include "../graphics/Graphics.h"
 #include "../graphics/Math.h"
-#include "../graphics/Vertex.h"
+#include "../graphics/CameraUBO.h"
 
 class Camera
 {

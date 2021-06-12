@@ -1,7 +1,7 @@
 #ifndef R3DENGINE_LIGHT_H_
 #define R3DENGINE_LIGHT_H_
 
-#include "../graphics/Vertex.h"
+#include "../graphics/SceneUBO.h"
 
 enum class TLIGHT
 {
