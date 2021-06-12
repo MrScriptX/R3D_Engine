@@ -1,6 +1,6 @@
 #include "../Includes/world/Scene.h"
 
-Scene::Scene()
+Scene::Scene() : m_light_changed(true), m_descriptorset(VK_NULL_HANDLE), m_light_buffer(VK_NULL_HANDLE), m_light_mem(VK_NULL_HANDLE)
 {
 	m_changed.reset();
 }
@@ -124,8 +124,13 @@ void Scene::Clean(const int32_t frame)
 
 void Scene::CleanRessources(std::shared_ptr<Renderer> p_renderer)
 {
+<<<<<<< HEAD
 	vkDestroyBuffer(p_renderer->getDevice(), m_light_buffer, nullptr);
 	vkFreeMemory(p_renderer->getDevice(), m_light_mem, nullptr);
+=======
+	vkDestroyBuffer(p_renderer->GetDevice(), m_light_buffer, nullptr);
+	vkFreeMemory(p_renderer->GetDevice(), m_light_mem, nullptr);
+>>>>>>> develop
 
 	m_light_buffer = VK_NULL_HANDLE;
 	m_light_mem = VK_NULL_HANDLE;
@@ -148,10 +153,48 @@ void Scene::UpdateUBO(std::shared_ptr<Camera> p_camera, std::shared_ptr<Renderer
 		ubo.model = matrix;
 
 		void* data;
-		vkMapMemory(p_renderer->getDevice(), vp_objects[i]->GetUBOMemory(frame), 0, sizeof(ubo), 0, &data);
+		vkMapMemory(p_renderer->GetDevice(), vp_objects[i]->GetUBOMemory(frame), 0, sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(p_camera->GetUBO(frame)));
-		vkUnmapMemory(p_renderer->getDevice(), vp_objects[i]->GetUBOMemory(frame));
+		vkUnmapMemory(p_renderer->GetDevice(), vp_objects[i]->GetUBOMemory(frame));
 	}
+}
+
+void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
+{
+	SceneUBO ubo;
+	for (size_t i = 0; i < vp_directional_lights.max_size(); i++)
+	{
+		if (vp_directional_lights[i] != nullptr)
+		{
+			ubo.directionals[i] = vp_directional_lights[i]->GetProperties();
+			++ubo.nb_directional;
+		}
+	}
+
+	for (size_t i = 0; i < vp_spot_lights.max_size(); i++)
+	{
+		if (vp_spot_lights[i] != nullptr)
+		{
+			ubo.spots[i] = vp_spot_lights[i]->GetProperties();
+			++ubo.nb_spotlight;
+		}
+	}
+
+	for (size_t i = 0; i < vp_point_lights.max_size(); i++)
+	{
+		if (vp_point_lights[i] != nullptr)
+		{
+			ubo.points[i] = vp_point_lights[i]->GetProperties();
+			++ubo.nb_pointlight;
+		}
+	}
+
+	void* data;
+	vkMapMemory(p_renderer->GetDevice(), m_light_mem, 0, sizeof(SceneUBO), 0, &data);
+	memcpy(data, &ubo, sizeof(SceneUBO));
+	vkUnmapMemory(p_renderer->GetDevice(), m_light_mem);
+
+	m_light_changed = false;
 }
 
 void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)

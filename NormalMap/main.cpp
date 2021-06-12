@@ -7,31 +7,27 @@ int main()
 		Engine engine(1280, 720);
 		Logger::init();
 
-		/* std::shared_ptr<Material> room_texture = engine.CreateMaterial(TSHADER::TEXTURE, "../assets/textures/viking_room.png");
+		// setup 3D models
+		std::shared_ptr<Material> room_texture = engine.CreateMaterial(TSHADER::TEXTURE, "../assets/textures/viking_room.png");
 		std::shared_ptr<GameObject> room = engine.CreateGameObject();
 		room->LoadMesh("../assets/models/viking_room.obj");
 		room->bindMatToMesh(0, room_texture);
-		room->setPosition({ 3.0f, 0.0f, 3.0f });*/
+		room->setPosition({ 3.0f, 0.0f, 3.0f });
 
-		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::LIGHT_SOURCE);
 		std::shared_ptr<GameObject> cube = engine.CreateCube({ 2.0f, .0f, .0f }, 1.f, { 1.f, .0f, .0f });
 		cube->bindMatToMesh(0, cube_texture);
 
+		// setup scene
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-		//scene->AddGameObject(room);
+		scene->AddGameObject(room);
 		scene->AddGameObject(cube);
 
-
-		std::shared_ptr<LightObject> light = std::make_shared<LightObject>();
-		scene->AddLight(light);
-
-		std::shared_ptr<LightObject> light2 = std::make_shared<LightObject>();
-		scene->AddLight(light2);
-
+		// set scene and color mode
 		engine.setScene(scene);
-		//engine.SetColorMode(ColorMode::NORMALMAP);
+		engine.SetColorMode(ColorMode::NORMALMAP);
 
-
+		// set keys to switch fill mode
 		std::function<void()> wireframemode = [&engine]() { engine.SetWireframeMode(); };
 		engine.BindKeyToFunc(GLFW_KEY_Q, wireframemode, ActionType::R3D_PRESS);
 
@@ -41,12 +37,8 @@ int main()
 		std::function<void()> pointmode = [&engine]() { engine.SetPointMode(); };
 		engine.BindKeyToFunc(GLFW_KEY_R, pointmode, ActionType::R3D_PRESS);
 
-		int init = 0;
-		// running loop
 		do
 		{
-			// cube->setPosition(cube->getPosition() + glm::vec3{0.0001f, 0.f, 0.f});
-
 			engine.update();
 			engine.draw();
 		} while (!engine.shouldClose());
