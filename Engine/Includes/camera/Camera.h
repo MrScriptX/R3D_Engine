@@ -1,14 +1,14 @@
 #ifndef R3DENGINE_CAMERA_H_
 #define R3DENGINE_CAMERA_H_
 
+#include <array>
 #include <bitset>
 #include <iostream>
 #include <memory>
-#include <array>
 
+#include "../graphics/CameraUBO.h"
 #include "../graphics/Graphics.h"
 #include "../graphics/Math.h"
-#include "../graphics/CameraUBO.h"
 
 class Camera
 {
