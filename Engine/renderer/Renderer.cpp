@@ -27,6 +27,11 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	setupCommandPool();
 
 	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_graphic);
+
+	createDepthResources();
+	createFramebuffer();
+	createDescriptorPool();
+	allocateCommandBuffers();
 }
 
 Renderer::~Renderer()
@@ -196,32 +201,17 @@ void Renderer::SetColorMode(const ColorMode map)
 	recreateSwapchain();
 }
 
-VkDevice& Renderer::getDevice()
+const VkDevice& Renderer::GetDevice()
 {
 	return m_graphic.device;
 }
 
-VkDescriptorPool& Renderer::getDescriptorPool()
-{
-	return m_graphic.descriptor_pool;
-}
-
-VkDescriptorSetLayout& Renderer::getDescriptorSetLayout()
-{
-	return m_graphic.descriptor_set_layout;
-}
-
-const size_t Renderer::getNumberCommandBuffer()
-{
-	return m_graphic.command_buffers.size();
-}
-
-VkFramebuffer& Renderer::getFrameBuffer(const size_t& i)
+VkFramebuffer& Renderer::GetFrameBuffer(const size_t& i)
 {
 	return m_graphic.framebuffers[i];
 }
 
-VkCommandBuffer& Renderer::getCommandBuffer(const size_t& i)
+VkCommandBuffer& Renderer::GetCommandBuffer(const size_t& i)
 {
 	return m_graphic.command_buffers[i];
 }
@@ -234,11 +224,6 @@ std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
 std::unique_ptr<VulkanPipeline>& Renderer::GetPipelineFactory()
 {
 	return mp_pipelines_manager;
-}
-
-const int Renderer::getFrameIndex()
-{
-	return m_current_image;
 }
 
 const bool Renderer::IsUpdated()
@@ -254,11 +239,6 @@ const bool Renderer::NeedUpdate(const size_t& i)
 void Renderer::SetUpdated(const size_t& i)
 {
 	m_is_updated[i] = false;
-}
-
-const uint32_t& Renderer::GetHeight()
-{
-	return m_swapchain->GetHeigth();
 }
 
 void Renderer::destroyBuffers(Buffer& buffer)
@@ -277,7 +257,7 @@ void Renderer::destroyBuffers(Buffer& buffer)
 	vkFreeMemory(m_graphic.device, buffer.vertex_memory, nullptr);
 }
 
-void Renderer::createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer)
+void Renderer::CreateVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer)
 {
 	VkDeviceSize buffer_size = sizeof(vertices->at(0)) * vertices->size();
 
@@ -299,7 +279,7 @@ void Renderer::createVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertice
 	vkFreeMemory(m_graphic.device, staging_buffer_memory, nullptr);
 }
 
-void Renderer::createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer)
+void Renderer::CreateIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer)
 {
 	VkDeviceSize buffer_size = sizeof(indices->at(0)) * indices->size();
 
@@ -319,13 +299,6 @@ void Renderer::createIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indice
 
 	vkDestroyBuffer(m_graphic.device, staging_buffer, nullptr);
 	vkFreeMemory(m_graphic.device, staging_buffer_mem, nullptr);
-}
-
-void Renderer::createUBO(VkBuffer& uniform_buffer, VkDeviceMemory& uniform_memory)
-{
-	VkDeviceSize buffer_size = sizeof(UniformBufferObject);
-	m_pBufferFactory->createBuffer(uniform_buffer, uniform_memory, buffer_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-	                               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 }
 
 void Renderer::CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size)
@@ -349,7 +322,7 @@ void Renderer::allocateCommandBuffers()
 	}
 }
 
-void Renderer::beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer)
+void Renderer::BeginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer)
 {
 	// reset command buffer
 	if (vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VK_SUCCESS)
@@ -385,7 +358,7 @@ void Renderer::beginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFrame
 	m_pRenderpass->beginRenderPass(commandBuffer, renderPassInfo);
 }
 
-void Renderer::endRecordCommandBuffers(VkCommandBuffer& commandBuffer)
+void Renderer::EndRecordCommandBuffers(VkCommandBuffer& commandBuffer)
 {
 	m_pRenderpass->endRenderPass(commandBuffer);
 
@@ -442,20 +415,6 @@ void Renderer::createFramebuffer()
 		{
 			throw std::runtime_error("failed to create framebuffer!");
 		}
-	}
-}
-
-void Renderer::createCommandPool()
-{
-	VkCommandPoolCreateInfo pool_info = {};
-	pool_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	pool_info.pNext = nullptr;
-	pool_info.queueFamilyIndex = m_graphic.queue_indices.graphic_family;
-	pool_info.flags = 0;
-
-	if (vkCreateCommandPool(m_graphic.device, &pool_info, nullptr, &m_graphic.command_pool) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to create command pool!");
 	}
 }
 
@@ -722,90 +681,6 @@ void Renderer::cleanSwapchain()
 	vkDestroySwapchainKHR(m_graphic.device, m_graphic.swapchain, nullptr);
 }
 
-bool Renderer::checkDeviceExtensionSupport(VkPhysicalDevice device)
-{
-	uint32_t extension_count;
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
-
-	std::vector<VkExtensionProperties> availableExtensions(extension_count);
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, availableExtensions.data());
-
-	std::set<std::string> requiredExtensions(m_graphic.extensions.device_extensions.begin(), m_graphic.extensions.device_extensions.end());
-
-	for (const auto& extension : availableExtensions)
-	{
-		requiredExtensions.erase(extension.extensionName);
-	}
-
-	return requiredExtensions.empty();
-}
-
-bool Renderer::checkDeviceSuitability(VkPhysicalDevice device)
-{
-	bool swapChainAdequate = false;
-
-	VkPhysicalDeviceProperties deviceProperties;
-	VkPhysicalDeviceFeatures deviceFeatures;
-	vkGetPhysicalDeviceProperties(device, &deviceProperties);
-	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-
-	if (!(deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader))
-	{
-		return false;
-	}
-
-	QueueFamilyIndices indices = findQueueFamily(device);
-
-	bool extensionsSupported = checkDeviceExtensionSupport(device);
-
-	if (extensionsSupported)
-	{
-		SwapchainDetails swapChainSupport = querySwapChainSupport(device);
-		swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
-	}
-
-	VkPhysicalDeviceFeatures supportedFeatures;
-	vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
-
-	return indices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
-}
-
-bool Renderer::checkValidationLayerSupport()
-{
-	uint32_t layer_count = 0;
-	vkEnumerateInstanceLayerProperties(&layer_count, nullptr);
-
-	std::vector<VkLayerProperties> available_layers(layer_count);
-	vkEnumerateInstanceLayerProperties(&layer_count, available_layers.data());
-
-	/*std::cout << "available layer:" << std::endl;
-	for (const auto& extension : available_layers)
-	{
-	    std::cout << "\t" << extension.layerName << std::endl;
-	}*/
-
-	for (const char* layerName : m_graphic.extensions.validationLayers)
-	{
-		bool layerFound = false;
-
-		for (const auto& layerProperties : available_layers)
-		{
-			if (strcmp(layerName, layerProperties.layerName) == 0)
-			{
-				layerFound = true;
-				break;
-			}
-		}
-
-		if (!layerFound)
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
 uint32_t Renderer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
@@ -824,7 +699,7 @@ uint32_t Renderer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags pro
 
 void Renderer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 {
-	VkCommandBuffer commandBuffer = beginCommands();
+	VkCommandBuffer commandBuffer = beginCommands(); // not optimized, should use command buffer of frame instead of new one
 
 	VkBufferCopy copyRegion = {};
 	copyRegion.size = size;
@@ -991,60 +866,6 @@ void Renderer::transitionImageLayout(VkImage image, VkFormat format, VkImageLayo
 	endCommands(commandBuffer);
 }
 
-VkSurfaceFormatKHR Renderer::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
-{
-	if (availableFormats.size() == 1 && availableFormats[0].format == VK_FORMAT_UNDEFINED)
-	{
-		return { VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
-	}
-
-	for (const auto& availableFormat : availableFormats)
-	{
-		if (availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
-		{
-			return availableFormat;
-		}
-	}
-
-	return availableFormats[0];
-}
-
-VkPresentModeKHR Renderer::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> availablePresentModes)
-{
-	VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
-
-	for (const auto& availablePresentMode : availablePresentModes)
-	{
-		if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
-		{
-			return availablePresentMode;
-		}
-		else if (availablePresentMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
-		{
-			bestMode = availablePresentMode;
-		}
-	}
-
-	return bestMode;
-}
-
-VkExtent2D Renderer::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
-{
-	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
-	{
-		return capabilities.currentExtent;
-	}
-	else
-	{
-		VkExtent2D actualExtent = { *WIDTH.get(), *HEIGHT.get() };
-
-		actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
-		actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
-
-		return actualExtent;
-	}
-}
-
 SwapchainDetails Renderer::querySwapChainSupport(VkPhysicalDevice device)
 {
 	SwapchainDetails details;
@@ -1107,22 +928,6 @@ QueueFamilyIndices Renderer::findQueueFamily(VkPhysicalDevice device)
 	}
 
 	return indices;
-}
-
-std::vector<const char*> Renderer::getRequiredExtensions()
-{
-	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions;
-	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-
-	if (m_graphic.validation_layer_enable)
-	{
-		extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-	}
-
-	return extensions;
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL Renderer::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code,

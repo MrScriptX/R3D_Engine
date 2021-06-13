@@ -1,7 +1,7 @@
 #ifndef R3DENGINE_LIGHT_H_
 #define R3DENGINE_LIGHT_H_
 
-#include "../graphics/Vertex.h"
+#include "../graphics/SceneUBO.h"
 
 enum class TLIGHT
 {
@@ -22,14 +22,14 @@ class LightObject
 	void SetAmbientStrength(const float ambient);
 	void SetDiffuseStrength(const float diffuse);
 	void SetSpecularStrength(const float specular);
-	void SetProperties(const LightProperties properties);
+	void SetProperties(const DirectionalLight properties);
 
-	const LightProperties& GetProperties();
+	const DirectionalLight& GetProperties();
 	const TLIGHT GetType();
 
   private:
 	TLIGHT m_type;
-	LightProperties m_properties;
+	DirectionalLight m_properties;
 };
 
 #endif // !R3DENGINE_LIGHT_H_

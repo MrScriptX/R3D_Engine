@@ -71,36 +71,4 @@ template <> struct hash<Vertex>
 };
 } // namespace std
 
-struct UniformBufferObject
-{
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 proj;
-	glm::mat4 view_inv;
-};
-
-// Scene Data
-
-constexpr size_t MAX_LIGHT = 10;
-
-struct LightProperties
-{
-	alignas(4) float ambient_strength;
-	alignas(4) float diffuse_strength;
-	alignas(4) float specular_strength;
-	alignas(16) glm::vec3 color;
-	alignas(16) glm::vec3 position;
-	alignas(16) glm::vec3 direction;
-};
-
-struct SceneUBO
-{
-	alignas(4) unsigned int nb_directional = 0;
-	alignas(4) unsigned int nb_spotlight = 0;
-	alignas(4) unsigned int nb_pointlight = 0;
-	LightProperties directionals[MAX_LIGHT];
-	LightProperties spots[MAX_LIGHT];
-	LightProperties points[MAX_LIGHT];
-};
-
 #endif // !R3DENGINE_VERTEX_H_

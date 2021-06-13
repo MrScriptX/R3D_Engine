@@ -20,7 +20,7 @@ void VulkanDescriptor::createDescriptorPool()
 	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	pool_info.poolSizeCount = static_cast<uint32_t>(pool_sizes.size());
 	pool_info.pPoolSizes = pool_sizes.data();
-	pool_info.maxSets = 4;
+	pool_info.maxSets = 100;
 
 	if (vkCreateDescriptorPool(m_graphic.device, &pool_info, nullptr, &m_graphic.descriptor_pool) != VK_SUCCESS)
 	{

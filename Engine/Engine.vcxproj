@@ -72,10 +72,13 @@
     <ClInclude Include="Includes\camera\Controller.h" />
     <ClInclude Include="Includes\Engine.h" />
     <ClInclude Include="Includes\errors.h" />
+    <ClInclude Include="Includes\graphics\CameraUBO.h" />
     <ClInclude Include="Includes\graphics\Config.h" />
     <ClInclude Include="Includes\graphics\Geometry.h" />
     <ClInclude Include="Includes\graphics\Graphics.h" />
+    <ClInclude Include="Includes\graphics\LightProperties.h" />
     <ClInclude Include="Includes\graphics\Math.h" />
+    <ClInclude Include="Includes\graphics\SceneUBO.h" />
     <ClInclude Include="Includes\graphics\Shaders.h" />
     <ClInclude Include="Includes\graphics\Vertex.h" />
     <ClInclude Include="Includes\Logger.h" />
@@ -104,6 +107,7 @@
     <None Include="..\assets\shaders\HLSL\shader.vert" />
     <None Include="..\assets\shaders\HLSL\shader_compiler.bat" />
     <None Include="..\assets\shaders\HLSL\texture_shader.frag" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
