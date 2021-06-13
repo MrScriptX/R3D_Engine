@@ -18,6 +18,8 @@ class Scene
 
 	R3DResult AddGameObject(std::shared_ptr<GameObject> gameobject);
 	R3DResult RemoveGameObject(std::shared_ptr<GameObject> gameobject);
+	R3DResult AddLight(std::shared_ptr<LightObject> lightobject);
+	R3DResult RemoveLight(std::shared_ptr<LightObject> lightobject);
 
 	R3DResult AddLight(std::shared_ptr<DirectionalLight> light);
 	R3DResult AddLight(std::shared_ptr<PointLight> light);

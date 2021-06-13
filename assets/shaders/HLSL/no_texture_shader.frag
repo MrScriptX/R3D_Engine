@@ -38,6 +38,7 @@ layout(std140, set = 1, binding = 0) uniform Lights {
     uint nb_directionallight;
     uint nb_spotlight;
     uint nb_pointlight;
+
     DirectionalLight directionals[10];
     SpotLight spots[10];
     PointLight points[10];

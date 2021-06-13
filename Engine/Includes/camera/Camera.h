@@ -2,6 +2,7 @@
 #define R3DENGINE_CAMERA_H_
 
 #include <array>
+
 #include <bitset>
 #include <iostream>
 #include <memory>
