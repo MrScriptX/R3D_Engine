@@ -56,35 +56,34 @@ R3DResult Scene::RemoveGameObject(std::shared_ptr<GameObject> gameobject)
 	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }
 
-R3DResult Scene::AddLight(std::shared_ptr<LightObject> lightobject)
+R3DResult Scene::AddLight(std::shared_ptr<DirectionalLight> light)
 {
-	switch (lightobject->GetType())
-	{
-	case TLIGHT::DIRECTIONAL:
-		return addDirectionalLight(lightobject);
-	case TLIGHT::SPOT:
-		return addSpotLight(lightobject);
-	case TLIGHT::POINT:
-		return addPointLight(lightobject);
-	default:
-		return R3DResult::R3D_OBJECT_NOT_ENOUGH_MEMORY; // change error
-	}
+	return addDirectionalLight(light);
 }
 
-R3DResult Scene::RemoveLight(std::shared_ptr<LightObject> lightobject)
+R3DResult Scene::AddLight(std::shared_ptr<PointLight> light)
 {
-	switch (lightobject->GetType())
-	{
-	case TLIGHT::DIRECTIONAL:
-		return removeDirectionalLight(lightobject);
-	case TLIGHT::SPOT:
-		return removeSpotLight(lightobject);
-	case TLIGHT::POINT:
-		return removePointLight(lightobject);
-	default:
-		return R3DResult::R3D_OBJECT_NOT_FOUND; // change error
-		break;
-	}
+	return addPointLight(light);
+}
+
+R3DResult Scene::AddLight(std::shared_ptr<SpotLight> light)
+{
+	return addSpotLight(light);
+}
+
+R3DResult Scene::RemoveLight(std::shared_ptr<DirectionalLight> light)
+{
+	return removeDirectionalLight(light);
+}
+
+R3DResult Scene::RemoveLight(std::shared_ptr<PointLight> light)
+{
+	return removePointLight(light);
+}
+
+R3DResult Scene::RemoveLight(std::shared_ptr<SpotLight> lightobject)
+{
+	return removeSpotLight(lightobject);
 }
 
 void Scene::Load(std::shared_ptr<Renderer> p_renderer)
@@ -161,7 +160,7 @@ void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
 	{
 		if (vp_directional_lights[i] != nullptr)
 		{
-			ubo.directionals[i] = vp_directional_lights[i]->GetProperties();
+			ubo.directionals[i] = *vp_directional_lights[i].get();
 			++ubo.nb_directional;
 		}
 	}
@@ -170,7 +169,7 @@ void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
 	{
 		if (vp_spot_lights[i] != nullptr)
 		{
-			ubo.spots[i] = vp_spot_lights[i]->GetProperties();
+			ubo.spots[i] = *vp_spot_lights[i].get();
 			++ubo.nb_spotlight;
 		}
 	}
@@ -179,7 +178,7 @@ void Scene::UpdateSceneUBO(std::shared_ptr<Renderer> p_renderer)
 	{
 		if (vp_point_lights[i] != nullptr)
 		{
-			ubo.points[i] = vp_point_lights[i]->GetProperties();
+			ubo.points[i] = *vp_point_lights[i].get();
 			++ubo.nb_pointlight;
 		}
 	}
@@ -220,7 +219,7 @@ std::vector<std::shared_ptr<GameObject>>& Scene::getObjects()
 	return vp_objects;
 }
 
-R3DResult Scene::addDirectionalLight(std::shared_ptr<LightObject> lightobject)
+R3DResult Scene::addDirectionalLight(std::shared_ptr<DirectionalLight> lightobject)
 {
 	int32_t empty_index = -1;
 	for (size_t i = 0; i < vp_directional_lights.max_size(); i++)
@@ -245,7 +244,7 @@ R3DResult Scene::addDirectionalLight(std::shared_ptr<LightObject> lightobject)
 	return R3DResult::R3D_SUCCESS;
 }
 
-R3DResult Scene::addSpotLight(std::shared_ptr<LightObject> lightobject)
+R3DResult Scene::addSpotLight(std::shared_ptr<SpotLight> lightobject)
 {
 	int32_t empty_index = -1;
 	for (size_t i = 0; i < vp_spot_lights.max_size(); i++)
@@ -270,12 +269,12 @@ R3DResult Scene::addSpotLight(std::shared_ptr<LightObject> lightobject)
 	return R3DResult::R3D_SUCCESS;
 }
 
-R3DResult Scene::addPointLight(std::shared_ptr<LightObject> lightobject)
+R3DResult Scene::addPointLight(std::shared_ptr<PointLight> light)
 {
 	int32_t empty_index = -1;
 	for (size_t i = 0; i < vp_point_lights.max_size(); i++)
 	{
-		if (vp_point_lights[i] == lightobject)
+		if (vp_point_lights[i] == light)
 		{
 			return R3DResult::R3D_OBJECT_IN_SCENE;
 		}
@@ -288,14 +287,14 @@ R3DResult Scene::addPointLight(std::shared_ptr<LightObject> lightobject)
 	if (empty_index == -1)
 		return R3DResult::R3D_OBJECT_NOT_ENOUGH_MEMORY;
 	else
-		vp_point_lights[empty_index] = lightobject;
+		vp_point_lights[empty_index] = light;
 
 	m_light_changed = true;
 
 	return R3DResult::R3D_SUCCESS;
 }
 
-R3DResult Scene::removeDirectionalLight(std::shared_ptr<LightObject> lightobject)
+R3DResult Scene::removeDirectionalLight(std::shared_ptr<DirectionalLight> lightobject)
 {
 	for (size_t i = 0; i < vp_directional_lights.max_size(); i++)
 	{
@@ -311,7 +310,7 @@ R3DResult Scene::removeDirectionalLight(std::shared_ptr<LightObject> lightobject
 	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }
 
-R3DResult Scene::removeSpotLight(std::shared_ptr<LightObject> lightobject)
+R3DResult Scene::removeSpotLight(std::shared_ptr<SpotLight> lightobject)
 {
 	for (size_t i = 0; i < vp_spot_lights.max_size(); i++)
 	{
@@ -327,7 +326,7 @@ R3DResult Scene::removeSpotLight(std::shared_ptr<LightObject> lightobject)
 	return R3DResult::R3D_OBJECT_NOT_FOUND;
 }
 
-R3DResult Scene::removePointLight(std::shared_ptr<LightObject> lightobject)
+R3DResult Scene::removePointLight(std::shared_ptr<PointLight> lightobject)
 {
 	for (size_t i = 0; i < vp_point_lights.max_size(); i++)
 	{

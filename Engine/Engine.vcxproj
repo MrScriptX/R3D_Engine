@@ -76,6 +76,7 @@
     <ClInclude Include="Includes\graphics\Config.h" />
     <ClInclude Include="Includes\graphics\Geometry.h" />
     <ClInclude Include="Includes\graphics\Graphics.h" />
+    <ClInclude Include="Includes\graphics\LightProperties.h" />
     <ClInclude Include="Includes\graphics\Math.h" />
     <ClInclude Include="Includes\graphics\SceneUBO.h" />
     <ClInclude Include="Includes\graphics\Shaders.h" />
