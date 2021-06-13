@@ -40,12 +40,12 @@ void LightObject::SetSpecularStrength(const float specular)
 	m_properties.specular_strength = specular;
 }
 
-void LightObject::SetProperties(const LightProperties properties)
+void LightObject::SetProperties(const DirectionalLight properties)
 {
 	m_properties = properties;
 }
 
-const LightProperties& LightObject::GetProperties()
+const DirectionalLight& LightObject::GetProperties()
 {
 	return m_properties;
 }

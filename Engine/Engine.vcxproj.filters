@@ -197,6 +197,9 @@
     <ClInclude Include="Includes\graphics\SceneUBO.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Includes\graphics\LightProperties.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\shaders\HLSL\no_texture_shader.frag">

@@ -2,10 +2,10 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(binding = 0) uniform UniformBufferObject {
+    vec3 position;
     mat4 model;
     mat4 view;
     mat4 proj;
-    mat4 view_inv;
 } ubo;
 
 layout(location = 0) in vec3 inPosition;
@@ -26,5 +26,5 @@ void main() {
     fragNormal = inNormal;
     fragTexCoord = inTexCoord;
     fragPosition = vec3(ubo.model * vec4(inPosition, 1.0));
-    viewPos = vec3(0.0, 0.0, 0.0); //vec3(ubo.view_inv[3][0], ubo.view_inv[3][1], ubo.view_inv[3][2]); maybe view-space is better
+    viewPos = ubo.position;
 }

@@ -76,6 +76,7 @@
     <ClInclude Include="Includes\graphics\Config.h" />
     <ClInclude Include="Includes\graphics\Geometry.h" />
     <ClInclude Include="Includes\graphics\Graphics.h" />
+    <ClInclude Include="Includes\graphics\LightProperties.h" />
     <ClInclude Include="Includes\graphics\Math.h" />
     <ClInclude Include="Includes\graphics\SceneUBO.h" />
     <ClInclude Include="Includes\graphics\Shaders.h" />
@@ -106,10 +107,7 @@
     <None Include="..\assets\shaders\HLSL\shader.vert" />
     <None Include="..\assets\shaders\HLSL\shader_compiler.bat" />
     <None Include="..\assets\shaders\HLSL\texture_shader.frag" />
-<<<<<<< HEAD
-=======
     <None Include="ClassDiagram.cd" />
->>>>>>> develop
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

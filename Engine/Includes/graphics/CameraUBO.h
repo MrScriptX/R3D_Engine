@@ -5,10 +5,10 @@
 
 struct UniformBufferObject
 {
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 proj;
-	glm::mat4 view_inv;
+	alignas(16) glm::vec3 position;
+	alignas(16) glm::mat4 model;
+	alignas(16) glm::mat4 view;
+	alignas(16) glm::mat4 proj;
 };
 
 #endif // !R3DENGINE_CAMERA_UBO_H_
