@@ -6,10 +6,6 @@ VulkanDevice::VulkanDevice(Graphics& m_graphic) : m_graphic(m_graphic)
 	createLogicalDevice();
 }
 
-VulkanDevice::~VulkanDevice()
-{
-}
-
 void VulkanDevice::choosePhysicalDevice()
 {
 	uint32_t device_count = 0;

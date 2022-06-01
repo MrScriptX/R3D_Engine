@@ -24,7 +24,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	setupSwapchain();
 	setupRenderPass();
 	setupDescriptorSetLayout();
-	setupCommandPool();
+	createCommandPool();
 
 	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_graphic);
 
@@ -32,53 +32,13 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	createFramebuffer();
 	createDescriptorPool();
 	allocateCommandBuffers();
-	
-	m_graphic.imgui_command_buffers.resize(m_graphic.swapchain_images.size());
 
-	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
-	commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	commandBufferAllocateInfo.commandPool = m_graphic.imgui_command_pool;
-	commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	commandBufferAllocateInfo.commandBufferCount = static_cast<uint32_t>(m_graphic.imgui_command_buffers.size());
-
-	if (vkAllocateCommandBuffers(m_graphic.device, &commandBufferAllocateInfo, m_graphic.imgui_command_buffers.data()) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Unable to allocate UI command buffers!");
-	}
-
-	// ImGui setup
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); 
-	(void)io;
-
-	ImGui::StyleColorsDark();
-
-	ImGui_ImplGlfw_InitForVulkan(&window, true);
-	ImGui_ImplVulkan_InitInfo init_info = {};
-	init_info.Instance = m_graphic.instance;
-	init_info.PhysicalDevice = m_graphic.physical_device;
-	init_info.Device = m_graphic.device;
-	init_info.QueueFamily = m_graphic.queue_indices.graphic_family;
-	init_info.Queue = m_graphic.graphics_queue;
-	init_info.PipelineCache = VK_NULL_HANDLE;
-	init_info.DescriptorPool = m_graphic.imgui_decriptor_pool;
-	init_info.Allocator = nullptr;
-	init_info.MinImageCount = m_graphic.swapchain_images.size();
-	init_info.ImageCount = m_graphic.framebuffers.size();
-	init_info.CheckVkResultFn = nullptr;
-	ImGui_ImplVulkan_Init(&init_info, m_graphic.imgui_render_pass);
-
-	std::cout << "ImGui Vulkan init" << std::endl;
-
-	VkCommandBuffer command_buffer = beginCommands();
-	ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
-	endCommands(command_buffer);
-	ImGui_ImplVulkan_DestroyFontUploadObjects();
+	initUI(window);
 }
 
 Renderer::~Renderer()
 {
+	// destroy ImGui objects
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -96,7 +56,7 @@ Renderer::~Renderer()
 	}
 
 	vkDestroyCommandPool(m_graphic.device, m_graphic.command_pool, nullptr);
-	vkDestroyCommandPool(m_graphic.device, m_graphic.imgui_command_pool, nullptr);
+	vkDestroyCommandPool(m_graphic.device, m_ui.command_pool, nullptr);
 
 	vkDestroyDevice(m_graphic.device, nullptr);
 
@@ -111,40 +71,6 @@ Renderer::~Renderer()
 
 int32_t Renderer::draw()
 {
-	// record ImGui command
-	VkCommandBufferBeginInfo cmdBufferBegin = {};
-	cmdBufferBegin.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	cmdBufferBegin.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-	if (vkBeginCommandBuffer(m_graphic.imgui_command_buffers[m_current_image], &cmdBufferBegin) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Unable to start recording UI command buffer!");
-	}
-
-	VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-	VkRenderPassBeginInfo renderPassBeginInfo = {};
-	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassBeginInfo.renderPass = m_graphic.imgui_render_pass;
-	renderPassBeginInfo.framebuffer = m_graphic.imgui_framebuffers[m_current_image];
-	renderPassBeginInfo.renderArea.extent.width = m_graphic.swapchain_details.extent.width;
-	renderPassBeginInfo.renderArea.extent.height = m_graphic.swapchain_details.extent.height;
-	renderPassBeginInfo.clearValueCount = 1;
-	renderPassBeginInfo.pClearValues = &clearColor;
-
-	vkCmdBeginRenderPass(m_graphic.imgui_command_buffers[m_current_image], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-	// Grab and record the draw data for Dear Imgui
-	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_graphic.imgui_command_buffers[m_current_image]);
-
-	// End and submit render pass
-	vkCmdEndRenderPass(m_graphic.imgui_command_buffers[m_current_image]);
-	// end record
-
-	if (vkEndCommandBuffer(m_graphic.imgui_command_buffers[m_current_image]) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Failed to record command buffers!");
-	}
-
 	if (m_graphic.validation_layer_enable)
 	{
 		vkQueueWaitIdle(m_graphic.present_queue);
@@ -160,7 +86,7 @@ int32_t Renderer::draw()
 	submit_info.pWaitSemaphores = waitSemaphores;
 	submit_info.pWaitDstStageMask = waitStages;
 
-	std::array<VkCommandBuffer, 2> command_buffers = { m_graphic.command_buffers[m_current_image], m_graphic.imgui_command_buffers[m_current_image] };
+	std::array<VkCommandBuffer, 2> command_buffers = { m_graphic.command_buffers[m_current_image], m_ui.command_buffers[m_current_image] };
 	submit_info.commandBufferCount = command_buffers.size();
 	submit_info.pCommandBuffers = command_buffers.data();
 
@@ -205,6 +131,41 @@ int32_t Renderer::draw()
 	}
 
 	return return_code;
+}
+
+void Renderer::UpdateUI()
+{
+	VkCommandBufferBeginInfo cmdBufferBegin = {};
+	cmdBufferBegin.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	cmdBufferBegin.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	if (vkBeginCommandBuffer(m_ui.command_buffers[m_current_image], &cmdBufferBegin) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Unable to start recording UI command buffer!");
+	}
+
+	VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	VkRenderPassBeginInfo renderPassBeginInfo = {};
+	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassBeginInfo.renderPass = m_graphic.imgui_render_pass;
+	renderPassBeginInfo.framebuffer = m_graphic.imgui_framebuffers[m_current_image];
+	renderPassBeginInfo.renderArea.extent.width = m_graphic.swapchain_details.extent.width;
+	renderPassBeginInfo.renderArea.extent.height = m_graphic.swapchain_details.extent.height;
+	renderPassBeginInfo.clearValueCount = 1;
+	renderPassBeginInfo.pClearValues = &clearColor;
+
+	vkCmdBeginRenderPass(m_ui.command_buffers[m_current_image], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	// Grab and record the draw data for Dear Imgui
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_ui.command_buffers[m_current_image]);
+
+	// End and submit render pass
+	vkCmdEndRenderPass(m_ui.command_buffers[m_current_image]);
+
+	if (vkEndCommandBuffer(m_ui.command_buffers[m_current_image]) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Failed to record command buffers!");
+	}
 }
 
 int32_t Renderer::AcquireNextImage()
@@ -266,9 +227,12 @@ void Renderer::setupDescriptorSetLayout()
 	m_descriptor->createDescriptorSetLayoutLight(); // create light descriptor set layout
 }
 
-void Renderer::setupCommandPool()
+void Renderer::createCommandPool()
 {
 	m_commandPool = std::make_unique<VulkanCommandPool>(m_graphic);
+
+	m_commandPool->CreateCommandPool(m_graphic.command_pool);
+	m_commandPool->CreateCommandPool(m_ui.command_pool);
 }
 
 void Renderer::SetPolygonFillingMode(const VkPolygonMode& mode)
@@ -392,6 +356,7 @@ void Renderer::CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkD
 
 void Renderer::allocateCommandBuffers()
 {
+	// allocate app command buffer
 	m_graphic.command_buffers.resize(m_graphic.framebuffers.size());
 
 	VkCommandBufferAllocateInfo alloc_buffers_info = {};
@@ -403,6 +368,20 @@ void Renderer::allocateCommandBuffers()
 	if (vkAllocateCommandBuffers(m_graphic.device, &alloc_buffers_info, m_graphic.command_buffers.data()) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate command buffers!");
+	}
+
+	// allocate UI command buffer
+	m_ui.command_buffers.resize(m_graphic.swapchain_images.size());
+
+	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
+	commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	commandBufferAllocateInfo.commandPool = m_ui.command_pool;
+	commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	commandBufferAllocateInfo.commandBufferCount = static_cast<uint32_t>(m_ui.command_buffers.size());
+
+	if (vkAllocateCommandBuffers(m_graphic.device, &commandBufferAllocateInfo, m_ui.command_buffers.data()) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Unable to allocate UI command buffers!");
 	}
 }
 
@@ -756,6 +735,39 @@ void Renderer::recreateSwapchain()
 	m_is_updated.set();
 }
 
+void Renderer::initUI(GLFWwindow& window)
+{
+	std::cout << "ImGui Vulkan init" << std::endl;
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForVulkan(&window, true);
+	ImGui_ImplVulkan_InitInfo init_info = {};
+	init_info.Instance = m_graphic.instance;
+	init_info.PhysicalDevice = m_graphic.physical_device;
+	init_info.Device = m_graphic.device;
+	init_info.QueueFamily = m_graphic.queue_indices.graphic_family;
+	init_info.Queue = m_graphic.graphics_queue;
+	init_info.PipelineCache = VK_NULL_HANDLE;
+	init_info.DescriptorPool = m_graphic.imgui_decriptor_pool;
+	init_info.Allocator = nullptr;
+	init_info.MinImageCount = m_graphic.swapchain_images.size();
+	init_info.ImageCount = m_graphic.framebuffers.size();
+	init_info.CheckVkResultFn = nullptr;
+	ImGui_ImplVulkan_Init(&init_info, m_graphic.imgui_render_pass);
+
+	// upload textures to gpu
+	VkCommandBuffer command_buffer = beginCommands();
+	ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+	endCommands(command_buffer);
+	ImGui_ImplVulkan_DestroyFontUploadObjects();
+}
+
 void Renderer::cleanSwapchain()
 {
 	vkDeviceWaitIdle(m_graphic.device);
@@ -777,7 +789,7 @@ void Renderer::cleanSwapchain()
 	}
 
 	vkFreeCommandBuffers(m_graphic.device, m_graphic.command_pool, static_cast<uint32_t>(m_graphic.command_buffers.size()), m_graphic.command_buffers.data());
-	vkFreeCommandBuffers(m_graphic.device, m_graphic.imgui_command_pool, static_cast<uint32_t>(m_graphic.imgui_command_buffers.size()), m_graphic.imgui_command_buffers.data());
+	vkFreeCommandBuffers(m_graphic.device, m_ui.command_pool, static_cast<uint32_t>(m_ui.command_buffers.size()), m_ui.command_buffers.data());
 
 	mp_pipelines_manager->DestroyPipelines();
 

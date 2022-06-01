@@ -221,5 +221,6 @@ void Engine::update()
 
 void Engine::draw()
 {
+	mp_renderer->UpdateUI();
 	mp_renderer->draw();
 }

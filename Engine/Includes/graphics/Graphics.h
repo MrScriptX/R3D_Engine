@@ -42,6 +42,12 @@ struct SwapchainImage
 	VkExtent2D extent;
 };
 
+struct UIObject
+{
+	VkCommandPool command_pool;
+	std::vector<VkCommandBuffer> command_buffers;
+};
+
 struct Graphics
 {
 #ifdef NDEBUG
@@ -69,10 +75,8 @@ struct Graphics
 	std::vector<VkFramebuffer> framebuffers;
 	std::vector<VkFramebuffer> imgui_framebuffers;
 
-	VkCommandPool imgui_command_pool;
 	VkCommandPool command_pool;
 	std::vector<VkCommandBuffer> command_buffers; // replace VkCommandBuffer with CommandBuffer
-	std::vector<VkCommandBuffer> imgui_command_buffers;
 
 	std::vector<VkSemaphore> semaphores_render_finished;
 	std::vector<VkSemaphore> semaphores_image_available;

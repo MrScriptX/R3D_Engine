@@ -34,6 +34,9 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{c606f9d2-a452-4947-8432-abe1a04f9b7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\UI">
+      <UniqueIdentifier>{e0688573-f834-4be7-8363-ea5ac447cdc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Logger.cpp">

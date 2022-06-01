@@ -9,10 +9,9 @@ class VulkanCommandPool
 {
   public:
 	VulkanCommandPool(Graphics& m_graphic);
-	~VulkanCommandPool();
+	~VulkanCommandPool() = default;
 
-	void createCommandPool();
-	void createImGuiCommandPool();
+	void CreateCommandPool(VkCommandPool& pool);
 
   private:
 	Graphics& m_graphic;

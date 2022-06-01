@@ -39,6 +39,7 @@ class Renderer
 	~Renderer();
 
 	int32_t draw();
+	void UpdateUI();
 	int32_t AcquireNextImage();
 	void WaitForSwapchainImageFence();
 
@@ -93,13 +94,15 @@ class Renderer
 	void setupSwapchain();
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
-	void setupCommandPool();
+	void createCommandPool();
 	void createFramebuffer();
 	void createDescriptorPool();
 	void allocateCommandBuffers();
 	void createDepthResources();
 
 	void recreateSwapchain();
+
+	void initUI(GLFWwindow& window);
 
 	SwapchainDetails querySwapChainSupport(VkPhysicalDevice device);
 	QueueFamilyIndices findQueueFamily(VkPhysicalDevice device);
@@ -123,6 +126,7 @@ class Renderer
 
 	VkDebugReportCallbackEXT callback;
 	Graphics m_graphic;
+	UIObject m_ui;
 	std::unique_ptr<uint32_t> WIDTH;
 	std::unique_ptr<uint32_t> HEIGHT;
 
