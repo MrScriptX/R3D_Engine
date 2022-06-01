@@ -3,7 +3,16 @@
 Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_resolution_clock::now())
 {
 	mp_main_camera = std::make_shared<Camera>();
+	
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
+
+	ConsoleUI& console = m_console;
+
+	std::function<void()> console_hide = [&console]() { 
+		console.SetActive(!console.IsActive());
+	};
+	BindKeyToFunc(GLFW_KEY_GRAVE_ACCENT, console_hide, ActionType::R3D_PRESS);
+
 	mp_config = std::make_shared<Config>();
 	mp_config->width = width;
 	mp_config->height = height;
@@ -193,26 +202,12 @@ void Engine::update()
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 	mp_scene->UpdateSceneUBO(mp_renderer);
 
-	// ImGui draw
+	// Update UI
 	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	static float f = 0.0f;
-	static int counter = 0;
-
-	ImGui::Begin("Renderer Options");
-	ImGui::Text("This is some useful text.");
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-	if (ImGui::Button("Button"))
-	{
-		counter++;
-	}
-	ImGui::SameLine();
-	ImGui::Text("counter = %d", counter);
-
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::End();
+	m_console.Update();
 
 	ImGui::Render();
 

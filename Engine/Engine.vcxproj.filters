@@ -126,6 +126,9 @@
     <ClCompile Include="..\dependencies\imgui-1.87\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="ui\ConsoleUI.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Includes\world\GameObject.h">
@@ -247,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="..\dependencies\imgui-1.87\imstb_truetype.h">
       <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\ui\ConsoleUI.h">
+      <Filter>Engine\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

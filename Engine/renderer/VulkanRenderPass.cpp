@@ -2,8 +2,8 @@
 
 VulkanRenderPass::VulkanRenderPass(Graphics& graphic, VkFormat depthFormat) : m_graphic(graphic)
 {
-	createRenderPass(depthFormat);
-	createImGuiRenderPass();
+	CreateRenderPass(depthFormat);
+	CreateImGuiRenderPass();
 }
 
 VulkanRenderPass::~VulkanRenderPass()
@@ -20,7 +20,7 @@ void VulkanRenderPass::endRenderPass(VkCommandBuffer& commandBuffer)
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void VulkanRenderPass::createRenderPass(VkFormat depthFormat)
+void VulkanRenderPass::CreateRenderPass(VkFormat depthFormat)
 {
 	VkAttachmentDescription depthAttachment = {};
 	depthAttachment.format = depthFormat;
@@ -80,7 +80,7 @@ void VulkanRenderPass::createRenderPass(VkFormat depthFormat)
 	}
 }
 
-void VulkanRenderPass::createImGuiRenderPass()
+void VulkanRenderPass::CreateImGuiRenderPass()
 {
 	VkAttachmentDescription attachment = {};
 	attachment.format = m_graphic.swapchain_details.format;
