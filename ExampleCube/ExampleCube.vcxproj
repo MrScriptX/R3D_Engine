@@ -78,6 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -116,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\glfw-3.3.4\include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)\dependencies\assimp-5.0.1\include;$(SolutionDir)\Engine\Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\glfw-3.3.4\include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)\dependencies\assimp-5.0.1\include;$(SolutionDir)\dependencies\imgui-1.87;$(SolutionDir)\Engine\Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

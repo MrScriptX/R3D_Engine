@@ -10,7 +10,7 @@ class VulkanDevice
 {
   public:
 	VulkanDevice(Graphics& m_graphic);
-	~VulkanDevice();
+	~VulkanDevice() = default;
 
   private:
 	void choosePhysicalDevice();

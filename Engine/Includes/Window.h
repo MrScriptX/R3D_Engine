@@ -9,6 +9,7 @@
 #endif // !_GLFW3_
 
 #include <memory>
+#include <imgui.h>
 
 #include "camera/Controller.h"
 #include "graphics/Config.h"
@@ -23,7 +24,6 @@ class Window
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 	GLFWwindow& getHandle();
-	// Camera& getCamera();
 
   private:
 	GLFWwindow* m_handle;

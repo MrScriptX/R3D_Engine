@@ -28,6 +28,44 @@ void VulkanDescriptor::createDescriptorPool()
 	}
 }
 
+void VulkanDescriptor::createImGuiDescriptorPool()
+{
+	std::array<VkDescriptorPoolSize, 11> pool_sizes = {};
+	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_SAMPLER;
+	pool_sizes[0].descriptorCount = 1000;
+	pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	pool_sizes[1].descriptorCount = 1000;
+	pool_sizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	pool_sizes[2].descriptorCount = 1000;
+	pool_sizes[3].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+	pool_sizes[3].descriptorCount = 1000;
+	pool_sizes[4].type = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+	pool_sizes[4].descriptorCount = 1000;
+	pool_sizes[5].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+	pool_sizes[5].descriptorCount = 1000;
+	pool_sizes[6].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	pool_sizes[6].descriptorCount = 1000;
+	pool_sizes[7].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	pool_sizes[7].descriptorCount = 1000;
+	pool_sizes[8].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+	pool_sizes[8].descriptorCount = 1000;
+	pool_sizes[9].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+	pool_sizes[9].descriptorCount = 1000;
+	pool_sizes[10].type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+	pool_sizes[10].descriptorCount = 1000;
+
+	VkDescriptorPoolCreateInfo pool_info = {};
+	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	pool_info.poolSizeCount = static_cast<uint32_t>(pool_sizes.size());
+	pool_info.pPoolSizes = pool_sizes.data();
+	pool_info.maxSets = 100;
+
+	if (vkCreateDescriptorPool(m_graphic.device, &pool_info, nullptr, &m_graphic.imgui_decriptor_pool) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create descriptor pool!");
+	}
+}
+
 void VulkanDescriptor::createDescriptorSetLayout()
 {
 	VkDescriptorSetLayoutBinding uboLayoutBinding = {};

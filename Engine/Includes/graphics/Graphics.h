@@ -42,6 +42,12 @@ struct SwapchainImage
 	VkExtent2D extent;
 };
 
+struct UIObject
+{
+	VkCommandPool command_pool;
+	std::vector<VkCommandBuffer> command_buffers;
+};
+
 struct Graphics
 {
 #ifdef NDEBUG
@@ -67,6 +73,7 @@ struct Graphics
 	std::vector<VkImageView> images_view;
 
 	std::vector<VkFramebuffer> framebuffers;
+	std::vector<VkFramebuffer> imgui_framebuffers;
 
 	VkCommandPool command_pool;
 	std::vector<VkCommandBuffer> command_buffers; // replace VkCommandBuffer with CommandBuffer
@@ -76,6 +83,7 @@ struct Graphics
 	std::vector<VkFence> fences_in_flight;
 
 	VkRenderPass render_pass;
+	VkRenderPass imgui_render_pass;
 
 	VkBuffer uniform_buffer;
 	VkDeviceMemory uniform_memory;
@@ -83,6 +91,7 @@ struct Graphics
 	VkDescriptorSetLayout light_descriptor_layout = VK_NULL_HANDLE;
 	VkDescriptorSetLayout descriptor_set_layout = VK_NULL_HANDLE;
 	VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
+	VkDescriptorPool imgui_decriptor_pool = VK_NULL_HANDLE;
 
 	VkImage depth_image;
 	VkDeviceMemory depth_memory;

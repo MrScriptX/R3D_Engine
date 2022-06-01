@@ -28,9 +28,22 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 
 	pController->setInput(static_cast<int32_t>(key), static_cast<int32_t>(scancode), static_cast<int32_t>(mods), static_cast<int32_t>(action));
 
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	}
+	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		if (pController->IsMouseLock())
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			pController->SetMouseState(false);
+		}
+		else
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			pController->SetMouseState(true);
+		}
 	}
 }
 
@@ -38,9 +51,16 @@ void Window::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	Controller* pController = static_cast<Controller*>(glfwGetWindowUserPointer(window));
 
-	pController->updateRotation(xpos, ypos);
-
-	glfwSetCursorPos(window, 0.0, 0.0);
+	if (pController->IsMouseLock())
+	{
+		pController->updateRotation(xpos, ypos);
+		glfwSetCursorPos(window, 0.0, 0.0);
+	}
+	else
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MousePos = ImVec2(xpos, ypos);
+	}
 }
 
 GLFWwindow& Window::getHandle()

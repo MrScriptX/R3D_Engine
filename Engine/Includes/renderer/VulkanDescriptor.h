@@ -14,6 +14,7 @@ class VulkanDescriptor
 	~VulkanDescriptor();
 
 	void createDescriptorPool();
+	void createImGuiDescriptorPool();
 
 	void createDescriptorSetLayout();
 	void createDescriptorSetLayoutLight();

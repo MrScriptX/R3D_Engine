@@ -3,7 +3,16 @@
 Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_resolution_clock::now())
 {
 	mp_main_camera = std::make_shared<Camera>();
+	
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
+
+	ConsoleUI& console = m_console;
+
+	std::function<void()> console_hide = [&console]() { 
+		console.SetActive(!console.IsActive());
+	};
+	BindKeyToFunc(GLFW_KEY_GRAVE_ACCENT, console_hide, ActionType::R3D_PRESS);
+
 	mp_config = std::make_shared<Config>();
 	mp_config->width = width;
 	mp_config->height = height;
@@ -193,10 +202,20 @@ void Engine::update()
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 	mp_scene->UpdateSceneUBO(mp_renderer);
 
+	// Update UI
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	m_console.Update();
+
+	ImGui::Render();
+
 	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }
 
 void Engine::draw()
 {
+	mp_renderer->UpdateUI();
 	mp_renderer->draw();
 }
