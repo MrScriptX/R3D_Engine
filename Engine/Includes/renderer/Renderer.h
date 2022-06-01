@@ -14,6 +14,10 @@
 #include <iostream>
 #include <memory>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_vulkan.h>
+
 #include "VulkanBuffer.h"
 #include "VulkanCommandPool.h"
 #include "VulkanDescriptor.h"

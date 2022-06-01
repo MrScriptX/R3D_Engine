@@ -43,6 +43,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\dependencies\imgui-1.87\imgui.cpp" />
+    <ClCompile Include="..\dependencies\imgui-1.87\imgui_demo.cpp" />
+    <ClCompile Include="..\dependencies\imgui-1.87\imgui_draw.cpp" />
+    <ClCompile Include="..\dependencies\imgui-1.87\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\dependencies\imgui-1.87\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="..\dependencies\imgui-1.87\imgui_tables.cpp" />
+    <ClCompile Include="..\dependencies\imgui-1.87\imgui_widgets.cpp" />
     <ClCompile Include="cameras\Camera.cpp" />
     <ClCompile Include="cameras\Controller.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -68,6 +75,14 @@
     <ClCompile Include="world\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h" />
+    <ClInclude Include="..\dependencies\imgui-1.87\imgui.h" />
+    <ClInclude Include="..\dependencies\imgui-1.87\imgui_impl_glfw.h" />
+    <ClInclude Include="..\dependencies\imgui-1.87\imgui_impl_vulkan.h" />
+    <ClInclude Include="..\dependencies\imgui-1.87\imgui_internal.h" />
+    <ClInclude Include="..\dependencies\imgui-1.87\imstb_rectpack.h" />
+    <ClInclude Include="..\dependencies\imgui-1.87\imstb_textedit.h" />
+    <ClInclude Include="..\dependencies\imgui-1.87\imstb_truetype.h" />
     <ClInclude Include="Includes\camera\Camera.h" />
     <ClInclude Include="Includes\camera\Controller.h" />
     <ClInclude Include="Includes\Engine.h" />
@@ -239,7 +254,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)\dependencies\glfw-3.3.4\include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\assimp-5.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)\dependencies\glfw-3.3.4\include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\assimp-5.0.1\include;$(SolutionDir)\dependencies\imgui-1.87;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

@@ -12,6 +12,7 @@ class VulkanCommandPool
 	~VulkanCommandPool();
 
 	void createCommandPool();
+	void createImGuiCommandPool();
 
   private:
 	Graphics& m_graphic;

@@ -13,6 +13,7 @@ class VulkanRenderPass
 	~VulkanRenderPass();
 
 	void createRenderPass(VkFormat depthFormat);
+	void createImGuiRenderPass();
 
 	void beginRenderPass(VkCommandBuffer& commanderBuffer, VkRenderPassBeginInfo& renderPass_info);
 	void endRenderPass(VkCommandBuffer& commandBuffer);
