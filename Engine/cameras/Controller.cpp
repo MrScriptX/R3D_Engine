@@ -1,4 +1,4 @@
-#include "../Includes/camera/Controller.h"
+#include "Controller.h"
 
 Controller::Controller(std::shared_ptr<Camera> p_camera) : m_mouse_lock(true)
 {

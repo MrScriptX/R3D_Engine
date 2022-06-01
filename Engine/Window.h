@@ -11,7 +11,7 @@
 #include <memory>
 #include <imgui.h>
 
-#include "camera/Controller.h"
+#include "cameras/Controller.h"
 #include "graphics/Config.h"
 
 class Window

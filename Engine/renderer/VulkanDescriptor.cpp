@@ -1,4 +1,4 @@
-#include "../Includes/renderer/VulkanDescriptor.h"
+#include "VulkanDescriptor.h"
 
 VulkanDescriptor::VulkanDescriptor(Graphics& graphic) : m_graphic(graphic)
 {

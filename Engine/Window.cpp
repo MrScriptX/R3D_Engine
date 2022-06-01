@@ -1,4 +1,4 @@
-#include "Includes/Window.h"
+#include "Window.h"
 
 Window::Window(std::shared_ptr<Config>& config, Controller& controller)
 {

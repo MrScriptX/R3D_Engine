@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 
-#include "../camera/Controller.h"
+#include "../cameras/Controller.h"
 #include "GameObject.h"
 
 #include <glm/gtc/matrix_transform.hpp>

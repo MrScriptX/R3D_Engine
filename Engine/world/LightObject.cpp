@@ -1,4 +1,4 @@
-#include "../Includes/world/LightObject.h"
+#include "LightObject.h"
 
 LightObject::LightObject(TLIGHT type) : m_type(type)
 {

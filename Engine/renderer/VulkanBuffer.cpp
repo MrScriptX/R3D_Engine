@@ -1,4 +1,4 @@
-#include "../Includes/renderer/VulkanBuffer.h"
+#include "VulkanBuffer.h"
 
 VulkanBuffer::VulkanBuffer(Graphics& graphic) : m_graphic(graphic)
 {

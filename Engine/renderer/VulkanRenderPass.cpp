@@ -1,4 +1,4 @@
-#include "../Includes/renderer/VulkanRenderPass.h"
+#include "VulkanRenderPass.h"
 
 VulkanRenderPass::VulkanRenderPass(Graphics& graphic, VkFormat depthFormat) : m_graphic(graphic)
 {
