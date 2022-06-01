@@ -65,7 +65,6 @@
     <ClCompile Include="renderer\VulkanPipeline.cpp" />
     <ClCompile Include="renderer\VulkanRenderPass.cpp" />
     <ClCompile Include="renderer\VulkanSwapchain.cpp" />
-    <ClCompile Include="Source.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="world\GameObject.cpp" />
     <ClCompile Include="world\LightObject.cpp" />

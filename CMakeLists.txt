@@ -12,7 +12,7 @@ ELSE()
     MESSAGE(STATUS "VULKAN PATH NOT FOUND")
 ENDIF()
 
-file(GLOB_RECURSE ENGINE_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "Engine/*.cpp")
+file(GLOB_RECURSE ENGINE_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "Engine/*.cpp" "dependencies/imgui-1.87/*.cpp")
 
 add_library(R3DEngine STATIC ${ENGINE_SOURCES})
 
@@ -42,6 +42,7 @@ target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/
 target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glfw-3.3.4/include")
 target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glm")
 target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/stb_image")
+target_include_directories(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/imgui-1.87")
 target_include_directories(R3DEngine PUBLIC $ENV{VULKAN_SDK}/Include)
 
 target_link_libraries(R3DEngine PUBLIC "${PROJECT_SOURCE_DIR}/dependencies/glew-2.1.0/lib/Release/glew32.lib")
