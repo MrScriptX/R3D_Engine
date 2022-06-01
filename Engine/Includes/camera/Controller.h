@@ -37,7 +37,12 @@ class Controller
 
 	uint32_t getLoadRadius();
 
+	bool IsMouseLock() const;
+	void SetMouseState(const bool lock);
+
   private:
+	bool m_mouse_lock;
+
 	std::vector<Actions> m_hold_actions;
 	std::unique_ptr<std::array<std::function<void()>, 348>> m_onpress_actions;
 	std::unique_ptr<std::array<std::function<void()>, 348>> m_onrelease_actions;

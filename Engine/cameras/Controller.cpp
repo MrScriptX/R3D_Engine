@@ -1,6 +1,6 @@
 #include "../Includes/camera/Controller.h"
 
-Controller::Controller(std::shared_ptr<Camera> p_camera)
+Controller::Controller(std::shared_ptr<Camera> p_camera) : m_mouse_lock(true)
 {
 	mp_camera = p_camera;
 
@@ -94,4 +94,14 @@ void Controller::Update(const float& dt)
 uint32_t Controller::getLoadRadius()
 {
 	return m_load_radius;
+}
+
+bool Controller::IsMouseLock() const
+{
+	return m_mouse_lock;
+}
+
+void Controller::SetMouseState(const bool lock)
+{
+	m_mouse_lock = lock;
 }
