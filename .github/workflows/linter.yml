@@ -10,8 +10,8 @@ jobs:
     - name: Checkout this commit
       uses: actions/checkout@v2
     - name: Run clang-format style check for C/C++ programs.
-      uses: jidicula/clang-format-action@v3.4.0
+      uses: jidicula/clang-format-action@v4.6.2
       with:
-        clang-format-version: '11'
+        clang-format-version: '14'
         check-path: 'Engine'
         fallback-style: 'GNU'
