@@ -3,24 +3,28 @@
 Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_resolution_clock::now())
 {
 	mp_main_camera = std::make_shared<Camera>();
-	
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
 
+	// setup default UI
 	ConsoleUI* console = &ConsoleUI::Get();
-
-	std::function<void()> console_hide = [console]() { 
-		console->SetActive(!console->IsActive());
-	};
+	std::function<void()> console_hide = [console]() { console->SetActive(!console->IsActive()); };
 	BindKeyToFunc(GLFW_KEY_GRAVE_ACCENT, console_hide, ActionType::R3D_PRESS);
 
 	m_UIs.push_back(console);
 
+	Watcher* watcher = &Watcher::Get();
+	std::function<void()> watcher_hide = [watcher]() { watcher->SetActive(!watcher->IsActive()); };
+	BindKeyToFunc(GLFW_KEY_F1, watcher_hide, ActionType::R3D_PRESS);
+
+	m_UIs.push_back(watcher);
+
+	// load config
 	mp_config = std::make_shared<Config>();
 	mp_config->width = width;
 	mp_config->height = height;
 
+	// start the interface
 	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
-
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
 }
 

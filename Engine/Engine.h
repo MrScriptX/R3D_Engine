@@ -10,6 +10,7 @@
 #include "graphics/Geometry.h"
 
 #include "ui/ConsoleUI.h"
+#include "ui/Watcher.h"
 
 class Engine
 {

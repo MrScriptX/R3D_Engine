@@ -1,4 +1,3 @@
-#include <world/GameObject.h>
 #include <Engine.h>
 
 int main()
@@ -90,6 +89,8 @@ int main()
 			light_cube->setPosition(light_pos);
 			light->position = light_pos;
 			// light->direction = glm::normalize(light_pos - glm::vec3(.0f, .0f, .0f));
+
+			Watcher::SetPosition(light->position);
 
 			// update & draw
 			engine.update();

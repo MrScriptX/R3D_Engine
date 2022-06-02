@@ -123,6 +123,9 @@
     <ClCompile Include="ui\UI.cpp">
       <Filter>Engine\UI</Filter>
     </ClCompile>
+    <ClCompile Include="ui\Watcher.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -249,6 +252,9 @@
       <Filter>Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="ui\UI.h">
+      <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Watcher.h">
       <Filter>Engine\UI</Filter>
     </ClInclude>
   </ItemGroup>
