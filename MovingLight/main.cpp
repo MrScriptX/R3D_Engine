@@ -12,26 +12,38 @@ int main()
 		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
 		cube->bindMatToMesh(0, cube_texture);
 
+		engine.Log("Create cube 1 at pos {} {} {}", .0f, .0f, .0f);
+
 		std::shared_ptr<GameObject> cube2 = engine.CreateCube({ .0f, .0f, 3.0f }, 1.f, { .0f, 1.0f, .0f });
 		std::shared_ptr<Material> cube_texture2 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
 		cube2->bindMatToMesh(0, cube_texture2);
+
+		engine.Log("Create cube 2 at pos {} {} {}", .0f, .0f, 3.0f);
 
 		std::shared_ptr<GameObject> cube3 = engine.CreateCube({ 3.0f, .0f, .0f }, 1.f, { .0f, .0f, 1.0f });
 		std::shared_ptr<Material> cube_texture3 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
 		cube3->bindMatToMesh(0, cube_texture3);
 
+		engine.Log("Create cube 3 at pos {} {} {}", -3.0f, .0f, .0f);
+
 		std::shared_ptr<GameObject> cube4 = engine.CreateCube({ -3.0f, .0f, .0f }, 1.f, { 1.0f, 1.0f, 1.0f });
 		std::shared_ptr<Material> cube_texture4 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
 		cube4->bindMatToMesh(0, cube_texture4);
+
+		engine.Log("Create cube 4 at pos {} {} {}", -3.0f, .0f, .0f);
 
 		std::shared_ptr<GameObject> cube5 = engine.CreateCube({ .0f, .0f, -3.0f }, 1.f, { 1.0f, 1.0f, .0f });
 		std::shared_ptr<Material> cube_texture5 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
 		cube5->bindMatToMesh(0, cube_texture5);
 
+		engine.Log("Create cube 5 at pos {} {} {}", .0f, .0f, -3.0f);
+
 		glm::vec3 light_pos = { 2.0f, .0f, .0f };
 		std::shared_ptr<GameObject> light_cube = engine.CreateCube(light_pos, 0.2f, { 1.f, 1.f, 1.f });
 		std::shared_ptr<Material> cube_light_mat = engine.CreateMaterial(TSHADER::LIGHT_SOURCE);
 		light_cube->bindMatToMesh(0, cube_light_mat);
+
+		engine.Log("Create light at pos {} {} {}", 2.0f, .0f, .0f);
 
 		// create light
 		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();

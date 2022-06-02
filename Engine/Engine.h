@@ -45,6 +45,9 @@ class Engine
 	void SetFillMode();
 	void SetColorMode(const ColorMode color_map);
 
+	template<typename ...Args>
+	void Log(const std::string& msg, Args&& ...args);
+
 	const bool& shouldClose();
 
   private:
@@ -64,3 +67,9 @@ class Engine
 };
 
 #endif // !R3DENGINE_INCLUDES_ENGINE_H_
+
+template <typename... Args> 
+inline void Engine::Log(const std::string& msg, Args&&... args)
+{
+	m_console.Log(msg, std::forward<Args>(args)...);
+}
