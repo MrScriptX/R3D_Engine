@@ -1,5 +1,9 @@
 #include "ConsoleUI.h"
 
+ConsoleUI::ConsoleUI() : m_active(false), m_update(false), m_size(200.f, 400.f)
+{
+}
+
 void ConsoleUI::Update()
 {
 	if (!m_active)
@@ -7,8 +11,8 @@ void ConsoleUI::Update()
 
 	ImGui::Begin("Console", &m_active);
 
-	ImVec2 size(200, 400);
-	ImGui::SetWindowSize(size);
+	m_size = ImGui::GetWindowSize();
+	ImGui::SetWindowSize(m_size);
 
 	for (size_t i = 0; i < m_output.size(); i++)
 	{
@@ -22,16 +26,6 @@ void ConsoleUI::Update()
 	}
 
 	ImGui::End();
-}
-
-void ConsoleUI::Log(const std::string& msg)
-{
-	if (m_output.size() > 200)
-		m_output.erase(m_output.begin());
-	else
-		m_output.push_back(msg);
-
-	m_update = true;
 }
 
 void ConsoleUI::SetActive(const bool active)
