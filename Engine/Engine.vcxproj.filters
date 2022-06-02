@@ -120,6 +120,9 @@
     <ClCompile Include="renderer\VulkanSwapchain.cpp">
       <Filter>Engine\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="ui\ObjectsViewer.cpp">
+      <Filter>Engine\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -244,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="renderer\VulkanSwapchain.h">
       <Filter>Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ObjectsViewer.h">
+      <Filter>Engine\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
