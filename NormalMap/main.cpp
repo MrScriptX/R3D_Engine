@@ -1,3 +1,4 @@
+#include <world/GameObject.h>
 #include <Engine.h>
 
 int main()

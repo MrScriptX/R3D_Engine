@@ -43,6 +43,7 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 		{
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 			pController->SetMouseState(true);
+			glfwSetCursorPos(window, pController->GetLastMousePosX(), pController->GetLastMousePosY());
 		}
 	}
 }
@@ -54,7 +55,6 @@ void Window::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	if (pController->IsMouseLock())
 	{
 		pController->updateRotation(xpos, ypos);
-		glfwSetCursorPos(window, 0.0, 0.0);
 	}
 	else
 	{

@@ -1,3 +1,4 @@
+#include <world/GameObject.h>
 #include <Engine.h>
 
 int main()
@@ -48,7 +49,7 @@ int main()
 		// create light
 		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
 		light->color = { 1.0f, 1.0f, 1.0f };
-		light->ambient_strength = 0.1f;
+		light->ambient_strength = 0.15f;
 		light->diffuse_strength = 1.0f;
 		light->specular_strength = 1.0f;
 		light->constant = 1.0f;

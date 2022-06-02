@@ -9,6 +9,7 @@
 #include <functional>
 
 #include "Camera.h"
+#include "../ui/ConsoleUI.h"
 
 struct Actions
 {
@@ -40,6 +41,9 @@ class Controller
 	bool IsMouseLock() const;
 	void SetMouseState(const bool lock);
 
+	double GetLastMousePosX() const;
+	double GetLastMousePosY() const;
+
   private:
 	bool m_mouse_lock;
 
@@ -51,6 +55,9 @@ class Controller
 	std::bitset<348> m_keyboard_press;
 
 	std::shared_ptr<Camera> mp_camera;
+
+	double m_last_mouse_pos_x = 0;
+	double m_last_mouse_pos_y = 0;
 };
 
 #endif //!_CONTROLLER_H

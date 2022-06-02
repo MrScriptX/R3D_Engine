@@ -70,12 +70,15 @@ void Controller::SetKeyToFunc(const int32_t& key, std::function<void()>& func, c
 
 void Controller::updateRotation(const double& xpos, const double& ypos)
 {
-	const float sensibility = 0.005f;
+	const float sensibility = 0.003f;
 
-	glm::vec2 mouse_delta = glm::vec2(xpos, ypos);
+	glm::vec2 mouse_delta(std::abs(xpos) - m_last_mouse_pos_x, std::abs(ypos) - m_last_mouse_pos_y);
 
-	mp_camera->setYaw(mp_camera->getYaw() + (mouse_delta.x * sensibility));
-	mp_camera->setPitch(mp_camera->getPitch() + (mouse_delta.y * sensibility));
+	mp_camera->setYaw(xpos * sensibility);
+	mp_camera->setPitch(ypos * sensibility);
+
+	m_last_mouse_pos_x = std::abs(xpos);
+	m_last_mouse_pos_y = std::abs(ypos);
 }
 
 void Controller::Update(const float& dt)
@@ -104,4 +107,14 @@ bool Controller::IsMouseLock() const
 void Controller::SetMouseState(const bool lock)
 {
 	m_mouse_lock = lock;
+}
+
+double Controller::GetLastMousePosX() const
+{
+	return m_last_mouse_pos_x;
+}
+
+double Controller::GetLastMousePosY() const
+{
+	return m_last_mouse_pos_y;
 }
