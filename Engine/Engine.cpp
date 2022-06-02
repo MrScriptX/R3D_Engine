@@ -13,11 +13,7 @@ Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_
 	};
 	BindKeyToFunc(GLFW_KEY_GRAVE_ACCENT, console_hide, ActionType::R3D_PRESS);
 
-	ObjectsViewer& viewer = m_viewer;
-	std::function<void()> viewer_hide = [&viewer]() { 
-		viewer.SetActive(!viewer.IsActive());
-	};
-	BindKeyToFunc(GLFW_KEY_F1, viewer_hide, ActionType::R3D_PRESS);
+	m_UIs.push_back(&m_console);
 
 	mp_config = std::make_shared<Config>();
 	mp_config->width = width;
@@ -213,8 +209,8 @@ void Engine::update()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	m_console.Update();
-	m_viewer.Update();
+	for (size_t i = 0; i < m_UIs.size(); i++)
+		m_UIs[i]->Update();
 
 	ImGui::Render();
 

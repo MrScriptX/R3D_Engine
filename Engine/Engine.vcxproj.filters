@@ -120,7 +120,7 @@
     <ClCompile Include="renderer\VulkanSwapchain.cpp">
       <Filter>Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="ui\ObjectsViewer.cpp">
+    <ClCompile Include="ui\UI.cpp">
       <Filter>Engine\UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -248,7 +248,7 @@
     <ClInclude Include="renderer\VulkanSwapchain.h">
       <Filter>Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="ui\ObjectsViewer.h">
+    <ClInclude Include="ui\UI.h">
       <Filter>Engine\UI</Filter>
     </ClInclude>
   </ItemGroup>

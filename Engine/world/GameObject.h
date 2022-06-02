@@ -47,6 +47,8 @@ class GameObject
 	const size_t& getMeshesCount();
 	const bool Deleted();
 
+	const std::vector<std::unique_ptr<Mesh>>& GetMeshInDeleteQueue() const;
+
   private:
 	std::vector<int32_t> m_mesh_to_update;
 	std::vector<std::unique_ptr<Mesh>> m_mesh_to_delete;

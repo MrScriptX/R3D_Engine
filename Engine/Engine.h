@@ -10,7 +10,6 @@
 #include "graphics/Geometry.h"
 
 #include "ui/ConsoleUI.h"
-#include "ui/ObjectsViewer.h"
 
 class Engine
 {
@@ -59,9 +58,9 @@ class Engine
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_last_time;
 
-	// Default UI
+	// UI
+	std::vector<UI*> m_UIs;
 	ConsoleUI m_console;
-	ObjectsViewer m_viewer;
 };
 
 #endif // !R3DENGINE_INCLUDES_ENGINE_H_

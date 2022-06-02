@@ -182,3 +182,8 @@ const bool GameObject::Deleted()
 {
 	return m_meshes.size() == 0;
 }
+
+const std::vector<std::unique_ptr<Mesh>>& GameObject::GetMeshInDeleteQueue() const
+{
+	return m_mesh_to_delete;
+}

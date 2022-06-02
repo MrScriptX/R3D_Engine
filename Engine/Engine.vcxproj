@@ -66,7 +66,7 @@
     <ClCompile Include="renderer\VulkanRenderPass.cpp" />
     <ClCompile Include="renderer\VulkanSwapchain.cpp" />
     <ClCompile Include="ui\ConsoleUI.cpp" />
-    <ClCompile Include="ui\ObjectsViewer.cpp" />
+    <ClCompile Include="ui\UI.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="world\GameObject.cpp" />
     <ClCompile Include="world\LightObject.cpp" />
@@ -109,7 +109,7 @@
     <ClInclude Include="renderer\VulkanRenderPass.h" />
     <ClInclude Include="renderer\VulkanSwapchain.h" />
     <ClInclude Include="ui\ConsoleUI.h" />
-    <ClInclude Include="ui\ObjectsViewer.h" />
+    <ClInclude Include="ui\UI.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="world\GameObject.h" />
     <ClInclude Include="world\Geometry.h" />

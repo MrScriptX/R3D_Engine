@@ -1,6 +1,6 @@
 #include "ConsoleUI.h"
 
-ConsoleUI::ConsoleUI() : m_active(false), m_update(false), m_size(200.f, 400.f)
+ConsoleUI::ConsoleUI() : m_update(false)
 {
 }
 
@@ -26,14 +26,4 @@ void ConsoleUI::Update()
 	}
 
 	ImGui::End();
-}
-
-void ConsoleUI::SetActive(const bool active)
-{
-	m_active = active;
-}
-
-bool ConsoleUI::IsActive() const
-{
-	return m_active;
 }

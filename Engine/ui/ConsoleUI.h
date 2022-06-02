@@ -6,24 +6,21 @@
 #include <format>
 #include <imgui.h>
 
-class ConsoleUI
+#include "UI.h"
+
+class ConsoleUI : public UI
 {
 public:
 	ConsoleUI();
 
-	void Update();
+	void Update() override;
 
 	template<typename ...Args>
 	void Log(const std::string& msg, Args... args);
 
-	void SetActive(const bool active);
-	bool IsActive() const;
-
 private:
-	bool m_active;
 	bool m_update;
 	
-	ImVec2 m_size;
 	std::vector<std::string> m_output;
 };
 
