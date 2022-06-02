@@ -1,5 +1,5 @@
-#ifndef R3DENGINE_SCENE_H_
-#define R3DENGINE_SCENE_H_
+#ifndef R3DENGINE_SCENE_H
+#define R3DENGINE_SCENE_H
 
 #include <array>
 #include <vector>
@@ -38,8 +38,8 @@ class Scene
 
 	void ToUpdate();
 	void Update(const int32_t frame);
-	const bool& isUpdate(const int i);
-	const bool IsUpdated();
+	const bool IsUpdate(const int i) const;
+	const bool IsUpdated() const;
 	std::vector<std::shared_ptr<GameObject>>& getObjects();
 
   private:

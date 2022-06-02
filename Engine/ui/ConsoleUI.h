@@ -11,29 +11,35 @@
 class ConsoleUI : public UI
 {
 public:
-	ConsoleUI();
+	ConsoleUI(const ConsoleUI&) = delete;
+	void operator=(const ConsoleUI&) = delete;
 
+	static ConsoleUI& Get();
 	void Update() override;
 
 	template<typename ...Args>
-	void Log(std::string msg, Args&&... args);
+	static void Log(const std::string msg, Args&&... args);
 
-private:
+  private:
+	ConsoleUI();
+
 	bool m_update;
 	
 	std::vector<std::string> m_output;
 };
 
 template<typename ...Args>
-void ConsoleUI::Log(std::string msg, Args&&... args)
+static void ConsoleUI::Log(const std::string msg, Args&&... args)
 {
-	if (m_output.size() > 200)
-		m_output.erase(m_output.begin());
+	ConsoleUI* console = &ConsoleUI::Get();
 
-	std::string parsed = std::format(msg, std::forward<Args>(args)...);
-	m_output.push_back(parsed);
+	if (console->m_output.size() > 200)
+		console->m_output.erase(console->m_output.begin());
 
-	m_update = true;
+	std::string parsed = std::vformat(msg, std::make_format_args(args...));
+	console->m_output.push_back(parsed);
+
+	console->m_update = true;
 }
 
 #endif

@@ -204,12 +204,12 @@ void Scene::Update(const int32_t frame)
 	}
 }
 
-const bool& Scene::isUpdate(const int i)
+const bool Scene::IsUpdate(const int i) const
 {
 	return m_changed[i];
 }
 
-const bool Scene::IsUpdated()
+const bool Scene::IsUpdated() const
 {
 	return m_changed == false;
 }

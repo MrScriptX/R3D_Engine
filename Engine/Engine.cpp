@@ -6,14 +6,14 @@ Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_
 	
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
 
-	ConsoleUI& console = m_console;
+	ConsoleUI* console = &ConsoleUI::Get();
 
-	std::function<void()> console_hide = [&console]() { 
-		console.SetActive(!console.IsActive());
+	std::function<void()> console_hide = [console]() { 
+		console->SetActive(!console->IsActive());
 	};
 	BindKeyToFunc(GLFW_KEY_GRAVE_ACCENT, console_hide, ActionType::R3D_PRESS);
 
-	m_UIs.push_back(&m_console);
+	m_UIs.push_back(console);
 
 	mp_config = std::make_shared<Config>();
 	mp_config->width = width;
@@ -186,7 +186,7 @@ void Engine::update()
 	if (frame == -1)
 		return;
 
-	if (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame))
+	if (mp_scene->IsUpdate(frame) || mp_renderer->NeedUpdate(frame))
 	{
 		mp_renderer->WaitForSwapchainImageFence();
 

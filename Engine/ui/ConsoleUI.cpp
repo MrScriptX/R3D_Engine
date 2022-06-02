@@ -1,7 +1,13 @@
 #include "ConsoleUI.h"
 
-ConsoleUI::ConsoleUI() : m_update(false)
+ConsoleUI::ConsoleUI() : UI(), m_update(false)
 {
+}
+
+ConsoleUI& ConsoleUI::Get()
+{
+	static ConsoleUI console;
+	return console;
 }
 
 void ConsoleUI::Update()
