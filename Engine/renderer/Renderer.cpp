@@ -44,7 +44,7 @@ Renderer::~Renderer()
 	ImGui::DestroyContext();
 
 	vkDestroyDescriptorPool(m_graphic.device, m_graphic.descriptor_pool, nullptr);
-	vkDestroyDescriptorPool(m_graphic.device, m_graphic.imgui_decriptor_pool, nullptr);
+	vkDestroyDescriptorPool(m_graphic.device, m_ui.decriptor_pool, nullptr);
 	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.descriptor_set_layout, nullptr);
 	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.light_descriptor_layout, nullptr);
 
@@ -147,8 +147,8 @@ void Renderer::UpdateUI()
 	VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 	VkRenderPassBeginInfo renderPassBeginInfo = {};
 	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassBeginInfo.renderPass = m_graphic.imgui_render_pass;
-	renderPassBeginInfo.framebuffer = m_graphic.imgui_framebuffers[m_current_image];
+	renderPassBeginInfo.renderPass = m_ui.render_pass;
+	renderPassBeginInfo.framebuffer = m_ui.framebuffers[m_current_image];
 	renderPassBeginInfo.renderArea.extent.width = m_graphic.swapchain_details.extent.width;
 	renderPassBeginInfo.renderArea.extent.height = m_graphic.swapchain_details.extent.height;
 	renderPassBeginInfo.clearValueCount = 1;
@@ -216,7 +216,7 @@ void Renderer::setupRenderPass()
 {
 	VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
 	                                      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-	m_pRenderpass = std::make_unique<VulkanRenderPass>(m_graphic, format);
+	m_pRenderpass = std::make_unique<VulkanRenderPass>(m_graphic, m_ui, format);
 }
 
 void Renderer::setupDescriptorSetLayout()
@@ -461,41 +461,46 @@ void Renderer::createFramebuffer()
 {
 	m_graphic.framebuffers.resize(m_graphic.images_view.size());
 
+	VkFramebufferCreateInfo framebuffer_info = {};
+	framebuffer_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	framebuffer_info.renderPass = m_graphic.render_pass;
+	framebuffer_info.width = m_graphic.swapchain_details.extent.width;
+	framebuffer_info.height = m_graphic.swapchain_details.extent.height;
+	framebuffer_info.layers = 1;
+
 	for (size_t i = 0; i < m_graphic.images_view.size(); i++)
 	{
 		std::array<VkImageView, 2> attachments = { m_graphic.images_view[i], m_graphic.depth_view };
 
-		VkFramebufferCreateInfo framebufferInfo = {};
-		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass = m_graphic.render_pass;
-		framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-		framebufferInfo.pAttachments = attachments.data();
-		framebufferInfo.width = m_graphic.swapchain_details.extent.width;
-		framebufferInfo.height = m_graphic.swapchain_details.extent.height;
-		framebufferInfo.layers = 1;
+		framebuffer_info.attachmentCount = static_cast<uint32_t>(attachments.size());
+		framebuffer_info.pAttachments = attachments.data();
 
-		if (vkCreateFramebuffer(m_graphic.device, &framebufferInfo, nullptr, &m_graphic.framebuffers[i]) != VK_SUCCESS)
+		if (vkCreateFramebuffer(m_graphic.device, &framebuffer_info, nullptr, &m_graphic.framebuffers[i]) != VK_SUCCESS)
 		{
-			throw std::runtime_error("failed to create framebuffer!");
+			throw std::runtime_error("failed to create framebuffers!");
 		}
 	}
 
-	m_graphic.imgui_framebuffers.resize(m_graphic.swapchain_images.size());
-	VkImageView attachment[1];
-	VkFramebufferCreateInfo info = {};
-	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	info.renderPass = m_graphic.imgui_render_pass;
-	info.attachmentCount = 1;
-	info.pAttachments = attachment;
-	info.width = m_graphic.swapchain_details.extent.width;
-	info.height = m_graphic.swapchain_details.extent.height;
-	info.layers = 1;
-	for (uint32_t i = 0; i < m_graphic.swapchain_images.size(); ++i)
+	m_ui.framebuffers.resize(m_graphic.swapchain_images.size());
+	
+	VkFramebufferCreateInfo ui_info = {};
+	ui_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	ui_info.attachmentCount = 1;
+	ui_info.width = m_graphic.swapchain_details.extent.width;
+	ui_info.height = m_graphic.swapchain_details.extent.height;
+	ui_info.layers = 1;
+
+	for (size_t i = 0; i < m_graphic.swapchain_images.size(); ++i)
 	{
-		attachment[0] = m_graphic.images_view[i];
-		if (vkCreateFramebuffer(m_graphic.device, &info, nullptr, &m_graphic.imgui_framebuffers[i]) != VK_SUCCESS)
+		VkImageView attachments[1];
+		attachments[0] = m_graphic.images_view[i];
+
+		ui_info.renderPass = m_ui.render_pass;
+		ui_info.pAttachments = attachments;
+
+		if (vkCreateFramebuffer(m_graphic.device, &ui_info, nullptr, &m_ui.framebuffers[i]) != VK_SUCCESS)
 		{
-			throw std::runtime_error("Unable to create UI framebuffers!");
+			throw std::runtime_error("failed to create UI framebuffers!");
 		}
 	}
 }
@@ -531,24 +536,7 @@ void Renderer::createSyncObject()
 void Renderer::createDescriptorPool()
 {
 	m_descriptor->createDescriptorPool();
-	m_descriptor->createImGuiDescriptorPool();
-
-	/* std::array<VkDescriptorPoolSize, 2> poolSizes = {};
-	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[0].descriptorCount = 1;
-	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSizes[1].descriptorCount = 1;
-
-	VkDescriptorPoolCreateInfo poolInfo = {};
-	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
-	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 4;
-
-	if (vkCreateDescriptorPool(m_graphic.device, &poolInfo, nullptr, &m_graphic.descriptor_pool) != VK_SUCCESS)
-	{
-	    throw std::runtime_error("failed to create descriptor pool!");
-	} */
+	m_descriptor->createImGuiDescriptorPool(m_ui);
 }
 
 void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
@@ -726,7 +714,7 @@ void Renderer::recreateSwapchain()
 	VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
 	                                      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	m_pRenderpass->CreateRenderPass(format);
-	m_pRenderpass->CreateImGuiRenderPass();
+	m_pRenderpass->CreateImGuiRenderPass(m_ui);
 
 	mp_pipelines_manager->CreatePipelines();
 	createDepthResources();
@@ -738,7 +726,7 @@ void Renderer::recreateSwapchain()
 
 void Renderer::initUI(GLFWwindow& window)
 {
-	std::cout << "ImGui Vulkan init" << std::endl;
+	std::cout << "Init ImGui for Vulkan..." << std::endl;
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -755,12 +743,12 @@ void Renderer::initUI(GLFWwindow& window)
 	init_info.QueueFamily = m_graphic.queue_indices.graphic_family;
 	init_info.Queue = m_graphic.graphics_queue;
 	init_info.PipelineCache = VK_NULL_HANDLE;
-	init_info.DescriptorPool = m_graphic.imgui_decriptor_pool;
+	init_info.DescriptorPool = m_ui.decriptor_pool;
 	init_info.Allocator = nullptr;
 	init_info.MinImageCount = m_graphic.swapchain_images.size();
 	init_info.ImageCount = m_graphic.framebuffers.size();
 	init_info.CheckVkResultFn = nullptr;
-	ImGui_ImplVulkan_Init(&init_info, m_graphic.imgui_render_pass);
+	ImGui_ImplVulkan_Init(&init_info, m_ui.render_pass);
 
 	// upload textures to gpu
 	VkCommandBuffer command_buffer = beginCommands();
@@ -784,9 +772,9 @@ void Renderer::cleanSwapchain()
 		vkDestroyFramebuffer(m_graphic.device, m_graphic.framebuffers[i], nullptr);
 	}
 
-	for (size_t i = 0; i < m_graphic.imgui_framebuffers.size(); i++)
+	for (size_t i = 0; i < m_ui.framebuffers.size(); i++)
 	{
-		vkDestroyFramebuffer(m_graphic.device, m_graphic.imgui_framebuffers[i], nullptr);
+		vkDestroyFramebuffer(m_graphic.device, m_ui.framebuffers[i], nullptr);
 	}
 
 	vkFreeCommandBuffers(m_graphic.device, m_graphic.command_pool, static_cast<uint32_t>(m_graphic.command_buffers.size()), m_graphic.command_buffers.data());
@@ -795,7 +783,7 @@ void Renderer::cleanSwapchain()
 	mp_pipelines_manager->DestroyPipelines();
 
 	vkDestroyRenderPass(m_graphic.device, m_graphic.render_pass, nullptr);
-	vkDestroyRenderPass(m_graphic.device, m_graphic.imgui_render_pass, nullptr);
+	vkDestroyRenderPass(m_graphic.device, m_ui.render_pass, nullptr);
 
 	for (auto imageView : m_graphic.images_view)
 	{

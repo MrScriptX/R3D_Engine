@@ -9,11 +9,11 @@
 class VulkanRenderPass
 {
   public:
-	VulkanRenderPass(Graphics& m_graphic, VkFormat depthFormat);
+	VulkanRenderPass(Graphics& m_graphic, UIObject& ui, VkFormat depthFormat);
 	~VulkanRenderPass();
 
 	void CreateRenderPass(VkFormat depthFormat);
-	void CreateImGuiRenderPass();
+	void CreateImGuiRenderPass(UIObject& ui);
 
 	void beginRenderPass(VkCommandBuffer& commanderBuffer, VkRenderPassBeginInfo& renderPass_info);
 	void endRenderPass(VkCommandBuffer& commandBuffer);

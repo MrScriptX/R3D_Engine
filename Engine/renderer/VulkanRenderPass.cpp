@@ -1,9 +1,9 @@
 #include "VulkanRenderPass.h"
 
-VulkanRenderPass::VulkanRenderPass(Graphics& graphic, VkFormat depthFormat) : m_graphic(graphic)
+VulkanRenderPass::VulkanRenderPass(Graphics& graphic, UIObject& ui, VkFormat depthFormat) : m_graphic(graphic)
 {
 	CreateRenderPass(depthFormat);
-	CreateImGuiRenderPass();
+	CreateImGuiRenderPass(ui);
 }
 
 VulkanRenderPass::~VulkanRenderPass()
@@ -80,7 +80,7 @@ void VulkanRenderPass::CreateRenderPass(VkFormat depthFormat)
 	}
 }
 
-void VulkanRenderPass::CreateImGuiRenderPass()
+void VulkanRenderPass::CreateImGuiRenderPass(UIObject& ui)
 {
 	VkAttachmentDescription attachment = {};
 	attachment.format = m_graphic.swapchain_details.format;
@@ -117,7 +117,8 @@ void VulkanRenderPass::CreateImGuiRenderPass()
 	info.pSubpasses = &subpass;
 	info.dependencyCount = 1;
 	info.pDependencies = &dependency;
-	if (vkCreateRenderPass(m_graphic.device, &info, nullptr, &m_graphic.imgui_render_pass) != VK_SUCCESS)
+
+	if (vkCreateRenderPass(m_graphic.device, &info, nullptr, &ui.render_pass) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Could not create Dear ImGui's render pass");
 	}

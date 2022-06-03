@@ -14,7 +14,7 @@ class VulkanDescriptor
 	~VulkanDescriptor();
 
 	void createDescriptorPool();
-	void createImGuiDescriptorPool();
+	void createImGuiDescriptorPool(UIObject& m_ui);
 
 	void createDescriptorSetLayout();
 	void createDescriptorSetLayoutLight();

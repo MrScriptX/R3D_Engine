@@ -28,7 +28,7 @@ void VulkanDescriptor::createDescriptorPool()
 	}
 }
 
-void VulkanDescriptor::createImGuiDescriptorPool()
+void VulkanDescriptor::createImGuiDescriptorPool(UIObject& m_ui)
 {
 	std::array<VkDescriptorPoolSize, 11> pool_sizes = {};
 	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_SAMPLER;
@@ -60,7 +60,7 @@ void VulkanDescriptor::createImGuiDescriptorPool()
 	pool_info.pPoolSizes = pool_sizes.data();
 	pool_info.maxSets = 100;
 
-	if (vkCreateDescriptorPool(m_graphic.device, &pool_info, nullptr, &m_graphic.imgui_decriptor_pool) != VK_SUCCESS)
+	if (vkCreateDescriptorPool(m_graphic.device, &pool_info, nullptr, &m_ui.decriptor_pool) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create descriptor pool!");
 	}
