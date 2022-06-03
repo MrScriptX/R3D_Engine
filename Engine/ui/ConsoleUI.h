@@ -15,7 +15,7 @@ public:
 	void operator=(const ConsoleUI&) = delete;
 
 	static ConsoleUI& Get();
-	void Update() override;
+	void Update(const uint16_t width, const uint16_t height) override;
 
 	template<typename ...Args>
 	static void Log(const std::string msg, Args&&... args);

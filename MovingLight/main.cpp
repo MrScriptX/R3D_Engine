@@ -1,10 +1,11 @@
+#include <ui/Watcher.h>
 #include <Engine.h>
 
 int main()
 {
 	try
 	{
-		Engine engine(1280, 720);
+		Engine engine(1920, 1080);
 		Logger::init();
 
 		// create object
@@ -90,7 +91,8 @@ int main()
 			light->position = light_pos;
 			// light->direction = glm::normalize(light_pos - glm::vec3(.0f, .0f, .0f));
 
-			Watcher::SetPosition(light->position);
+			Watcher::WatchPosition("camera", engine.GetMainCamera()->GetPosition());
+			Watcher::WatchPosition("light", light->position);
 
 			// update & draw
 			engine.update();

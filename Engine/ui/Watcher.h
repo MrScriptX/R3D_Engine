@@ -2,6 +2,8 @@
 #define R3DENGINE_WATCHER_H
 
 #include <string>
+#include <map>
+#include <vector>
 #include <glm/vec3.hpp>
 
 #include "UI.h"
@@ -13,14 +15,15 @@ public:
 	void operator=(const Watcher&) = delete;
 
 	static Watcher& Get();
-	void Update() override;
+	void Update(const uint16_t width, const uint16_t height) override;
 
-	static void SetPosition(const glm::vec3 pos);
+	static void WatchPosition(const std::string& name, const glm::vec3& pos);
+	inline static void DropPosition(const std::string& name);
 
 private:
 	Watcher() = default;
 
-	glm::vec3 m_position = glm::vec3();
+	std::map<std::string, glm::vec3> m_positions;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef R3DENGINE_UI_H
 #define R3DENGINE_UI_H
 
+#include <memory>
 #include <imgui.h>
 
 class UI
@@ -8,7 +9,7 @@ class UI
 public:
 	UI();
 
-	virtual void Update() = 0;
+	virtual void Update(const uint16_t width, const uint16_t height) = 0;
 
 	void SetActive(const bool active);
 	bool IsActive() const;

@@ -214,7 +214,7 @@ void Engine::update()
 	ImGui::NewFrame();
 
 	for (size_t i = 0; i < m_UIs.size(); i++)
-		m_UIs[i]->Update();
+		m_UIs[i]->Update(mp_config->width, mp_config->height);
 
 	ImGui::Render();
 
