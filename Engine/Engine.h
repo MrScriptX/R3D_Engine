@@ -46,6 +46,9 @@ class Engine
 	void SetFillMode();
 	void SetColorMode(const ColorMode color_map);
 
+	void RenderUI(UI& ui);
+	void RemoveUI(UI& ui);
+
 	const bool& shouldClose();
 
   private:

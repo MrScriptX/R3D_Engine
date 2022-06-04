@@ -20,10 +20,14 @@ public:
 	static void WatchPosition(const std::string& name, const glm::vec3& pos);
 	inline static void DropPosition(const std::string& name);
 
+	static void WatchVariable(const std::string& name, const double& var);
+	inline static void DropVariable(const std::string& name);
+
 private:
 	Watcher() = default;
 
 	std::map<std::string, glm::vec3> m_positions;
+	std::map<std::string, double> m_variables;
 };
 
 #endif

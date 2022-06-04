@@ -170,6 +170,23 @@ void Engine::SetColorMode(const ColorMode color_map)
 	mp_renderer->SetColorMode(color_map);
 }
 
+void Engine::RenderUI(UI& ui)
+{
+	m_UIs.push_back(&ui);
+}
+
+void Engine::RemoveUI(UI& ui)
+{
+	for (auto it = m_UIs.begin(); it != m_UIs.end(); it++)
+	{
+		if (*it == &ui)
+		{
+			m_UIs.erase(it);
+			break;
+		}
+	}
+}
+
 const bool& Engine::shouldClose()
 {
 	return glfwWindowShouldClose(&mp_window->getHandle());

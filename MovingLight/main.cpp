@@ -1,6 +1,8 @@
 #include <ui/Watcher.h>
 #include <Engine.h>
 
+#include "LightMenu.h"
+
 int main()
 {
 	try
@@ -56,6 +58,12 @@ int main()
 		light->linear = 1.0f;
 		light->quadratic = 0.2f;
 
+		LightMenu menu(light->color, light->ambient_strength, light->specular_strength, light->diffuse_strength);
+		engine.RenderUI(menu);
+
+		std::function<void()> key_light_menu = [&menu]() { menu.SetActive(!menu.IsActive()); };
+		engine.BindKeyToFunc(GLFW_KEY_F2, key_light_menu, ActionType::R3D_PRESS);
+
 		// setup scene
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 		scene->AddGameObject(cube);
@@ -67,6 +75,8 @@ int main()
 		scene->AddLight(light);
 
 		engine.setScene(scene);
+
+		engine.GetMainCamera()->SetPosition({ -5.f, 2.f, 7.f });
 
 		std::chrono::time_point<std::chrono::high_resolution_clock> last = std::chrono::high_resolution_clock::now();
 		const float radius = 5.0f;
@@ -93,6 +103,9 @@ int main()
 
 			Watcher::WatchPosition("camera", engine.GetMainCamera()->GetPosition());
 			Watcher::WatchPosition("light", light->position);
+
+			Watcher::WatchVariable("yaw", static_cast<double>(engine.GetMainCamera()->getYaw()));
+			Watcher::WatchVariable("pitch", static_cast<double>(engine.GetMainCamera()->getPitch()));
 
 			// update & draw
 			engine.update();
