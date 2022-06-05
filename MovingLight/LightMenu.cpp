@@ -9,8 +9,8 @@ void LightMenu::Update(const uint16_t width, const uint16_t height)
 	if (!m_active)
 		return;
 
-	ImGui::SetNextWindowPos(ImVec2(width - 320.f, 550.f), ImGuiCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(300.f, 300.f), ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(width - 420.f, 550.f), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(400.f, 250.f), ImGuiCond_Once);
 
 	ImGui::Begin("Light Menu", &m_active);
 

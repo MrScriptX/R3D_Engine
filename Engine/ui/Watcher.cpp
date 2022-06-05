@@ -61,7 +61,7 @@ void Watcher::Update(const uint16_t width, const uint16_t height)
 		ImGui::Text(i->first.c_str());
 
 		ImGui::TableNextColumn();
-		ImGui::Text("%d", i->second);
+		ImGui::Text("%f", i->second);
 	}
 
 	ImGui::EndTable();
