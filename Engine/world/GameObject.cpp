@@ -1,5 +1,4 @@
-#include "../Includes/world/GameObject.h"
-
+#include "GameObject.h"
 
 GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
 {
@@ -11,18 +10,18 @@ GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_ren
 
 	for (size_t i = 0; i < m_ubo.size(); i++)
 	{
-		mp_renderer->createUBO(m_ubo[i], m_ubo_memory[i]);
+		mp_renderer->CreateUniformBuffer(m_ubo[i], m_ubo_memory[i], sizeof(UniformBufferObject));
 	}
 }
 
 GameObject::~GameObject()
 {
 	m_meshes.clear();
-	
+
 	for (size_t i = 0; i < m_ubo.size(); i++)
 	{
-		vkDestroyBuffer(mp_renderer->getDevice(), m_ubo[i], nullptr);
-		vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory[i], nullptr);
+		vkDestroyBuffer(mp_renderer->GetDevice(), m_ubo[i], nullptr);
+		vkFreeMemory(mp_renderer->GetDevice(), m_ubo_memory[i], nullptr);
 	}
 }
 
@@ -55,7 +54,7 @@ void GameObject::Clean(const size_t frame)
 
 void GameObject::Destroy(const int32_t frame)
 {
-	for (auto it = m_meshes.begin(); it != m_meshes.end(); )
+	for (auto it = m_meshes.begin(); it != m_meshes.end();)
 	{
 		it->second->DestroyBuffers(frame);
 		if (it->second->IsCleaned())
@@ -68,18 +67,18 @@ void GameObject::Destroy(const int32_t frame)
 		}
 	}
 
-	vkDestroyBuffer(mp_renderer->getDevice(), m_ubo[frame], nullptr);
-	vkFreeMemory(mp_renderer->getDevice(), m_ubo_memory[frame], nullptr);
+	vkDestroyBuffer(mp_renderer->GetDevice(), m_ubo[frame], nullptr);
+	vkFreeMemory(mp_renderer->GetDevice(), m_ubo_memory[frame], nullptr);
 
 	m_ubo[frame] = VK_NULL_HANDLE;
 	m_ubo_memory[frame] = VK_NULL_HANDLE;
 }
 
-void GameObject::RegisterDrawCmd(VkCommandBuffer& command_buffer, const int32_t frame)
+void GameObject::RegisterDrawCmd(VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame)
 {
 	for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 	{
-		it->second->draw(command_buffer, frame);
+		it->second->draw(command_buffer, descriptorset, frame);
 	}
 }
 
@@ -94,7 +93,7 @@ void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_
 int32_t GameObject::LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
 {
 	int32_t i = m_meshes.rbegin() != m_meshes.rend() ? m_meshes.rbegin()->first + 1 : 0;
-	m_meshes.insert({ i ,std::make_unique<Mesh>(vertices, indices, mp_renderer) });
+	m_meshes.insert({ i, std::make_unique<Mesh>(vertices, indices, mp_renderer) });
 	m_meshes.at(i)->CreateBuffers(mp_renderer);
 
 	return i;
@@ -184,3 +183,7 @@ const bool GameObject::Deleted()
 	return m_meshes.size() == 0;
 }
 
+const std::vector<std::unique_ptr<Mesh>>& GameObject::GetMeshInDeleteQueue() const
+{
+	return m_mesh_to_delete;
+}

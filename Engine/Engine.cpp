@@ -1,137 +1,199 @@
-#include "Includes/Engine.h"
+#include "Engine.h"
 
-Engine::Engine(uint32_t width, uint32_t height) {
-	m_last_time = std::chrono::high_resolution_clock::now();
-
+Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_resolution_clock::now())
+{
 	mp_main_camera = std::make_shared<Camera>();
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
+
+	// setup default UI
+	ConsoleUI* console = &ConsoleUI::Get();
+	std::function<void()> console_hide = [console]() { console->SetActive(!console->IsActive()); };
+	BindKeyToFunc(GLFW_KEY_GRAVE_ACCENT, console_hide, ActionType::R3D_PRESS);
+
+	m_UIs.push_back(console);
+
+	Watcher* watcher = &Watcher::Get();
+	std::function<void()> watcher_hide = [watcher]() { watcher->SetActive(!watcher->IsActive()); };
+	BindKeyToFunc(GLFW_KEY_F1, watcher_hide, ActionType::R3D_PRESS);
+
+	m_UIs.push_back(watcher);
+
+	// load config
 	mp_config = std::make_shared<Config>();
 	mp_config->width = width;
 	mp_config->height = height;
 
+	// start the interface
 	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
-
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
-
-	mp_renderer->createDepthResources();
-	mp_renderer->createFramebuffer();
-
-	mp_renderer->createDescriptorPool();
-	mp_renderer->allocateCommandBuffers();
 }
 
-Engine::~Engine() {
-	vkDeviceWaitIdle(mp_renderer->getDevice());
+Engine::~Engine()
+{
+	vkDeviceWaitIdle(mp_renderer->GetDevice());
 
 	mp_renderer->cleanSwapchain();
 
+	mp_scene->CleanRessources(mp_renderer);
 	mp_scene.reset();
-
-	vkDestroyDescriptorPool(mp_renderer->getDevice(), mp_renderer->getDescriptorPool(), nullptr);
-	vkDestroyDescriptorSetLayout(mp_renderer->getDevice(), mp_renderer->getDescriptorSetLayout(), nullptr);
 
 	mp_renderer.reset();
 	mp_window.reset();
 	mp_config.reset();
 }
 
-void Engine::setScene(std::shared_ptr<Scene> p_scene) {
+void Engine::setScene(std::shared_ptr<Scene> p_scene)
+{
 	mp_scene = p_scene;
+	mp_scene->Load(mp_renderer);
 }
 
-void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject) {
+void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
+{
 	mp_scene->AddGameObject(gameobject);
 }
 
-const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader) {
+const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader)
+{
 	return std::make_shared<Material>(shader, mp_renderer);
 }
 
-const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file) {
+const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file)
+{
 	std::shared_ptr<Material> mat = std::make_shared<Material>(shader, mp_renderer);
 	mat->LoadTexture(texture_file);
 
 	return mat;
 }
 
-const std::shared_ptr<GameObject> Engine::CreateGameObject() {
+const std::shared_ptr<GameObject> Engine::CreateGameObject()
+{
 	return std::make_shared<GameObject>(mp_renderer);
 }
 
-const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& object_file) {
+const std::shared_ptr<GameObject> Engine::CreateGameObject(const std::string& object_file)
+{
 	std::shared_ptr<GameObject> go = std::make_shared<GameObject>(mp_renderer);
 	go->LoadMesh(object_file);
 
 	return go;
 }
 
-const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor) {
+const std::shared_ptr<GameObject> Engine::CreateCube(const glm::vec3& position, const float& size, const glm::vec3& vcolor)
+{
 	std::shared_ptr<GameObject> cube = std::make_shared<GameObject>(mp_renderer);
 
-	Geometry g;
+	Geometry geo;
 
 	const float half_size = size / 2;
 
-	//vertices
-	g.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
-	g.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.0f });
-	g.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
-	g.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.0f, .0f });
-	g.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
-	g.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.0f });
-	g.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.0f, .0f });
-	g.addVertex({ half_size, half_size, half_size }, vcolor, { 2.0f, 2.0f });
+	// vertices
+	uint32_t a = geo.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
+	uint32_t b = geo.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
+	uint32_t c = geo.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t d = geo.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t e = geo.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
+	uint32_t f = geo.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.f });
+	uint32_t g = geo.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
+	uint32_t h = geo.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
 
-	//indices
-	g.addIndices(0, 2, 1);
-	g.addIndices(1, 2, 3);
+	uint32_t a1 = geo.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
+	uint32_t b1 = geo.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
+	uint32_t c1 = geo.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t d1 = geo.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t e1 = geo.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
+	uint32_t f1 = geo.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.f });
+	uint32_t g1 = geo.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
+	uint32_t h1 = geo.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
 
-	g.addIndices(5, 7, 4);
-	g.addIndices(4, 7, 6);
+	uint32_t a2 = geo.addVertex({ -half_size, -half_size, -half_size }, vcolor, { .0f, .0f });
+	uint32_t b2 = geo.addVertex({ half_size, -half_size, -half_size }, vcolor, { .0f, 2.f });
+	uint32_t c2 = geo.addVertex({ -half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t d2 = geo.addVertex({ half_size, half_size, -half_size }, vcolor, { 2.f, .0f });
+	uint32_t e2 = geo.addVertex({ -half_size, -half_size, half_size }, vcolor, { .0f, .0f });
+	uint32_t f2 = geo.addVertex({ half_size, -half_size, half_size }, vcolor, { .0f, 2.f });
+	uint32_t g2 = geo.addVertex({ -half_size, half_size, half_size }, vcolor, { 2.f, .0f });
+	uint32_t h2 = geo.addVertex({ half_size, half_size, half_size }, vcolor, { 2.f, 2.f });
 
-	g.addIndices(1, 3, 5);
-	g.addIndices(5, 3, 7);
+	// indices
+	geo.addIndices(a, c, b);
+	geo.addIndices(b, c, d);
 
-	g.addIndices(4, 6, 0);
-	g.addIndices(0, 6, 2);
+	geo.addIndices(f, h, e);
+	geo.addIndices(e, h, g);
 
-	g.addIndices(2, 6, 3);
-	g.addIndices(3, 6, 7);
+	geo.addIndices(b1, d1, f1);
+	geo.addIndices(f1, d1, h1);
 
-	g.addIndices(4, 0, 5);
-	g.addIndices(5, 0, 1);
+	geo.addIndices(e1, g1, a1);
+	geo.addIndices(a1, g1, c1);
 
-	cube->LoadMesh(g.vertices, g.indices);
+	geo.addIndices(c2, g2, d2);
+	geo.addIndices(d2, g2, h2);
+
+	geo.addIndices(e2, a2, f2);
+	geo.addIndices(f2, a2, b2);
+
+	cube->LoadMesh(geo.vertices, geo.indices);
 	cube->setPosition(position);
 
 	return cube;
 }
 
-void Engine::BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type) {
+void Engine::BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type)
+{
 	mp_controller->SetKeyToFunc(key, func, type);
 }
 
-const std::shared_ptr<Camera> Engine::GetMainCamera() {
+const std::shared_ptr<Camera> Engine::GetMainCamera()
+{
 	return mp_main_camera;
 }
 
-void Engine::SetWireframeMode() {
+void Engine::SetWireframeMode()
+{
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_LINE);
 }
 
-void Engine::SetPointMode() {
+void Engine::SetPointMode()
+{
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_POINT);
 }
 
-void Engine::SetFillMode() {
+void Engine::SetFillMode()
+{
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL);
 }
 
-const bool& Engine::shouldClose() {
+void Engine::SetColorMode(const ColorMode color_map)
+{
+	mp_renderer->SetColorMode(color_map);
+}
+
+void Engine::RenderUI(UI& ui)
+{
+	m_UIs.push_back(&ui);
+}
+
+void Engine::RemoveUI(UI& ui)
+{
+	for (auto it = m_UIs.begin(); it != m_UIs.end(); it++)
+	{
+		if (*it == &ui)
+		{
+			m_UIs.erase(it);
+			break;
+		}
+	}
+}
+
+const bool& Engine::shouldClose()
+{
 	return glfwWindowShouldClose(&mp_window->getHandle());
 }
 
-void Engine::update() {
+void Engine::update()
+{
 	glfwPollEvents();
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> current_time = std::chrono::high_resolution_clock::now();
@@ -145,14 +207,15 @@ void Engine::update() {
 	if (frame == -1)
 		return;
 
-	if (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame)) {
+	if (mp_scene->IsUpdate(frame) || mp_renderer->NeedUpdate(frame))
+	{
 		mp_renderer->WaitForSwapchainImageFence();
 
 		mp_scene->Update(frame);
 
-		mp_renderer->beginRecordCommandBuffers(mp_renderer->getCommandBuffer(frame), mp_renderer->getFrameBuffer(frame));
-		mp_scene->Render(mp_renderer->getCommandBuffer(frame), frame);
-		mp_renderer->endRecordCommandBuffers(mp_renderer->getCommandBuffer(frame));
+		mp_renderer->BeginRecordCommandBuffers(mp_renderer->GetCommandBuffer(frame), mp_renderer->GetFrameBuffer(frame));
+		mp_scene->Render(mp_renderer->GetCommandBuffer(frame), frame);
+		mp_renderer->EndRecordCommandBuffers(mp_renderer->GetCommandBuffer(frame));
 
 		mp_scene->Clean(frame);
 		mp_renderer->SetUpdated(frame);
@@ -160,10 +223,23 @@ void Engine::update() {
 
 	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
+	mp_scene->UpdateSceneUBO(mp_renderer);
 
-	//std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
+	// Update UI
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	for (size_t i = 0; i < m_UIs.size(); i++)
+		m_UIs[i]->Update(mp_config->width, mp_config->height);
+
+	ImGui::Render();
+
+	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }
 
-void Engine::draw() {
+void Engine::draw()
+{
+	mp_renderer->UpdateUI();
 	mp_renderer->draw();
 }

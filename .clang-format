@@ -4,7 +4,7 @@ PointerAlignment: Left
 UseTab: ForIndentation
 TabWidth: 4
 IndentWidth: 4
-ColumnLimit: 120
+ColumnLimit: 180
 
 BreakBeforeBraces: Allman
 Cpp11BracedListStyle: false
@@ -14,5 +14,8 @@ SpaceBeforeCpp11BracedList: true
 SpaceBeforeCtorInitializerColon: true
 SpacesInAngles: false
 
+AllowShortFunctionsOnASingleLine: None
 
-Standard: c++17
+MacroBlockBegin: "R3DENGINE_ .+"
+
+Standard: c++20

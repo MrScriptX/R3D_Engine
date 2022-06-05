@@ -1,12 +1,9 @@
-#include "../Includes/renderer/VulkanSwapchain.h"
+#include "VulkanSwapchain.h"
 
-
-
-VulkanSwapchain::VulkanSwapchain(Graphics & m_graphic, uint32_t width, uint32_t height) : m_graphic(m_graphic), WIDTH(width), HEIGHT(height)
+VulkanSwapchain::VulkanSwapchain(Graphics& m_graphic, uint32_t width, uint32_t height) : m_graphic(m_graphic), WIDTH(width), HEIGHT(height)
 {
 	createSwapchain();
 }
-
 
 VulkanSwapchain::~VulkanSwapchain()
 {
@@ -69,7 +66,6 @@ void VulkanSwapchain::createSwapchain()
 		throw std::runtime_error("failed to create swapchain!");
 	}
 
-
 	vkGetSwapchainImagesKHR(m_graphic.device, m_graphic.swapchain, &image_count, nullptr);
 
 	m_graphic.swapchain_images.resize(image_count);
@@ -77,7 +73,6 @@ void VulkanSwapchain::createSwapchain()
 	{
 		throw std::runtime_error("Failed to retrieve swapchain images!");
 	}
-
 
 	createImagesView();
 }
@@ -110,7 +105,6 @@ void VulkanSwapchain::createImagesView()
 		}
 	}
 }
-
 
 VkSurfaceFormatKHR VulkanSwapchain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 {
@@ -149,7 +143,7 @@ VkPresentModeKHR VulkanSwapchain::chooseSwapPresentMode(const std::vector<VkPres
 	return bestMode;
 }
 
-VkExtent2D VulkanSwapchain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabilities)
+VkExtent2D VulkanSwapchain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
 {
 	if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
 	{
@@ -171,7 +165,6 @@ SwapchainDetails VulkanSwapchain::querySwapChainSupport(VkPhysicalDevice device)
 	SwapchainDetails details;
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_graphic.surface, &details.capabilities);
 
-
 	uint32_t format_count = 0;
 	vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_graphic.surface, &format_count, nullptr);
 
@@ -180,7 +173,6 @@ SwapchainDetails VulkanSwapchain::querySwapChainSupport(VkPhysicalDevice device)
 		details.formats.resize(format_count);
 		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_graphic.surface, &format_count, details.formats.data());
 	}
-
 
 	uint32_t present_mode_count;
 	vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_graphic.surface, &present_mode_count, nullptr);

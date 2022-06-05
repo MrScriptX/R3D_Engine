@@ -1,16 +1,9 @@
-#include "../Includes/renderer/VulkanDevice.h"
-
-
+#include "VulkanDevice.h"
 
 VulkanDevice::VulkanDevice(Graphics& m_graphic) : m_graphic(m_graphic)
 {
 	choosePhysicalDevice();
 	createLogicalDevice();
-}
-
-
-VulkanDevice::~VulkanDevice()
-{
 }
 
 void VulkanDevice::choosePhysicalDevice()
@@ -71,11 +64,9 @@ void VulkanDevice::createLogicalDevice()
 		queue_infos.push_back(queue_info);
 	}
 
-
 	VkPhysicalDeviceFeatures deviceFeatures = {};
 	deviceFeatures.samplerAnisotropy = VK_TRUE;
 	deviceFeatures.fillModeNonSolid = VK_TRUE;
-
 
 	VkDeviceCreateInfo device_info = {};
 	device_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -149,13 +140,12 @@ bool VulkanDevice::checkDeviceExtensionSupport(VkPhysicalDevice device)
 	std::vector<VkExtensionProperties> availableExtensions(extension_count);
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, availableExtensions.data());
 
-/*#ifndef NDEBUG
-	for (uint32_t i = 0; i < availableExtensions.size(); i++)
-	{
-		std::clog << availableExtensions[i].extensionName << "\t";
-	}
-#endif // !NDEBUG*/
-
+	/*#ifndef NDEBUG
+	    for (uint32_t i = 0; i < availableExtensions.size(); i++)
+	    {
+	        std::clog << availableExtensions[i].extensionName << "\t";
+	    }
+	#endif // !NDEBUG*/
 
 	std::set<std::string> requiredExtensions(m_graphic.extensions.device_extensions.begin(), m_graphic.extensions.device_extensions.end());
 
@@ -210,7 +200,6 @@ SwapchainDetails VulkanDevice::querySwapChainSupport(VkPhysicalDevice device)
 
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_graphic.surface, &details.capabilities);
 
-
 	uint32_t format_count = 0;
 	vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_graphic.surface, &format_count, nullptr);
 
@@ -219,7 +208,6 @@ SwapchainDetails VulkanDevice::querySwapChainSupport(VkPhysicalDevice device)
 		details.formats.resize(format_count);
 		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_graphic.surface, &format_count, details.formats.data());
 	}
-
 
 	uint32_t present_mode_count;
 	vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_graphic.surface, &present_mode_count, nullptr);

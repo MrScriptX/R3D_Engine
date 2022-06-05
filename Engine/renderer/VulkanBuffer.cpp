@@ -1,17 +1,14 @@
-#include "../Includes/renderer/VulkanBuffer.h"
-
-
+#include "VulkanBuffer.h"
 
 VulkanBuffer::VulkanBuffer(Graphics& graphic) : m_graphic(graphic)
 {
 }
 
-
 VulkanBuffer::~VulkanBuffer()
 {
 }
 
-void VulkanBuffer::createBuffer(VkBuffer & buffer, VkDeviceMemory & bufferMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
+void VulkanBuffer::createBuffer(VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 {
 	VkResult result;
 
@@ -62,12 +59,11 @@ void VulkanBuffer::createBuffer(VkBuffer & buffer, VkDeviceMemory & bufferMemory
 	case VK_ERROR_INVALID_EXTERNAL_HANDLE:
 		throw std::runtime_error("Failed to allocate buffer memory!");
 		break;
-	
+
 	default:
 		throw std::runtime_error("Failed to allocate buffer memory!");
 		break;
 	}
-
 
 	result = vkBindBufferMemory(m_graphic.device, buffer, bufferMemory, 0);
 	switch (result)
