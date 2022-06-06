@@ -1,5 +1,5 @@
-#ifndef _GRAPHICS_H
-#define _GRAPHICS_H
+#ifndef R3DENGINE_GRAPHICS_H
+#define R3DENGINE_GRAPHICS_H
 
 #include "vulkan/vulkan.h"
 #include <vector>
@@ -123,4 +123,4 @@ struct CommandBuffers
 	VkCommandBuffer handle = VK_NULL_HANDLE;
 };
 
-#endif // !_GRAPHICS_H
+#endif // !R3DENGINE_GRAPHICS_H
