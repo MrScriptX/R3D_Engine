@@ -39,10 +39,11 @@ jobs:
         ls VULKAN_SDK >&2
         du -hs VULKAN_SDK >&2
 
+    - name: Download XMake
+      run: |
         sudo add-apt-repository ppa:xmake-io/xmake
         sudo apt update
         sudo apt install xmake
-
         
     - name: Build
       env:
@@ -52,3 +53,4 @@ jobs:
         VULKAN_SDK: /home/runner/work/R3D_Engine/R3D_Engine/VULKAN_SDK
       run: |
         xmake f -m debug
+        xmake
