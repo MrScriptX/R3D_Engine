@@ -114,6 +114,7 @@
     <ClInclude Include="ui\ConsoleUI.h" />
     <ClInclude Include="ui\UI.h" />
     <ClInclude Include="ui\Watcher.h" />
+    <ClInclude Include="version.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="world\GameObject.h" />
     <ClInclude Include="world\Geometry.h" />

@@ -278,6 +278,9 @@
     <ClInclude Include="renderer\parameters.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
