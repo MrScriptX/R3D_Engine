@@ -8,6 +8,7 @@
 namespace vred::renderer
 {
 	VkPhysicalDevice choose_device(const interface& o);
+	void create_device_interface(interface& o);
 }
 
 #endif // !VRED_RENDERER_VDEVICES_H

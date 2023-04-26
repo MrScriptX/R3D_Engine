@@ -10,6 +10,7 @@
 #endif // !STB_IMAGE_IMPLEMENTATION
 
 // review createBuffer func
+#include "vdevices.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
@@ -203,7 +204,20 @@ void Renderer::setupInstance(GLFWwindow& window)
 
 void Renderer::setupDevice()
 {
-	m_device = std::make_unique<VulkanDevice>(m_graphic);
+	// m_device = std::make_unique<VulkanDevice>(m_graphic);
+	vred::renderer::interface it;
+	it.instance = m_graphic.instance;
+	it.surface = m_graphic.surface;
+	it.physical_device = choose_device(it);
+	vred::renderer::create_device_interface(it);
+
+	m_graphic.physical_device = it.physical_device;
+	m_graphic.device = it.device;
+	m_graphic.queue_indices.graphic_family = it.queue_indices.graphic_family;
+	m_graphic.queue_indices.present_family = it.queue_indices.present_family;
+	m_graphic.graphics_queue = it.graphics_queue;
+	m_graphic.present_queue = it.present_queue;
+
 	createSyncObject();
 }
 

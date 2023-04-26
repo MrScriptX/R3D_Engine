@@ -275,6 +275,9 @@
     <ClInclude Include="renderer\swapchain_details.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\parameters.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

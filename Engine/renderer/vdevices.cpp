@@ -7,14 +7,15 @@
 
 #include "queue_family.h"
 #include "extensions.h"
+#include "parameters.h"
 #include "swapchain_details.h"
 
 using namespace vred::renderer;
 
-bool checkDeviceSuitability(const VkPhysicalDevice& device, const interface& o);
-queue_family_indices findQueueFamily(const VkPhysicalDevice& device, const interface& o);
-bool checkDeviceExtensionSupport(const VkPhysicalDevice& device);
-swapchain_details querySwapChainSupport(const VkPhysicalDevice& device, const interface& o);
+bool check_device_suitability(const VkPhysicalDevice& device, const interface& o);
+queue_family_indices find_queue_family(const VkPhysicalDevice& device, const interface& o);
+bool check_device_extension_support(const VkPhysicalDevice& device);
+swapchain_details query_swapchain_support(const VkPhysicalDevice& device, const interface& o);
 
 VkPhysicalDevice vred::renderer::choose_device(const interface& o)
 {
@@ -30,7 +31,7 @@ VkPhysicalDevice vred::renderer::choose_device(const interface& o)
 	VkPhysicalDevice device = VK_NULL_HANDLE;
 	for (uint32_t i = 0; i < available_device.size(); i++)
 	{
-		if (checkDeviceSuitability(available_device[i], o))
+		if (check_device_suitability(available_device[i], o))
 		{
 			device = available_device[i];
 			break;
@@ -50,7 +51,64 @@ VkPhysicalDevice vred::renderer::choose_device(const interface& o)
 	return device;
 }
 
-bool checkDeviceSuitability(const VkPhysicalDevice& device, const interface& o)
+void vred::renderer::create_device_interface(interface& o)
+{
+	float queuePriority = 1.0f;
+	queue_family_indices indices = find_queue_family(o.physical_device, o);
+	std::set<int> uniqueQueueFamilies = { indices.graphic_family, indices.present_family };
+
+	std::vector<VkDeviceQueueCreateInfo> queue_infos = {};
+	for (int queue_family : uniqueQueueFamilies)
+	{
+		VkDeviceQueueCreateInfo queue_info = {};
+		queue_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queue_info.pNext = nullptr;
+		queue_info.flags = 0;
+
+		queue_info.queueFamilyIndex = queue_family;
+		queue_info.queueCount = 1;
+		queue_info.pQueuePriorities = &queuePriority;
+
+		queue_infos.push_back(queue_info);
+	}
+
+	VkPhysicalDeviceFeatures deviceFeatures = {};
+	deviceFeatures.samplerAnisotropy = VK_TRUE;
+	deviceFeatures.fillModeNonSolid = VK_TRUE;
+
+	VkDeviceCreateInfo device_info = {};
+	device_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	device_info.pNext = nullptr;
+	device_info.flags = 0;
+
+	device_info.queueCreateInfoCount = static_cast<uint32_t>(queue_infos.size());
+	device_info.pQueueCreateInfos = queue_infos.data();
+
+	device_info.pEnabledFeatures = &deviceFeatures;
+	device_info.enabledExtensionCount = static_cast<uint32_t>(extensions::device_extensions.size());
+	device_info.ppEnabledExtensionNames = extensions::device_extensions.data();
+
+	if (parameters::validation_layer_enable)
+	{
+		device_info.enabledLayerCount = static_cast<uint32_t>(extensions::validation_layers.size());
+		device_info.ppEnabledLayerNames = extensions::validation_layers.data();
+	}
+	else
+	{
+		device_info.enabledLayerCount = 0;
+	}
+
+	if (vkCreateDevice(o.physical_device, &device_info, nullptr, &o.device) != VK_SUCCESS)
+		throw std::runtime_error("Failed to create logical device!");
+
+	o.queue_indices.graphic_family = indices.graphic_family;
+	o.queue_indices.present_family = indices.present_family;
+
+	vkGetDeviceQueue(o.device, indices.graphic_family, 0, &o.graphics_queue);
+	vkGetDeviceQueue(o.device, indices.present_family, 0, &o.present_queue);
+}
+
+bool check_device_suitability(const VkPhysicalDevice& device, const interface& o)
 {
 	VkPhysicalDeviceProperties device_properties;
 	vkGetPhysicalDeviceProperties(device, &device_properties);
@@ -71,12 +129,12 @@ bool checkDeviceSuitability(const VkPhysicalDevice& device, const interface& o)
 	}
 
 	bool swapchain_adequate = false;
-	queue_family_indices indices = findQueueFamily(device, o);
-	bool extensions_supported = checkDeviceExtensionSupport(device);
+	queue_family_indices indices = find_queue_family(device, o);
+	bool extensions_supported = check_device_extension_support(device);
 
 	if (extensions_supported)
 	{
-		swapchain_details swapChainSupport = querySwapChainSupport(device, o);
+		swapchain_details swapChainSupport = query_swapchain_support(device, o);
 		swapchain_adequate = !swapChainSupport.formats.empty() && !swapChainSupport.present_modes.empty();
 	}
 
@@ -86,7 +144,7 @@ bool checkDeviceSuitability(const VkPhysicalDevice& device, const interface& o)
 	return indices.is_complete() && extensions_supported && swapchain_adequate && supportedFeatures.samplerAnisotropy;
 }
 
-queue_family_indices findQueueFamily(const VkPhysicalDevice& device, const interface& o)
+queue_family_indices find_queue_family(const VkPhysicalDevice& device, const interface& o)
 {
 	uint32_t queue_family_count = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, nullptr);
@@ -122,7 +180,7 @@ queue_family_indices findQueueFamily(const VkPhysicalDevice& device, const inter
 	return indices;
 }
 
-bool checkDeviceExtensionSupport(const VkPhysicalDevice& device)
+bool check_device_extension_support(const VkPhysicalDevice& device)
 {
 	uint32_t extension_count;
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
@@ -146,7 +204,7 @@ bool checkDeviceExtensionSupport(const VkPhysicalDevice& device)
 	return required_extensions.empty();
 }
 
-swapchain_details querySwapChainSupport(const VkPhysicalDevice& device, const interface& o)
+swapchain_details query_swapchain_support(const VkPhysicalDevice& device, const interface& o)
 {
 	swapchain_details details;
 
