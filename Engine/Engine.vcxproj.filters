@@ -7,9 +7,6 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{be767481-ce1d-4bad-a5f3-4aeae38d9b7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Renderer">
-      <UniqueIdentifier>{fc06610a-7ac2-4f0f-b638-951b5eff3bd8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Graphics">
       <UniqueIdentifier>{c8467a9d-cccc-486f-814e-ac1fa2cce737}</UniqueIdentifier>
     </Filter>
@@ -27,6 +24,9 @@
     </Filter>
     <Filter Include="Engine\UI">
       <UniqueIdentifier>{e0688573-f834-4be7-8363-ea5ac447cdc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\renderer">
+      <UniqueIdentifier>{fc06610a-7ac2-4f0f-b638-951b5eff3bd8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -91,42 +91,43 @@
       <Filter>Engine\UI</Filter>
     </ClCompile>
     <ClCompile Include="renderer\Renderer.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanBuffer.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanCommandBuffer.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanCommandPool.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanDescriptor.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanDevice.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanInstance.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanPipeline.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanRenderPass.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanSwapchain.cpp">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="ui\UI.cpp">
       <Filter>Engine\UI</Filter>
     </ClCompile>
     <ClCompile Include="ui\Watcher.cpp">
       <Filter>Engine\UI</Filter>
+    </ClCompile>
     <ClCompile Include="renderer\vdevices.cpp">
-      <Filter>Engine\Renderer\Source</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -224,34 +225,34 @@
       <Filter>Engine\UI</Filter>
     </ClInclude>
     <ClInclude Include="renderer\Renderer.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanBuffer.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanCommandBuffer.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanCommandPool.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanDescriptor.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanDevice.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanInstance.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanPipeline.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanRenderPass.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanSwapchain.h">
-      <Filter>Engine\Renderer</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="ui\UI.h">
       <Filter>Engine\UI</Filter>
@@ -260,37 +261,22 @@
       <Filter>Engine\UI</Filter>
     </ClInclude>
     <ClInclude Include="renderer\vdevices.h">
-      <Filter>Engine\Renderer\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\queue_family.h">
-      <Filter>Engine\Renderer\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\interface.h">
-      <Filter>Engine\Renderer\Header</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\extensions.h">
-      <Filter>Engine\Renderer\Header</Filter>
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\interface.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\queue_family.h">
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\swapchain_details.h">
-      <Filter>Engine\Renderer\Header</Filter>
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\assets\shaders\HLSL\no_texture_shader.frag">
-      <Filter>Asset</Filter>
-    </None>
-    <None Include="..\assets\shaders\HLSL\normalmap.vert">
-      <Filter>Asset</Filter>
-    </None>
-    <None Include="..\assets\shaders\HLSL\shader.vert">
-      <Filter>Asset</Filter>
-    </None>
-    <None Include="..\assets\shaders\HLSL\shader_compiler.bat">
-      <Filter>Asset</Filter>
-    </None>
-    <None Include="..\assets\shaders\HLSL\texture_shader.frag">
-      <Filter>Asset</Filter>
-    </None>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

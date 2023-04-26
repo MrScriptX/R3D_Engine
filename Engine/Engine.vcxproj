@@ -128,11 +128,6 @@
     <ClInclude Include="renderer\interface.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\assets\shaders\HLSL\normalmap.vert" />
-    <None Include="..\assets\shaders\HLSL\no_texture_shader.frag" />
-    <None Include="..\assets\shaders\HLSL\shader.vert" />
-    <None Include="..\assets\shaders\HLSL\shader_compiler.bat" />
-    <None Include="..\assets\shaders\HLSL\texture_shader.frag" />
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -231,7 +226,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <SourcePath>$(SourcePath)</SourcePath>
+    <IncludePath>$(SolutionDir)dependencies\imgui-1.87;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -265,7 +263,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)\dependencies\glfw-3.3.7\include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\assimp-5.0.1\include;$(SolutionDir)\dependencies\imgui-1.87;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)\dependencies\glfw-3.3.7\include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\assimp-5.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>

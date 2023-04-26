@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <vector>
 #include <set>
+#include <iostream>
 
 #include "queue_family.h"
 #include "extensions.h"
@@ -26,15 +27,27 @@ VkPhysicalDevice vred::renderer::choose_device(const interface& o)
 	std::vector<VkPhysicalDevice> available_device(device_count);
 	vkEnumeratePhysicalDevices(o.instance, &device_count, available_device.data());
 
+	VkPhysicalDevice device = VK_NULL_HANDLE;
 	for (uint32_t i = 0; i < available_device.size(); i++)
 	{
 		if (checkDeviceSuitability(available_device[i], o))
 		{
-			return available_device[i];
+			device = available_device[i];
+			break;
 		}
 	}
 
-	return VK_NULL_HANDLE;
+	if (device == VK_NULL_HANDLE)
+		throw std::runtime_error("No physical device has required specs !");
+
+	VkPhysicalDeviceProperties device_properties;
+	vkGetPhysicalDeviceProperties(device, &device_properties);
+
+	std::clog << "Physical Device Name: " << device_properties.deviceName << "\n";
+	std::clog << "Physical Device Vendor ID: " << device_properties.vendorID << "\n";
+	std::clog << "Physical Device Driver version: " << device_properties.driverVersion << std::endl;
+
+	return device;
 }
 
 bool checkDeviceSuitability(const VkPhysicalDevice& device, const interface& o)
@@ -45,9 +58,16 @@ bool checkDeviceSuitability(const VkPhysicalDevice& device, const interface& o)
 	VkPhysicalDeviceFeatures device_features;
 	vkGetPhysicalDeviceFeatures(device, &device_features);
 
-	if (!(device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && device_features.geometryShader))
+	if (device_properties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && device_properties.deviceType != VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
 	{
-		return false;
+		std::clog << "device type does not match\n";
+		return false;	
+	}
+
+	if (!device_features.geometryShader)
+	{
+		std::clog << "geometry shader is not supported\n";
+		return false;	
 	}
 
 	bool swapchain_adequate = false;
@@ -102,7 +122,7 @@ queue_family_indices findQueueFamily(const VkPhysicalDevice& device, const inter
 	return indices;
 }
 
-bool checkDeviceExtensionSupport(const VkPhysicalDevice& device, const interface& o)
+bool checkDeviceExtensionSupport(const VkPhysicalDevice& device)
 {
 	uint32_t extension_count;
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
