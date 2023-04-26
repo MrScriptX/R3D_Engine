@@ -125,6 +125,8 @@
     </ClCompile>
     <ClCompile Include="ui\Watcher.cpp">
       <Filter>Engine\UI</Filter>
+    <ClCompile Include="renderer\vdevices.cpp">
+      <Filter>Engine\Renderer\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -256,6 +258,21 @@
     </ClInclude>
     <ClInclude Include="ui\Watcher.h">
       <Filter>Engine\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vdevices.h">
+      <Filter>Engine\Renderer\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\queue_family.h">
+      <Filter>Engine\Renderer\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\interface.h">
+      <Filter>Engine\Renderer\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\extensions.h">
+      <Filter>Engine\Renderer\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\swapchain_details.h">
+      <Filter>Engine\Renderer\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

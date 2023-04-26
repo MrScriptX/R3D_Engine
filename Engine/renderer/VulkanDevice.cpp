@@ -1,8 +1,16 @@
 #include "VulkanDevice.h"
 
+#include "vdevices.h"
+
 VulkanDevice::VulkanDevice(Graphics& m_graphic) : m_graphic(m_graphic)
 {
-	choosePhysicalDevice();
+	vred::renderer::interface it;
+	it.instance = m_graphic.instance;
+	it.surface = m_graphic.surface;
+
+	m_graphic.physical_device = choose_device(it);
+
+	// choosePhysicalDevice();
 	createLogicalDevice();
 }
 
