@@ -1,8 +1,16 @@
 #include "VulkanDevice.h"
 
+#include "vdevices.h"
+
 VulkanDevice::VulkanDevice(Graphics& m_graphic) : m_graphic(m_graphic)
 {
-	choosePhysicalDevice();
+	vred::renderer::interface it;
+	it.instance = m_graphic.instance;
+	it.surface = m_graphic.surface;
+	
+	m_graphic.physical_device = choose_device(it);
+
+	// choosePhysicalDevice();
 	createLogicalDevice();
 }
 
@@ -32,15 +40,13 @@ void VulkanDevice::choosePhysicalDevice()
 	{
 		throw std::runtime_error("Failed to find a suitable device!");
 	}
-	else
-	{
-		VkPhysicalDeviceProperties device_properties;
-		vkGetPhysicalDeviceProperties(m_graphic.physical_device, &device_properties);
 
-		std::clog << "Physical Device Name: " << device_properties.deviceName << "\n";
-		std::clog << "Physical Device Vendor ID: " << device_properties.vendorID << "\n";
-		std::clog << "Physical Device Driver version: " << device_properties.driverVersion << std::endl;
-	}
+	VkPhysicalDeviceProperties device_properties;
+	vkGetPhysicalDeviceProperties(m_graphic.physical_device, &device_properties);
+
+	std::clog << "Physical Device Name: " << device_properties.deviceName << "\n";
+	std::clog << "Physical Device Vendor ID: " << device_properties.vendorID << "\n";
+	std::clog << "Physical Device Driver version: " << device_properties.driverVersion << std::endl;
 }
 
 void VulkanDevice::createLogicalDevice()
