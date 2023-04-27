@@ -57,6 +57,7 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="renderer\Renderer.cpp" />
     <ClCompile Include="renderer\vdevices.cpp" />
+    <ClCompile Include="renderer\vinstance.cpp" />
     <ClCompile Include="renderer\VulkanBuffer.cpp" />
     <ClCompile Include="renderer\VulkanCommandBuffer.cpp" />
     <ClCompile Include="renderer\VulkanCommandPool.cpp" />
@@ -102,6 +103,7 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="renderer\parameters.h" />
     <ClInclude Include="renderer\Renderer.h" />
+    <ClInclude Include="renderer\vinstance.h" />
     <ClInclude Include="renderer\VulkanBuffer.h" />
     <ClInclude Include="renderer\VulkanCommandBuffer.h" />
     <ClInclude Include="renderer\VulkanCommandPool.h" />
@@ -265,7 +267,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)\dependencies\glfw-3.3.7\include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\assimp-5.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)dependencies\glfw-3.3.7\include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\assimp-5.0.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>

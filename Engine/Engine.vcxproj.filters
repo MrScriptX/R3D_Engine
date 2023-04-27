@@ -129,6 +129,9 @@
     <ClCompile Include="renderer\vdevices.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\vinstance.cpp">
+      <Filter>Engine\renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -280,6 +283,9 @@
     </ClInclude>
     <ClInclude Include="version.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vinstance.h">
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

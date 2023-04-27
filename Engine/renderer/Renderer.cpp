@@ -10,6 +10,7 @@
 #endif // !STB_IMAGE_IMPLEMENTATION
 
 // review createBuffer func
+#include "vinstance.h"
 #include "vdevices.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
@@ -197,7 +198,12 @@ void Renderer::WaitForSwapchainImageFence()
 
 void Renderer::setupInstance(GLFWwindow& window)
 {
-	m_instance = std::make_unique<VulkanInstance>(m_graphic);
+	vred::renderer::interface it;
+	it.instance = vred::renderer::create_instance();
+
+	m_graphic.instance = it.instance;
+
+	// m_instance = std::make_unique<VulkanInstance>(m_graphic);
 	setupCallback();
 	createSurface(window);
 }
