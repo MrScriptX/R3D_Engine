@@ -287,6 +287,9 @@
     <ClInclude Include="renderer\vinstance.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\frame.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

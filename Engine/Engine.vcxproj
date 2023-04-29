@@ -101,6 +101,7 @@
     <ClInclude Include="graphics\Shaders.h" />
     <ClInclude Include="graphics\Vertex.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="renderer\frame.h" />
     <ClInclude Include="renderer\parameters.h" />
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\vinstance.h" />
