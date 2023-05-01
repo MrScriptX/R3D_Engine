@@ -132,6 +132,7 @@
     <ClCompile Include="renderer\vinstance.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\vshader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -288,6 +289,9 @@
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\frame.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vshader.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
   </ItemGroup>
