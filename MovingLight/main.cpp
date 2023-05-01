@@ -2,6 +2,7 @@
 #include <Engine.h>
 
 #include "LightMenu.h"
+#include <Logger.h>
 
 int main()
 {
@@ -9,7 +10,10 @@ int main()
 	{
 		Engine engine(1920, 1080);
 		Logger::init();
+		vred::Log::init();
 
+		vred::Log::message(LOG_TYPE::INFO, "Moving Light Example Project");
+		
 		// create object
 		std::shared_ptr<GameObject> cube = engine.CreateCube({ .0f, .0f, .0f }, 1.f, { 1.f, .0f, .0f });
 		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);

@@ -118,7 +118,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(SolutionDir)\dependencies\glm;$(SolutionDir)\dependencies\glfw-3.3.7\include;$(SolutionDir)\dependencies\stb_image;$(SolutionDir)\dependencies\assimp-5.0.1\include;$(SolutionDir)dependencies\imgui-1.87;$(SolutionDir)x64\Debug\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

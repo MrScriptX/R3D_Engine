@@ -294,6 +294,9 @@
     <ClInclude Include="renderer\vshader.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="log_type.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
