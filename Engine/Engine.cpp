@@ -1,15 +1,30 @@
-#include "Includes/Engine.h"
+#include "Engine.h"
 
 Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_resolution_clock::now())
 {
 	mp_main_camera = std::make_shared<Camera>();
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
+
+	// setup default UI
+	ConsoleUI* console = &ConsoleUI::Get();
+	std::function<void()> console_hide = [console]() { console->SetActive(!console->IsActive()); };
+	BindKeyToFunc(GLFW_KEY_GRAVE_ACCENT, console_hide, ActionType::R3D_PRESS);
+
+	m_UIs.push_back(console);
+
+	Watcher* watcher = &Watcher::Get();
+	std::function<void()> watcher_hide = [watcher]() { watcher->SetActive(!watcher->IsActive()); };
+	BindKeyToFunc(GLFW_KEY_F1, watcher_hide, ActionType::R3D_PRESS);
+
+	m_UIs.push_back(watcher);
+
+	// load config
 	mp_config = std::make_shared<Config>();
 	mp_config->width = width;
 	mp_config->height = height;
 
+	// start the interface
 	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
-
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
 }
 
@@ -155,6 +170,23 @@ void Engine::SetColorMode(const ColorMode color_map)
 	mp_renderer->SetColorMode(color_map);
 }
 
+void Engine::RenderUI(UI& ui)
+{
+	m_UIs.push_back(&ui);
+}
+
+void Engine::RemoveUI(UI& ui)
+{
+	for (auto it = m_UIs.begin(); it != m_UIs.end(); it++)
+	{
+		if (*it == &ui)
+		{
+			m_UIs.erase(it);
+			break;
+		}
+	}
+}
+
 const bool& Engine::shouldClose()
 {
 	return glfwWindowShouldClose(&mp_window->getHandle());
@@ -175,7 +207,7 @@ void Engine::update()
 	if (frame == -1)
 		return;
 
-	if (mp_scene->isUpdate(frame) || mp_renderer->NeedUpdate(frame))
+	if (mp_scene->IsUpdate(frame) || mp_renderer->NeedUpdate(frame))
 	{
 		mp_renderer->WaitForSwapchainImageFence();
 
@@ -193,10 +225,21 @@ void Engine::update()
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 	mp_scene->UpdateSceneUBO(mp_renderer);
 
+	// Update UI
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	for (size_t i = 0; i < m_UIs.size(); i++)
+		m_UIs[i]->Update(mp_config->width, mp_config->height);
+
+	ImGui::Render();
+
 	// std::this_thread::sleep_for(std::chrono::nanoseconds(500));//delete when not streaming
 }
 
 void Engine::draw()
 {
+	mp_renderer->UpdateUI();
 	mp_renderer->draw();
 }

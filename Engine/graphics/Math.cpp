@@ -1,4 +1,4 @@
-#include "../Includes/graphics/Math.h"
+#include "Math.h"
 
 glm::mat4 updateView(float& pitch, float& yaw, glm::vec3 position)
 {

@@ -13,20 +13,23 @@ Vous pouvez suivre l'avancement du projet sur mon [blog](https://mrscriptx.githu
 ### Dépendances
 
 #### Vulkan SDK
-Téléchargez la version 1.2.131.2 de [Vulkan SDK](https://vulkan.lunarg.com/sdk/home) et installez-la.
+Téléchargez la version 1.2.176.1 de [Vulkan SDK](https://vulkan.lunarg.com/sdk/home) et installez-la.
 
 ### Autres
 Toutes les dépendances sont disponibles dans le dossier dependencies. Vous pourrez y trouver :
 - Assimp 5.0.1
 - GLEW 2.1.0
-- GLFW 3.3.4
+- GLFW 3.3.7
 - GLM
 - STB IMAGE
+- Dear ImGui 1.87
 
 Il faut les inclure à votre projet. Rajouter également le fichier assimp-vc142-mtd.dll à la racine de votre projet.
 
 ### Compilation
-Compilez le projet en utilisant Visual Studio 2019. Vous obtiendrez une bibliothèque statique Engine.lib dans le dossier x64/Debug. Tous les fichiers d'en-tête se trouvent dans le dossier Engine/Includes.
+Compilez le projet en utilisant Visual Studio 2022. Vous obtiendrez une bibliothèque statique Engine.lib dans le dossier x64/Debug. 
+Tous les fichiers d'en-tête se trouvent dans le dossier de build x64/Debug/include.
+La version release n'a pas été testé.
 
 ### Assets
 Le dossier assets contient les fichiers de shaders et est obligatoire. Ajoutez le dossier à la racine de votre projet.

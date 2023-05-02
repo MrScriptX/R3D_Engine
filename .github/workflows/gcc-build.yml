@@ -11,9 +11,10 @@ jobs:
     - uses: lukka/get-cmake@v3.19.0
     - name: Download Dependencies
       run: |
-        sudo apt-get install -y build-essential pkg-config gcc-10 g++-10 xorg-dev libglu1-mesa-dev libopenal-dev libvulkan-dev wget libwayland-dev libxrandr-dev libassimp-dev ninja-build
+        sudo apt update
+        sudo apt install -y build-essential pkg-config gcc g++ xorg-dev libglu1-mesa-dev libopenal-dev libvulkan-dev wget libwayland-dev libxrandr-dev libassimp-dev ninja-build
         mkdir VULKAN_SDK
-        BRANCH=$(curl https://sdk.lunarg.com/sdk/download/1.2.170.0/linux/SDK-1.2.170.0-CONFIG.json | jq '.repos["Vulkan-Headers"].branch' --raw-output)
+        BRANCH=$(curl https://sdk.lunarg.com/sdk/download/1.3.243.0/linux/config.json | jq '.repos["Vulkan-Headers"].branch' --raw-output)
         echo BRANCH=$BRANCH >&2
         mkdir VULKAN_SDK/_build
         pushd VULKAN_SDK/_build >&2
@@ -41,9 +42,9 @@ jobs:
         
     - name: Build
       env:
-        CC: gcc-10
-        CXX: g++-10
-        LD_LIBRARY_PATH: /usr/bin/g++-10/lib
+        CC: gcc-13
+        CXX: g++-13
+        LD_LIBRARY_PATH: /usr/bin/g++-13/lib
         VULKAN_SDK: /home/runner/work/R3D_Engine/R3D_Engine/VULKAN_SDK
       run: |
         cmake --version

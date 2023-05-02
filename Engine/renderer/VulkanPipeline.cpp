@@ -1,4 +1,4 @@
-#include "../Includes/renderer/VulkanPipeline.h"
+#include "VulkanPipeline.h"
 
 VulkanPipeline::VulkanPipeline(Graphics& m_graphic) : m_graphic(m_graphic)
 {

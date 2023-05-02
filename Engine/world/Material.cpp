@@ -1,4 +1,4 @@
-#include "../Includes/world/Material.h"
+#include "Material.h"
 
 Material::Material(const TSHADER shader, std::shared_ptr<Renderer> p_renderer)
     : m_shader(shader), mp_renderer(p_renderer), m_descriptor_set(VK_NULL_HANDLE), m_texture(nullptr), m_color(nullptr)

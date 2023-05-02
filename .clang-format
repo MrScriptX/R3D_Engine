@@ -18,4 +18,4 @@ AllowShortFunctionsOnASingleLine: None
 
 MacroBlockBegin: "R3DENGINE_ .+"
 
-Standard: c++17
+Standard: c++20

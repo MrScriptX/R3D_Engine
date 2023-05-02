@@ -1,4 +1,4 @@
-#include "../Includes/world/Scene.h"
+#include "Scene.h"
 
 Scene::Scene() : m_light_changed(true), m_descriptorset(VK_NULL_HANDLE), m_light_buffer(VK_NULL_HANDLE), m_light_mem(VK_NULL_HANDLE)
 {
@@ -204,12 +204,12 @@ void Scene::Update(const int32_t frame)
 	}
 }
 
-const bool& Scene::isUpdate(const int i)
+const bool Scene::IsUpdate(const int i) const
 {
 	return m_changed[i];
 }
 
-const bool Scene::IsUpdated()
+const bool Scene::IsUpdated() const
 {
 	return m_changed == false;
 }

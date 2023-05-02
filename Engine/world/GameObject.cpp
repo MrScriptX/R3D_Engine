@@ -1,4 +1,4 @@
-#include "../Includes/world/GameObject.h"
+#include "GameObject.h"
 
 GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
 {
@@ -119,6 +119,11 @@ void GameObject::UpdateMesh(const size_t& index, const std::vector<Vertex>& vert
 void GameObject::RemoveMesh(const size_t index)
 {
 	m_mesh_to_delete.push_back(std::move(m_meshes[index]));
+
+	auto it = std::find(m_mesh_to_update.begin(), m_mesh_to_update.end(), index);
+	if (it != m_mesh_to_update.end())
+		m_mesh_to_update.erase(it);
+	
 	m_meshes.erase(index);
 }
 
@@ -181,4 +186,9 @@ const size_t& GameObject::getMeshesCount()
 const bool GameObject::Deleted()
 {
 	return m_meshes.size() == 0;
+}
+
+const std::vector<std::unique_ptr<Mesh>>& GameObject::GetMeshInDeleteQueue() const
+{
+	return m_mesh_to_delete;
 }

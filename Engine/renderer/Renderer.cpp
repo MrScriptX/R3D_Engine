@@ -1,4 +1,4 @@
-#include "../Includes/renderer/Renderer.h"
+#include "Renderer.h"
 
 #include <set>
 
@@ -10,6 +10,11 @@
 #endif // !STB_IMAGE_IMPLEMENTATION
 
 // review createBuffer func
+#include "parameters.h"
+#include "vinstance.h"
+#include "vdevices.h"
+#include "vsurface.h"
+#include "vsync_obj.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
@@ -19,12 +24,36 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 
 	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_graphic);
 
-	setupInstance(window);
-	setupDevice();
+	// setupInstance(window);
+	m_interface.instance = vred::renderer::create_instance();
+	setup_debug_callback(m_interface.instance);
+	m_interface.surface = vred::renderer::create_surface(window, m_interface.instance);
+
+	// setupDevice();
+	m_interface.physical_device = vred::renderer::choose_device(m_interface);
+	vred::renderer::create_device_interface(m_interface);
+
+	// createSyncObject();
+	for (vred::renderer::frame& f: m_frames)
+	{
+		f.render_fence = vred::renderer::create_fence(m_interface.device);
+		f.render_finished = vred::renderer::create_semaphore(m_interface.device);
+		f.image_available = vred::renderer::create_semaphore(m_interface.device);
+	}
+
+	m_graphic.instance = m_interface.instance;
+	m_graphic.surface = m_interface.surface;
+	m_graphic.physical_device = m_interface.physical_device;
+	m_graphic.device = m_interface.device;
+	m_graphic.queue_indices.graphic_family = m_interface.queue_indices.graphic_family;
+	m_graphic.queue_indices.present_family = m_interface.queue_indices.present_family;
+	m_graphic.graphics_queue = m_interface.graphics_queue;
+	m_graphic.present_queue = m_interface.present_queue;
+
 	setupSwapchain();
 	setupRenderPass();
 	setupDescriptorSetLayout();
-	setupCommandPool();
+	createCommandPool();
 
 	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_graphic);
 
@@ -32,29 +61,36 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	createFramebuffer();
 	createDescriptorPool();
 	allocateCommandBuffers();
+
+	initUI(window);
 }
 
 Renderer::~Renderer()
 {
+	// destroy ImGui objects
+	ImGui_ImplVulkan_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	vkDestroyDescriptorPool(m_graphic.device, m_graphic.descriptor_pool, nullptr);
+	vkDestroyDescriptorPool(m_graphic.device, m_ui.decriptor_pool, nullptr);
 	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.descriptor_set_layout, nullptr);
 	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.light_descriptor_layout, nullptr);
 
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	for (const vred::renderer::frame& f: m_frames)
 	{
-		vkDestroySemaphore(m_graphic.device, m_graphic.semaphores_image_available[i], nullptr);
-		vkDestroySemaphore(m_graphic.device, m_graphic.semaphores_render_finished[i], nullptr);
-		vkDestroyFence(m_graphic.device, m_graphic.fences_in_flight[i], nullptr);
+		vkDestroySemaphore(m_interface.device, f.image_available, nullptr);
+		vkDestroySemaphore(m_interface.device, f.render_finished, nullptr);
+		vkDestroyFence(m_interface.device, f.render_fence, nullptr);
 	}
 
 	vkDestroyCommandPool(m_graphic.device, m_graphic.command_pool, nullptr);
+	vkDestroyCommandPool(m_graphic.device, m_ui.command_pool, nullptr);
 
 	vkDestroyDevice(m_graphic.device, nullptr);
 
-	if (m_graphic.validation_layer_enable)
-	{
+	if (vred::renderer::parameters::validation_layer_enable)
 		DestroyDebugReportCallbackEXT(m_graphic.instance, callback, nullptr);
-	}
 
 	vkDestroySurfaceKHR(m_graphic.instance, m_graphic.surface, nullptr);
 	vkDestroyInstance(m_graphic.instance, nullptr);
@@ -62,34 +98,33 @@ Renderer::~Renderer()
 
 int32_t Renderer::draw()
 {
-	if (m_graphic.validation_layer_enable)
-	{
+	if (vred::renderer::parameters::validation_layer_enable)
 		vkQueueWaitIdle(m_graphic.present_queue);
-	}
 
 	VkSubmitInfo submit_info = {};
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore waitSemaphores[] = { m_graphic.semaphores_image_available[m_last_image] };
-
-	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	// const VkSemaphore wait_semaphores[] = { m_graphic.semaphores_image_available[m_last_image] };
+	const VkSemaphore wait_semaphores[] = { m_frames[m_last_image].image_available };
 	submit_info.waitSemaphoreCount = 1;
-	submit_info.pWaitSemaphores = waitSemaphores;
-	submit_info.pWaitDstStageMask = waitStages;
+	submit_info.pWaitSemaphores = wait_semaphores;
 
-	submit_info.commandBufferCount = 1;
-	submit_info.pCommandBuffers = &m_graphic.command_buffers[m_current_image];
+	constexpr VkPipelineStageFlags wait_stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	submit_info.pWaitDstStageMask = wait_stages;
 
-	VkSemaphore signalSemaphores[] = { m_graphic.semaphores_render_finished[m_last_image] };
+	const std::array<VkCommandBuffer, 2> command_buffers = { m_graphic.command_buffers[m_current_image], m_ui.command_buffers[m_current_image] };
+	submit_info.commandBufferCount = command_buffers.size();
+	submit_info.pCommandBuffers = command_buffers.data();
+
+	// VkSemaphore signalSemaphores[] = { m_graphic.semaphores_render_finished[m_last_image] };
+	const VkSemaphore signal_semaphores[] = { m_frames[m_last_image].render_finished };
 
 	submit_info.signalSemaphoreCount = 1;
-	submit_info.pSignalSemaphores = signalSemaphores;
+	submit_info.pSignalSemaphores = signal_semaphores;
 
-	vkResetFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image]);
+	vkResetFences(m_graphic.device, 1, &m_frames[m_current_image].render_fence);
 
-	VkResult result;
-	result = vkQueueSubmit(m_graphic.graphics_queue, 1, &submit_info, m_graphic.fences_in_flight[m_current_image]);
-
+	VkResult result = vkQueueSubmit(m_graphic.graphics_queue, 1, &submit_info, m_frames[m_current_image].render_fence);
 	if (result != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to submit draw command buffer!");
@@ -99,9 +134,9 @@ int32_t Renderer::draw()
 	present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
 	present_info.waitSemaphoreCount = 1;
-	present_info.pWaitSemaphores = signalSemaphores;
+	present_info.pWaitSemaphores = signal_semaphores;
 
-	VkSwapchainKHR swapchains[] = { m_graphic.swapchain };
+	const VkSwapchainKHR swapchains[] = { m_graphic.swapchain };
 	present_info.swapchainCount = 1;
 	present_info.pSwapchains = swapchains;
 	present_info.pImageIndices = &m_current_image;
@@ -123,13 +158,46 @@ int32_t Renderer::draw()
 	return return_code;
 }
 
+void Renderer::UpdateUI()
+{
+	VkCommandBufferBeginInfo cmdBufferBegin = {};
+	cmdBufferBegin.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	cmdBufferBegin.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	if (vkBeginCommandBuffer(m_ui.command_buffers[m_current_image], &cmdBufferBegin) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Unable to start recording UI command buffer!");
+	}
+
+	VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	VkRenderPassBeginInfo renderPassBeginInfo = {};
+	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassBeginInfo.renderPass = m_ui.render_pass;
+	renderPassBeginInfo.framebuffer = m_ui.framebuffers[m_current_image];
+	renderPassBeginInfo.renderArea.extent.width = m_graphic.swapchain_details.extent.width;
+	renderPassBeginInfo.renderArea.extent.height = m_graphic.swapchain_details.extent.height;
+	renderPassBeginInfo.clearValueCount = 1;
+	renderPassBeginInfo.pClearValues = &clearColor;
+
+	vkCmdBeginRenderPass(m_ui.command_buffers[m_current_image], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	// Grab and record the draw data for Dear Imgui
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_ui.command_buffers[m_current_image]);
+
+	// End and submit render pass
+	vkCmdEndRenderPass(m_ui.command_buffers[m_current_image]);
+
+	if (vkEndCommandBuffer(m_ui.command_buffers[m_current_image]) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Failed to record command buffers!");
+	}
+}
+
 int32_t Renderer::AcquireNextImage()
 {
 	m_last_image = m_current_image;
 
-	VkResult result;
-	result = vkAcquireNextImageKHR(m_graphic.device, m_graphic.swapchain, std::numeric_limits<uint64_t>::max(), m_graphic.semaphores_image_available[m_current_image],
-	                               VK_NULL_HANDLE, &m_current_image);
+	 const VkResult result = vkAcquireNextImageKHR(m_interface.device, m_graphic.swapchain, std::numeric_limits<uint64_t>::max(), m_frames[m_current_image].image_available, VK_NULL_HANDLE, &m_current_image);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
@@ -146,20 +214,7 @@ int32_t Renderer::AcquireNextImage()
 
 void Renderer::WaitForSwapchainImageFence()
 {
-	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image], VK_TRUE, std::numeric_limits<uint64_t>::max());
-}
-
-void Renderer::setupInstance(GLFWwindow& window)
-{
-	m_instance = std::make_unique<VulkanInstance>(m_graphic);
-	setupCallback();
-	createSurface(window);
-}
-
-void Renderer::setupDevice()
-{
-	m_device = std::make_unique<VulkanDevice>(m_graphic);
-	createSyncObject();
+	vkWaitForFences(m_interface.device, 1, &m_frames[m_current_image].render_fence, VK_TRUE, std::numeric_limits<uint64_t>::max());
 }
 
 void Renderer::setupSwapchain()
@@ -171,7 +226,7 @@ void Renderer::setupRenderPass()
 {
 	VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
 	                                      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-	m_pRenderpass = std::make_unique<VulkanRenderPass>(m_graphic, format);
+	m_pRenderpass = std::make_unique<VulkanRenderPass>(m_graphic, m_ui, format);
 }
 
 void Renderer::setupDescriptorSetLayout()
@@ -182,9 +237,12 @@ void Renderer::setupDescriptorSetLayout()
 	m_descriptor->createDescriptorSetLayoutLight(); // create light descriptor set layout
 }
 
-void Renderer::setupCommandPool()
+void Renderer::createCommandPool()
 {
 	m_commandPool = std::make_unique<VulkanCommandPool>(m_graphic);
+
+	m_commandPool->CreateCommandPool(m_graphic.command_pool);
+	m_commandPool->CreateCommandPool(m_ui.command_pool);
 }
 
 void Renderer::SetPolygonFillingMode(const VkPolygonMode& mode)
@@ -308,6 +366,7 @@ void Renderer::CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkD
 
 void Renderer::allocateCommandBuffers()
 {
+	// allocate app command buffer
 	m_graphic.command_buffers.resize(m_graphic.framebuffers.size());
 
 	VkCommandBufferAllocateInfo alloc_buffers_info = {};
@@ -319,6 +378,20 @@ void Renderer::allocateCommandBuffers()
 	if (vkAllocateCommandBuffers(m_graphic.device, &alloc_buffers_info, m_graphic.command_buffers.data()) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate command buffers!");
+	}
+
+	// allocate UI command buffer
+	m_ui.command_buffers.resize(m_graphic.swapchain_images.size());
+
+	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
+	commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	commandBufferAllocateInfo.commandPool = m_ui.command_pool;
+	commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	commandBufferAllocateInfo.commandBufferCount = static_cast<uint32_t>(m_ui.command_buffers.size());
+
+	if (vkAllocateCommandBuffers(m_graphic.device, &commandBufferAllocateInfo, m_ui.command_buffers.data()) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Unable to allocate UI command buffers!");
 	}
 }
 
@@ -368,29 +441,19 @@ void Renderer::EndRecordCommandBuffers(VkCommandBuffer& commandBuffer)
 	}
 }
 
-void Renderer::setupCallback()
+void Renderer::setup_debug_callback(VkInstance& instance)
 {
-	if (!m_graphic.validation_layer_enable)
-	{
+	if constexpr (!vred::renderer::parameters::validation_layer_enable)
 		return;
-	}
 
 	VkDebugReportCallbackCreateInfoEXT create_info = {};
 	create_info.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
 	create_info.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
 	create_info.pfnCallback = debugCallback;
 
-	if (CreateDebugReportCallbackEXT(m_graphic.instance, &create_info, nullptr, &callback) != VK_SUCCESS)
+	if (CreateDebugReportCallbackEXT(instance, &create_info, nullptr, &callback) != VK_SUCCESS)
 	{
-		throw std::runtime_error("Failed to setup callback");
-	}
-}
-
-void Renderer::createSurface(GLFWwindow& window)
-{
-	if (glfwCreateWindowSurface(m_graphic.instance, &window, nullptr, &m_graphic.surface) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Failed to create window surface!");
+		throw std::runtime_error("Failed to setup debug callback");
 	}
 }
 
@@ -398,50 +461,46 @@ void Renderer::createFramebuffer()
 {
 	m_graphic.framebuffers.resize(m_graphic.images_view.size());
 
+	VkFramebufferCreateInfo framebuffer_info = {};
+	framebuffer_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	framebuffer_info.renderPass = m_graphic.render_pass;
+	framebuffer_info.width = m_graphic.swapchain_details.extent.width;
+	framebuffer_info.height = m_graphic.swapchain_details.extent.height;
+	framebuffer_info.layers = 1;
+
 	for (size_t i = 0; i < m_graphic.images_view.size(); i++)
 	{
 		std::array<VkImageView, 2> attachments = { m_graphic.images_view[i], m_graphic.depth_view };
 
-		VkFramebufferCreateInfo framebufferInfo = {};
-		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass = m_graphic.render_pass;
-		framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-		framebufferInfo.pAttachments = attachments.data();
-		framebufferInfo.width = m_graphic.swapchain_details.extent.width;
-		framebufferInfo.height = m_graphic.swapchain_details.extent.height;
-		framebufferInfo.layers = 1;
+		framebuffer_info.attachmentCount = static_cast<uint32_t>(attachments.size());
+		framebuffer_info.pAttachments = attachments.data();
 
-		if (vkCreateFramebuffer(m_graphic.device, &framebufferInfo, nullptr, &m_graphic.framebuffers[i]) != VK_SUCCESS)
+		if (vkCreateFramebuffer(m_graphic.device, &framebuffer_info, nullptr, &m_graphic.framebuffers[i]) != VK_SUCCESS)
 		{
-			throw std::runtime_error("failed to create framebuffer!");
+			throw std::runtime_error("failed to create framebuffers!");
 		}
 	}
-}
 
-void Renderer::createSyncObject()
-{
-	m_graphic.semaphores_image_available.resize(MAX_FRAMES_IN_FLIGHT);
-	m_graphic.semaphores_render_finished.resize(MAX_FRAMES_IN_FLIGHT);
-	m_graphic.fences_in_flight.resize(MAX_FRAMES_IN_FLIGHT);
+	m_ui.framebuffers.resize(m_graphic.swapchain_images.size());
+	
+	VkFramebufferCreateInfo ui_info = {};
+	ui_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	ui_info.attachmentCount = 1;
+	ui_info.width = m_graphic.swapchain_details.extent.width;
+	ui_info.height = m_graphic.swapchain_details.extent.height;
+	ui_info.layers = 1;
 
-	VkSemaphoreCreateInfo semaphore_info = {};
-	semaphore_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-	semaphore_info.pNext = nullptr;
-	semaphore_info.flags = 0;
-
-	VkFenceCreateInfo fence_info = {};
-	fence_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	fence_info.pNext = nullptr;
-	fence_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	for (size_t i = 0; i < m_graphic.swapchain_images.size(); ++i)
 	{
-		if (vkCreateSemaphore(m_graphic.device, &semaphore_info, nullptr, &m_graphic.semaphores_image_available[i]) != VK_SUCCESS ||
-		    vkCreateSemaphore(m_graphic.device, &semaphore_info, nullptr, &m_graphic.semaphores_render_finished[i]) != VK_SUCCESS ||
-		    vkCreateFence(m_graphic.device, &fence_info, nullptr, &m_graphic.fences_in_flight[i]) != VK_SUCCESS)
+		VkImageView attachments[1];
+		attachments[0] = m_graphic.images_view[i];
+
+		ui_info.renderPass = m_ui.render_pass;
+		ui_info.pAttachments = attachments;
+
+		if (vkCreateFramebuffer(m_graphic.device, &ui_info, nullptr, &m_ui.framebuffers[i]) != VK_SUCCESS)
 		{
-			Logger::registerError("failed to create semaphores for a frame!");
-			throw std::runtime_error("failed to create semaphores for a frame!");
+			throw std::runtime_error("failed to create UI framebuffers!");
 		}
 	}
 }
@@ -449,23 +508,7 @@ void Renderer::createSyncObject()
 void Renderer::createDescriptorPool()
 {
 	m_descriptor->createDescriptorPool();
-
-	/* std::array<VkDescriptorPoolSize, 2> poolSizes = {};
-	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[0].descriptorCount = 1;
-	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSizes[1].descriptorCount = 1;
-
-	VkDescriptorPoolCreateInfo poolInfo = {};
-	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
-	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 4;
-
-	if (vkCreateDescriptorPool(m_graphic.device, &poolInfo, nullptr, &m_graphic.descriptor_pool) != VK_SUCCESS)
-	{
-	    throw std::runtime_error("failed to create descriptor pool!");
-	} */
+	m_descriptor->createImGuiDescriptorPool(m_ui);
 }
 
 void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
@@ -642,7 +685,8 @@ void Renderer::recreateSwapchain()
 
 	VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
 	                                      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-	m_pRenderpass->createRenderPass(format);
+	m_pRenderpass->CreateRenderPass(format);
+	m_pRenderpass->CreateImGuiRenderPass(m_ui);
 
 	mp_pipelines_manager->CreatePipelines();
 	createDepthResources();
@@ -650,6 +694,39 @@ void Renderer::recreateSwapchain()
 	allocateCommandBuffers();
 
 	m_is_updated.set();
+}
+
+void Renderer::initUI(GLFWwindow& window)
+{
+	std::cout << "Init ImGui for Vulkan..." << std::endl;
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForVulkan(&window, true);
+	ImGui_ImplVulkan_InitInfo init_info = {};
+	init_info.Instance = m_graphic.instance;
+	init_info.PhysicalDevice = m_graphic.physical_device;
+	init_info.Device = m_graphic.device;
+	init_info.QueueFamily = m_graphic.queue_indices.graphic_family;
+	init_info.Queue = m_graphic.graphics_queue;
+	init_info.PipelineCache = VK_NULL_HANDLE;
+	init_info.DescriptorPool = m_ui.decriptor_pool;
+	init_info.Allocator = nullptr;
+	init_info.MinImageCount = m_graphic.swapchain_images.size();
+	init_info.ImageCount = m_graphic.framebuffers.size();
+	init_info.CheckVkResultFn = nullptr;
+	ImGui_ImplVulkan_Init(&init_info, m_ui.render_pass);
+
+	// upload textures to gpu
+	VkCommandBuffer command_buffer = beginCommands();
+	ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+	endCommands(command_buffer);
+	ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
 
 void Renderer::cleanSwapchain()
@@ -667,11 +744,18 @@ void Renderer::cleanSwapchain()
 		vkDestroyFramebuffer(m_graphic.device, m_graphic.framebuffers[i], nullptr);
 	}
 
+	for (size_t i = 0; i < m_ui.framebuffers.size(); i++)
+	{
+		vkDestroyFramebuffer(m_graphic.device, m_ui.framebuffers[i], nullptr);
+	}
+
 	vkFreeCommandBuffers(m_graphic.device, m_graphic.command_pool, static_cast<uint32_t>(m_graphic.command_buffers.size()), m_graphic.command_buffers.data());
+	vkFreeCommandBuffers(m_graphic.device, m_ui.command_pool, static_cast<uint32_t>(m_ui.command_buffers.size()), m_ui.command_buffers.data());
 
 	mp_pipelines_manager->DestroyPipelines();
 
 	vkDestroyRenderPass(m_graphic.device, m_graphic.render_pass, nullptr);
+	vkDestroyRenderPass(m_graphic.device, m_ui.render_pass, nullptr);
 
 	for (auto imageView : m_graphic.images_view)
 	{
