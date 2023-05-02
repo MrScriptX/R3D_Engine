@@ -105,12 +105,6 @@
     <ClCompile Include="renderer\VulkanDescriptor.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="renderer\VulkanDevice.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\VulkanInstance.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
     <ClCompile Include="renderer\VulkanPipeline.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
@@ -249,12 +243,6 @@
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanDescriptor.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\VulkanDevice.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\VulkanInstance.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanPipeline.h">

@@ -65,8 +65,6 @@
     <ClCompile Include="renderer\VulkanCommandBuffer.cpp" />
     <ClCompile Include="renderer\VulkanCommandPool.cpp" />
     <ClCompile Include="renderer\VulkanDescriptor.cpp" />
-    <ClCompile Include="renderer\VulkanDevice.cpp" />
-    <ClCompile Include="renderer\VulkanInstance.cpp" />
     <ClCompile Include="renderer\VulkanPipeline.cpp" />
     <ClCompile Include="renderer\VulkanRenderPass.cpp" />
     <ClCompile Include="renderer\VulkanSwapchain.cpp" />
@@ -116,8 +114,6 @@
     <ClInclude Include="renderer\VulkanCommandBuffer.h" />
     <ClInclude Include="renderer\VulkanCommandPool.h" />
     <ClInclude Include="renderer\VulkanDescriptor.h" />
-    <ClInclude Include="renderer\VulkanDevice.h" />
-    <ClInclude Include="renderer\VulkanInstance.h" />
     <ClInclude Include="renderer\VulkanPipeline.h" />
     <ClInclude Include="renderer\VulkanRenderPass.h" />
     <ClInclude Include="renderer\VulkanSwapchain.h" />

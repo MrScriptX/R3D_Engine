@@ -21,8 +21,6 @@
 #include "VulkanBuffer.h"
 #include "VulkanCommandPool.h"
 #include "VulkanDescriptor.h"
-#include "VulkanDevice.h"
-#include "VulkanInstance.h"
 #include "VulkanPipeline.h"
 #include "VulkanRenderPass.h"
 #include "VulkanSwapchain.h"
