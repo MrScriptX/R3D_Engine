@@ -10,8 +10,11 @@
 #endif // !STB_IMAGE_IMPLEMENTATION
 
 // review createBuffer func
+#include "parameters.h"
 #include "vinstance.h"
 #include "vdevices.h"
+#include "vsurface.h"
+#include "vsync_obj.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
@@ -21,8 +24,32 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 
 	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_graphic);
 
-	setupInstance(window);
-	setupDevice();
+	// setupInstance(window);
+	m_interface.instance = vred::renderer::create_instance();
+	setup_debug_callback(m_interface.instance);
+	m_interface.surface = vred::renderer::create_surface(window, m_interface.instance);
+
+	// setupDevice();
+	m_interface.physical_device = vred::renderer::choose_device(m_interface);
+	vred::renderer::create_device_interface(m_interface);
+
+	// createSyncObject();
+	for (vred::renderer::frame& f: m_frames)
+	{
+		f.render_fence = vred::renderer::create_fence(m_interface.device);
+		f.render_finished = vred::renderer::create_semaphore(m_interface.device);
+		f.image_available = vred::renderer::create_semaphore(m_interface.device);
+	}
+
+	m_graphic.instance = m_interface.instance;
+	m_graphic.surface = m_interface.surface;
+	m_graphic.physical_device = m_interface.physical_device;
+	m_graphic.device = m_interface.device;
+	m_graphic.queue_indices.graphic_family = m_interface.queue_indices.graphic_family;
+	m_graphic.queue_indices.present_family = m_interface.queue_indices.present_family;
+	m_graphic.graphics_queue = m_interface.graphics_queue;
+	m_graphic.present_queue = m_interface.present_queue;
+
 	setupSwapchain();
 	setupRenderPass();
 	setupDescriptorSetLayout();
@@ -50,11 +77,11 @@ Renderer::~Renderer()
 	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.descriptor_set_layout, nullptr);
 	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.light_descriptor_layout, nullptr);
 
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	for (const vred::renderer::frame& f: m_frames)
 	{
-		vkDestroySemaphore(m_graphic.device, m_graphic.semaphores_image_available[i], nullptr);
-		vkDestroySemaphore(m_graphic.device, m_graphic.semaphores_render_finished[i], nullptr);
-		vkDestroyFence(m_graphic.device, m_graphic.fences_in_flight[i], nullptr);
+		vkDestroySemaphore(m_interface.device, f.image_available, nullptr);
+		vkDestroySemaphore(m_interface.device, f.render_finished, nullptr);
+		vkDestroyFence(m_interface.device, f.render_fence, nullptr);
 	}
 
 	vkDestroyCommandPool(m_graphic.device, m_graphic.command_pool, nullptr);
@@ -62,10 +89,8 @@ Renderer::~Renderer()
 
 	vkDestroyDevice(m_graphic.device, nullptr);
 
-	if (m_graphic.validation_layer_enable)
-	{
+	if (vred::renderer::parameters::validation_layer_enable)
 		DestroyDebugReportCallbackEXT(m_graphic.instance, callback, nullptr);
-	}
 
 	vkDestroySurfaceKHR(m_graphic.instance, m_graphic.surface, nullptr);
 	vkDestroyInstance(m_graphic.instance, nullptr);
@@ -73,35 +98,33 @@ Renderer::~Renderer()
 
 int32_t Renderer::draw()
 {
-	if (m_graphic.validation_layer_enable)
-	{
+	if (vred::renderer::parameters::validation_layer_enable)
 		vkQueueWaitIdle(m_graphic.present_queue);
-	}
 
 	VkSubmitInfo submit_info = {};
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkSemaphore waitSemaphores[] = { m_graphic.semaphores_image_available[m_last_image] };
-
-	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	// const VkSemaphore wait_semaphores[] = { m_graphic.semaphores_image_available[m_last_image] };
+	const VkSemaphore wait_semaphores[] = { m_frames[m_last_image].image_available };
 	submit_info.waitSemaphoreCount = 1;
-	submit_info.pWaitSemaphores = waitSemaphores;
-	submit_info.pWaitDstStageMask = waitStages;
+	submit_info.pWaitSemaphores = wait_semaphores;
 
-	std::array<VkCommandBuffer, 2> command_buffers = { m_graphic.command_buffers[m_current_image], m_ui.command_buffers[m_current_image] };
+	constexpr VkPipelineStageFlags wait_stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	submit_info.pWaitDstStageMask = wait_stages;
+
+	const std::array<VkCommandBuffer, 2> command_buffers = { m_graphic.command_buffers[m_current_image], m_ui.command_buffers[m_current_image] };
 	submit_info.commandBufferCount = command_buffers.size();
 	submit_info.pCommandBuffers = command_buffers.data();
 
-	VkSemaphore signalSemaphores[] = { m_graphic.semaphores_render_finished[m_last_image] };
+	// VkSemaphore signalSemaphores[] = { m_graphic.semaphores_render_finished[m_last_image] };
+	const VkSemaphore signal_semaphores[] = { m_frames[m_last_image].render_finished };
 
 	submit_info.signalSemaphoreCount = 1;
-	submit_info.pSignalSemaphores = signalSemaphores;
+	submit_info.pSignalSemaphores = signal_semaphores;
 
-	vkResetFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image]);
+	vkResetFences(m_graphic.device, 1, &m_frames[m_current_image].render_fence);
 
-	VkResult result;
-	result = vkQueueSubmit(m_graphic.graphics_queue, 1, &submit_info, m_graphic.fences_in_flight[m_current_image]);
-
+	VkResult result = vkQueueSubmit(m_graphic.graphics_queue, 1, &submit_info, m_frames[m_current_image].render_fence);
 	if (result != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to submit draw command buffer!");
@@ -111,9 +134,9 @@ int32_t Renderer::draw()
 	present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
 	present_info.waitSemaphoreCount = 1;
-	present_info.pWaitSemaphores = signalSemaphores;
+	present_info.pWaitSemaphores = signal_semaphores;
 
-	VkSwapchainKHR swapchains[] = { m_graphic.swapchain };
+	const VkSwapchainKHR swapchains[] = { m_graphic.swapchain };
 	present_info.swapchainCount = 1;
 	present_info.pSwapchains = swapchains;
 	present_info.pImageIndices = &m_current_image;
@@ -174,9 +197,7 @@ int32_t Renderer::AcquireNextImage()
 {
 	m_last_image = m_current_image;
 
-	VkResult result;
-	result = vkAcquireNextImageKHR(m_graphic.device, m_graphic.swapchain, std::numeric_limits<uint64_t>::max(), m_graphic.semaphores_image_available[m_current_image],
-	                               VK_NULL_HANDLE, &m_current_image);
+	 const VkResult result = vkAcquireNextImageKHR(m_interface.device, m_graphic.swapchain, std::numeric_limits<uint64_t>::max(), m_frames[m_current_image].image_available, VK_NULL_HANDLE, &m_current_image);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
@@ -193,38 +214,7 @@ int32_t Renderer::AcquireNextImage()
 
 void Renderer::WaitForSwapchainImageFence()
 {
-	vkWaitForFences(m_graphic.device, 1, &m_graphic.fences_in_flight[m_current_image], VK_TRUE, std::numeric_limits<uint64_t>::max());
-}
-
-void Renderer::setupInstance(GLFWwindow& window)
-{
-	vred::renderer::interface it;
-	it.instance = vred::renderer::create_instance();
-
-	m_graphic.instance = it.instance;
-
-	// m_instance = std::make_unique<VulkanInstance>(m_graphic);
-	setupCallback();
-	createSurface(window);
-}
-
-void Renderer::setupDevice()
-{
-	// m_device = std::make_unique<VulkanDevice>(m_graphic);
-	vred::renderer::interface it;
-	it.instance = m_graphic.instance;
-	it.surface = m_graphic.surface;
-	it.physical_device = choose_device(it);
-	vred::renderer::create_device_interface(it);
-
-	m_graphic.physical_device = it.physical_device;
-	m_graphic.device = it.device;
-	m_graphic.queue_indices.graphic_family = it.queue_indices.graphic_family;
-	m_graphic.queue_indices.present_family = it.queue_indices.present_family;
-	m_graphic.graphics_queue = it.graphics_queue;
-	m_graphic.present_queue = it.present_queue;
-
-	createSyncObject();
+	vkWaitForFences(m_interface.device, 1, &m_frames[m_current_image].render_fence, VK_TRUE, std::numeric_limits<uint64_t>::max());
 }
 
 void Renderer::setupSwapchain()
@@ -451,29 +441,19 @@ void Renderer::EndRecordCommandBuffers(VkCommandBuffer& commandBuffer)
 	}
 }
 
-void Renderer::setupCallback()
+void Renderer::setup_debug_callback(VkInstance& instance)
 {
-	if (!m_graphic.validation_layer_enable)
-	{
+	if constexpr (!vred::renderer::parameters::validation_layer_enable)
 		return;
-	}
 
 	VkDebugReportCallbackCreateInfoEXT create_info = {};
 	create_info.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
 	create_info.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
 	create_info.pfnCallback = debugCallback;
 
-	if (CreateDebugReportCallbackEXT(m_graphic.instance, &create_info, nullptr, &callback) != VK_SUCCESS)
+	if (CreateDebugReportCallbackEXT(instance, &create_info, nullptr, &callback) != VK_SUCCESS)
 	{
-		throw std::runtime_error("Failed to setup callback");
-	}
-}
-
-void Renderer::createSurface(GLFWwindow& window)
-{
-	if (glfwCreateWindowSurface(m_graphic.instance, &window, nullptr, &m_graphic.surface) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Failed to create window surface!");
+		throw std::runtime_error("Failed to setup debug callback");
 	}
 }
 
@@ -521,34 +501,6 @@ void Renderer::createFramebuffer()
 		if (vkCreateFramebuffer(m_graphic.device, &ui_info, nullptr, &m_ui.framebuffers[i]) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create UI framebuffers!");
-		}
-	}
-}
-
-void Renderer::createSyncObject()
-{
-	m_graphic.semaphores_image_available.resize(MAX_FRAMES_IN_FLIGHT);
-	m_graphic.semaphores_render_finished.resize(MAX_FRAMES_IN_FLIGHT);
-	m_graphic.fences_in_flight.resize(MAX_FRAMES_IN_FLIGHT);
-
-	VkSemaphoreCreateInfo semaphore_info = {};
-	semaphore_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-	semaphore_info.pNext = nullptr;
-	semaphore_info.flags = 0;
-
-	VkFenceCreateInfo fence_info = {};
-	fence_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	fence_info.pNext = nullptr;
-	fence_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-	{
-		if (vkCreateSemaphore(m_graphic.device, &semaphore_info, nullptr, &m_graphic.semaphores_image_available[i]) != VK_SUCCESS ||
-		    vkCreateSemaphore(m_graphic.device, &semaphore_info, nullptr, &m_graphic.semaphores_render_finished[i]) != VK_SUCCESS ||
-		    vkCreateFence(m_graphic.device, &fence_info, nullptr, &m_graphic.fences_in_flight[i]) != VK_SUCCESS)
-		{
-			Logger::registerError("failed to create semaphores for a frame!");
-			throw std::runtime_error("failed to create semaphores for a frame!");
 		}
 	}
 }

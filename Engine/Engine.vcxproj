@@ -59,6 +59,8 @@
     <ClCompile Include="renderer\vdevices.cpp" />
     <ClCompile Include="renderer\vinstance.cpp" />
     <ClCompile Include="renderer\vshader.cpp" />
+    <ClCompile Include="renderer\vsurface.cpp" />
+    <ClCompile Include="renderer\vsync_obj.cpp" />
     <ClCompile Include="renderer\VulkanBuffer.cpp" />
     <ClCompile Include="renderer\VulkanCommandBuffer.cpp" />
     <ClCompile Include="renderer\VulkanCommandPool.cpp" />
@@ -108,6 +110,8 @@
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\vinstance.h" />
     <ClInclude Include="renderer\vshader.h" />
+    <ClInclude Include="renderer\vsurface.h" />
+    <ClInclude Include="renderer\vsync_obj.h" />
     <ClInclude Include="renderer\VulkanBuffer.h" />
     <ClInclude Include="renderer\VulkanCommandBuffer.h" />
     <ClInclude Include="renderer\VulkanCommandPool.h" />

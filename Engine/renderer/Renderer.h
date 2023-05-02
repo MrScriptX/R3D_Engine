@@ -32,6 +32,9 @@
 
 #include "../Logger.h"
 
+#include "interface.h"
+#include "frame.h"
+
 class Renderer
 {
   public:
@@ -86,11 +89,7 @@ class Renderer
 	void cleanSwapchain();
 
   private:
-	void setupInstance(GLFWwindow& window);
-	void setupCallback();
-	void createSurface(GLFWwindow& window);
-	void setupDevice();
-	void createSyncObject();
+	void setup_debug_callback(VkInstance& instance);
 	void setupSwapchain();
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
@@ -130,8 +129,6 @@ class Renderer
 	std::unique_ptr<uint32_t> WIDTH;
 	std::unique_ptr<uint32_t> HEIGHT;
 
-	std::unique_ptr<VulkanInstance> m_instance;
-	std::unique_ptr<VulkanDevice> m_device;
 	std::unique_ptr<VulkanSwapchain> m_swapchain;
 	std::unique_ptr<VulkanRenderPass> m_pRenderpass;
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
@@ -142,6 +139,9 @@ class Renderer
 	uint32_t m_current_image = 0;
 	uint32_t m_last_image = 0;
 	std::bitset<3> m_is_updated;
+
+	vred::renderer::interface m_interface;
+	std::array<vred::renderer::frame, 3> m_frames;
 };
 
 #endif // !R3DENGINE_RENDERER_H_

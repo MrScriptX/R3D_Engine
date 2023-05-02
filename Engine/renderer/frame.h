@@ -8,6 +8,8 @@ namespace vred::renderer
 	struct frame
 	{
 		VkFence render_fence;
+		VkSemaphore image_available;
+		VkSemaphore render_finished;
 		VkCommandBuffer command_buffer;
 	};
 }
