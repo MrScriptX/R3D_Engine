@@ -119,6 +119,11 @@ void GameObject::UpdateMesh(const size_t& index, const std::vector<Vertex>& vert
 void GameObject::RemoveMesh(const size_t index)
 {
 	m_mesh_to_delete.push_back(std::move(m_meshes[index]));
+
+	auto it = std::find(m_mesh_to_update.begin(), m_mesh_to_update.end(), index);
+	if (it != m_mesh_to_update.end())
+		m_mesh_to_update.erase(it);
+	
 	m_meshes.erase(index);
 }
 
