@@ -1,6 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(p_renderer)
+GameObject::GameObject(std::shared_ptr<Renderer> p_renderer) : mp_renderer(std::move(p_renderer))
 {
 	m_ubo.fill(VK_NULL_HANDLE);
 	m_ubo_memory.fill(VK_NULL_HANDLE);
@@ -74,7 +74,7 @@ void GameObject::Destroy(const int32_t frame)
 	m_ubo_memory[frame] = VK_NULL_HANDLE;
 }
 
-void GameObject::RegisterDrawCmd(VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame)
+void GameObject::RegisterDrawCmd(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame)
 {
 	for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 	{
@@ -90,7 +90,7 @@ void GameObject::bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_
 	}
 }
 
-int32_t GameObject::LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices)
+int32_t GameObject::LoadMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
 {
 	int32_t i = m_meshes.rbegin() != m_meshes.rend() ? m_meshes.rbegin()->first + 1 : 0;
 	m_meshes.insert({ i, std::make_unique<Mesh>(vertices, indices, mp_renderer) });
@@ -120,7 +120,7 @@ void GameObject::RemoveMesh(const size_t index)
 {
 	m_mesh_to_delete.push_back(std::move(m_meshes[index]));
 
-	auto it = std::find(m_mesh_to_update.begin(), m_mesh_to_update.end(), index);
+	const auto it = std::find(m_mesh_to_update.begin(), m_mesh_to_update.end(), index);
 	if (it != m_mesh_to_update.end())
 		m_mesh_to_update.erase(it);
 	
@@ -142,7 +142,7 @@ const std::unique_ptr<Mesh>& GameObject::getMesh(const size_t& index)
 	return m_meshes[index];
 }
 
-void GameObject::setMesh(const size_t& index, std::vector<Vertex> vertices)
+void GameObject::setMesh(const size_t& index, const std::vector<Vertex>& vertices)
 {
 	m_meshes[index]->SetVertices(vertices);
 	m_meshes[index]->CreateBuffers(mp_renderer);
@@ -153,7 +153,7 @@ void GameObject::setPosition(const glm::vec3& pos)
 	m_position = pos;
 }
 
-const glm::vec3& GameObject::getPosition()
+const glm::vec3& GameObject::getPosition() const noexcept
 {
 	return m_position;
 }
@@ -163,7 +163,7 @@ void GameObject::setRotation(const glm::vec3& rot)
 	m_rotation = rot;
 }
 
-const glm::vec3& GameObject::getRotation()
+const glm::vec3& GameObject::getRotation() const noexcept
 {
 	return m_rotation;
 }
