@@ -30,7 +30,8 @@
 
 #include "../Logger.h"
 
-#include "interface.h"
+#include "ihardware.h"
+#include "iswapchain.h"
 #include "frame.h"
 
 class Renderer
@@ -127,7 +128,7 @@ class Renderer
 	std::unique_ptr<uint32_t> WIDTH;
 	std::unique_ptr<uint32_t> HEIGHT;
 
-	std::unique_ptr<VulkanSwapchain> m_swapchain;
+	std::unique_ptr<VulkanSwapchain> m_pSwapchain;
 	std::unique_ptr<VulkanRenderPass> m_pRenderpass;
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
 	std::unique_ptr<VulkanCommandPool> m_commandPool;
@@ -138,7 +139,8 @@ class Renderer
 	uint32_t m_last_image = 0;
 	std::bitset<3> m_is_updated;
 
-	vred::renderer::interface m_interface;
+	vred::renderer::ihardware m_interface;// hardware interface
+	vred::renderer::iswapchain m_swapchain;
 	std::array<vred::renderer::frame, 3> m_frames;
 };
 

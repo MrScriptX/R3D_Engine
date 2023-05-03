@@ -1,5 +1,5 @@
-#ifndef VRED_RENDERER_INTERFACE_H
-#define VRED_RENDERER_INTERFACE_H
+#ifndef VRED_RENDERER_IHARDWARE_H
+#define VRED_RENDERER_IHARDWARE_H
 
 #include <vulkan/vulkan.h>
 
@@ -7,7 +7,7 @@
 
 namespace vred::renderer
 {
-	struct interface
+	struct ihardware
 	{
 	    VkInstance instance = VK_NULL_HANDLE;
 	    VkPhysicalDevice physical_device = VK_NULL_HANDLE;
@@ -20,4 +20,4 @@ namespace vred::renderer
 	};
 }
 
-#endif // !VRED_RENDERER_INTERFACE_H
+#endif // !VRED_RENDERER_IHARDWARE_H

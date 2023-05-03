@@ -15,6 +15,7 @@
 #include "vdevices.h"
 #include "vsurface.h"
 #include "vsync_obj.h"
+#include "vswapchain.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
@@ -41,6 +42,11 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 		f.image_available = vred::renderer::create_semaphore(m_interface.device);
 	}
 
+	const VkExtent2D extent = { width, height };
+	m_swapchain = vred::renderer::create_swapchain(m_interface, extent);
+	m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
+	m_swapchain.images_view = vred::renderer::create_swapchain_views(m_interface.device, m_swapchain);
+
 	m_graphic.instance = m_interface.instance;
 	m_graphic.surface = m_interface.surface;
 	m_graphic.physical_device = m_interface.physical_device;
@@ -49,8 +55,13 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	m_graphic.queue_indices.present_family = m_interface.queue_indices.present_family;
 	m_graphic.graphics_queue = m_interface.graphics_queue;
 	m_graphic.present_queue = m_interface.present_queue;
+	m_graphic.swapchain = m_swapchain.handle;
+	m_graphic.swapchain_details.extent = m_swapchain.extent;
+	m_graphic.swapchain_details.format = m_swapchain.format;
+	m_graphic.swapchain_images = m_swapchain.images;
+	m_graphic.images_view = m_swapchain.images_view;
 
-	setupSwapchain();
+	// setupSwapchain();
 	setupRenderPass();
 	setupDescriptorSetLayout();
 	createCommandPool();
@@ -87,13 +98,13 @@ Renderer::~Renderer()
 	vkDestroyCommandPool(m_graphic.device, m_graphic.command_pool, nullptr);
 	vkDestroyCommandPool(m_graphic.device, m_ui.command_pool, nullptr);
 
-	vkDestroyDevice(m_graphic.device, nullptr);
+	vkDestroyDevice(m_interface.device, nullptr);
 
 	if (vred::renderer::parameters::validation_layer_enable)
-		DestroyDebugReportCallbackEXT(m_graphic.instance, callback, nullptr);
+		DestroyDebugReportCallbackEXT(m_interface.instance, callback, nullptr);
 
-	vkDestroySurfaceKHR(m_graphic.instance, m_graphic.surface, nullptr);
-	vkDestroyInstance(m_graphic.instance, nullptr);
+	vkDestroySurfaceKHR(m_interface.instance, m_interface.surface, nullptr);
+	vkDestroyInstance(m_interface.instance, nullptr);
 }
 
 int32_t Renderer::draw()
@@ -219,7 +230,7 @@ void Renderer::WaitForSwapchainImageFence()
 
 void Renderer::setupSwapchain()
 {
-	m_swapchain = std::make_unique<VulkanSwapchain>(m_graphic, *WIDTH.get(), *HEIGHT.get());
+	m_pSwapchain = std::make_unique<VulkanSwapchain>(m_graphic, *WIDTH.get(), *HEIGHT.get());
 }
 
 void Renderer::setupRenderPass()
@@ -681,7 +692,7 @@ void Renderer::recreateSwapchain()
 {
 	cleanSwapchain();
 
-	m_swapchain->createSwapchain();
+	m_pSwapchain->createSwapchain();
 
 	VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
 	                                      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);

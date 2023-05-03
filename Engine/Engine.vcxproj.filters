@@ -135,6 +135,9 @@
     <ClCompile Include="renderer\vsync_obj.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\vswapchain.cpp">
+      <Filter>Engine\renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -266,7 +269,7 @@
     <ClInclude Include="renderer\extensions.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\interface.h">
+    <ClInclude Include="renderer\ihardware.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\queue_family.h">
@@ -299,14 +302,11 @@
     <ClInclude Include="renderer\vsync_obj.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\graphics\CameraUBO.h">
-      <Filter>Engine\Graphics</Filter>
+    <ClInclude Include="renderer\iswapchain.h">
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\graphics\SceneUBO.h">
-      <Filter>Engine\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\graphics\LightProperties.h">
-      <Filter>Engine\Graphics</Filter>
+    <ClInclude Include="renderer\vswapchain.h">
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
