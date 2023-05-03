@@ -23,7 +23,6 @@
 #include "VulkanDescriptor.h"
 #include "VulkanPipeline.h"
 #include "VulkanRenderPass.h"
-#include "VulkanSwapchain.h"
 
 #include "../graphics/CameraUBO.h"
 #include "../graphics/Graphics.h"
@@ -57,8 +56,8 @@ class Renderer
 	// Track State
 	void SetUpdated(const size_t& i);
 
-	const bool IsUpdated();
-	const bool NeedUpdate(const size_t& i);
+	bool IsUpdated() const;
+	bool NeedUpdate(const size_t& i) const;
 
 	// Create Buffers
 	void CreateVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
@@ -89,7 +88,6 @@ class Renderer
 
   private:
 	void setup_debug_callback(VkInstance& instance);
-	void setupSwapchain();
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
 	void createCommandPool();
@@ -128,7 +126,6 @@ class Renderer
 	std::unique_ptr<uint32_t> WIDTH;
 	std::unique_ptr<uint32_t> HEIGHT;
 
-	std::unique_ptr<VulkanSwapchain> m_pSwapchain;
 	std::unique_ptr<VulkanRenderPass> m_pRenderpass;
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
 	std::unique_ptr<VulkanCommandPool> m_commandPool;

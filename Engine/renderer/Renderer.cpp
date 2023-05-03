@@ -42,6 +42,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 		f.image_available = vred::renderer::create_semaphore(m_interface.device);
 	}
 
+	// setup swapchain
 	const VkExtent2D extent = { width, height };
 	m_swapchain = vred::renderer::create_swapchain(m_interface, extent);
 	m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
@@ -61,7 +62,6 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	m_graphic.swapchain_images = m_swapchain.images;
 	m_graphic.images_view = m_swapchain.images_view;
 
-	// setupSwapchain();
 	setupRenderPass();
 	setupDescriptorSetLayout();
 	createCommandPool();
@@ -110,7 +110,7 @@ Renderer::~Renderer()
 int32_t Renderer::draw()
 {
 	if (vred::renderer::parameters::validation_layer_enable)
-		vkQueueWaitIdle(m_graphic.present_queue);
+		vkQueueWaitIdle(m_interface.present_queue);
 
 	VkSubmitInfo submit_info = {};
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -133,9 +133,9 @@ int32_t Renderer::draw()
 	submit_info.signalSemaphoreCount = 1;
 	submit_info.pSignalSemaphores = signal_semaphores;
 
-	vkResetFences(m_graphic.device, 1, &m_frames[m_current_image].render_fence);
+	vkResetFences(m_interface.device, 1, &m_frames[m_current_image].render_fence);
 
-	VkResult result = vkQueueSubmit(m_graphic.graphics_queue, 1, &submit_info, m_frames[m_current_image].render_fence);
+	VkResult result = vkQueueSubmit(m_interface.graphics_queue, 1, &submit_info, m_frames[m_current_image].render_fence);
 	if (result != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to submit draw command buffer!");
@@ -147,13 +147,13 @@ int32_t Renderer::draw()
 	present_info.waitSemaphoreCount = 1;
 	present_info.pWaitSemaphores = signal_semaphores;
 
-	const VkSwapchainKHR swapchains[] = { m_graphic.swapchain };
+	const VkSwapchainKHR swapchains[] = { m_swapchain.handle };
 	present_info.swapchainCount = 1;
 	present_info.pSwapchains = swapchains;
 	present_info.pImageIndices = &m_current_image;
 	present_info.pResults = nullptr;
 
-	result = vkQueuePresentKHR(m_graphic.present_queue, &present_info);
+	result = vkQueuePresentKHR(m_interface.present_queue, &present_info);
 
 	int return_code = 0;
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
@@ -180,7 +180,7 @@ void Renderer::UpdateUI()
 		throw std::runtime_error("Unable to start recording UI command buffer!");
 	}
 
-	VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	const VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 	VkRenderPassBeginInfo renderPassBeginInfo = {};
 	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassBeginInfo.renderPass = m_ui.render_pass;
@@ -208,7 +208,7 @@ int32_t Renderer::AcquireNextImage()
 {
 	m_last_image = m_current_image;
 
-	 const VkResult result = vkAcquireNextImageKHR(m_interface.device, m_graphic.swapchain, std::numeric_limits<uint64_t>::max(), m_frames[m_current_image].image_available, VK_NULL_HANDLE, &m_current_image);
+	 const VkResult result = vkAcquireNextImageKHR(m_interface.device, m_swapchain.handle, std::numeric_limits<uint64_t>::max(), m_frames[m_current_image].image_available, VK_NULL_HANDLE, &m_current_image);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
@@ -226,11 +226,6 @@ int32_t Renderer::AcquireNextImage()
 void Renderer::WaitForSwapchainImageFence()
 {
 	vkWaitForFences(m_interface.device, 1, &m_frames[m_current_image].render_fence, VK_TRUE, std::numeric_limits<uint64_t>::max());
-}
-
-void Renderer::setupSwapchain()
-{
-	m_pSwapchain = std::make_unique<VulkanSwapchain>(m_graphic, *WIDTH.get(), *HEIGHT.get());
 }
 
 void Renderer::setupRenderPass()
@@ -295,12 +290,12 @@ std::unique_ptr<VulkanPipeline>& Renderer::GetPipelineFactory()
 	return mp_pipelines_manager;
 }
 
-const bool Renderer::IsUpdated()
+bool Renderer::IsUpdated() const
 {
 	return m_is_updated == false;
 }
 
-const bool Renderer::NeedUpdate(const size_t& i)
+bool Renderer::NeedUpdate(const size_t& i) const
 {
 	return m_is_updated[i];
 }
@@ -692,9 +687,13 @@ void Renderer::recreateSwapchain()
 {
 	cleanSwapchain();
 
-	m_pSwapchain->createSwapchain();
+	// m_pSwapchain->createSwapchain();
+	const VkExtent2D extent = { *WIDTH, *HEIGHT };
+	m_swapchain = vred::renderer::create_swapchain(m_interface, extent);
+	m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
+	m_swapchain.images_view = vred::renderer::create_swapchain_views(m_interface.device, m_swapchain);
 
-	VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
+	const VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
 	                                      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	m_pRenderpass->CreateRenderPass(format);
 	m_pRenderpass->CreateImGuiRenderPass(m_ui);
@@ -742,13 +741,13 @@ void Renderer::initUI(GLFWwindow& window)
 
 void Renderer::cleanSwapchain()
 {
-	vkDeviceWaitIdle(m_graphic.device);
-	vkQueueWaitIdle(m_graphic.graphics_queue);
-	vkQueueWaitIdle(m_graphic.present_queue);
+	vkDeviceWaitIdle(m_interface.device);
+	vkQueueWaitIdle(m_interface.graphics_queue);
+	vkQueueWaitIdle(m_interface.present_queue);
 
-	vkDestroyImageView(m_graphic.device, m_graphic.depth_view, nullptr);
-	vkDestroyImage(m_graphic.device, m_graphic.depth_image, nullptr);
-	vkFreeMemory(m_graphic.device, m_graphic.depth_memory, nullptr);
+	vkDestroyImageView(m_interface.device, m_graphic.depth_view, nullptr);
+	vkDestroyImage(m_interface.device, m_graphic.depth_image, nullptr);
+	vkFreeMemory(m_interface.device, m_graphic.depth_memory, nullptr);
 
 	for (size_t i = 0; i < m_graphic.framebuffers.size(); i++)
 	{
@@ -768,12 +767,12 @@ void Renderer::cleanSwapchain()
 	vkDestroyRenderPass(m_graphic.device, m_graphic.render_pass, nullptr);
 	vkDestroyRenderPass(m_graphic.device, m_ui.render_pass, nullptr);
 
-	for (auto imageView : m_graphic.images_view)
+	for (const auto& image_view : m_swapchain.images_view)
 	{
-		vkDestroyImageView(m_graphic.device, imageView, nullptr);
+		vkDestroyImageView(m_interface.device, image_view, nullptr);
 	}
 
-	vkDestroySwapchainKHR(m_graphic.device, m_graphic.swapchain, nullptr);
+	vkDestroySwapchainKHR(m_interface.device, m_swapchain.handle, nullptr);
 }
 
 uint32_t Renderer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)

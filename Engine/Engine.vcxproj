@@ -68,7 +68,6 @@
     <ClCompile Include="renderer\VulkanDescriptor.cpp" />
     <ClCompile Include="renderer\VulkanPipeline.cpp" />
     <ClCompile Include="renderer\VulkanRenderPass.cpp" />
-    <ClCompile Include="renderer\VulkanSwapchain.cpp" />
     <ClCompile Include="ui\ConsoleUI.cpp" />
     <ClCompile Include="ui\UI.cpp" />
     <ClCompile Include="ui\Watcher.cpp" />
@@ -119,7 +118,6 @@
     <ClInclude Include="renderer\VulkanDescriptor.h" />
     <ClInclude Include="renderer\VulkanPipeline.h" />
     <ClInclude Include="renderer\VulkanRenderPass.h" />
-    <ClInclude Include="renderer\VulkanSwapchain.h" />
     <ClInclude Include="ui\ConsoleUI.h" />
     <ClInclude Include="ui\UI.h" />
     <ClInclude Include="ui\Watcher.h" />

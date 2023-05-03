@@ -111,9 +111,6 @@
     <ClCompile Include="renderer\VulkanRenderPass.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="renderer\VulkanSwapchain.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
     <ClCompile Include="ui\UI.cpp">
       <Filter>Engine\UI</Filter>
     </ClCompile>
@@ -252,9 +249,6 @@
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanRenderPass.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\VulkanSwapchain.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="ui\UI.h">
