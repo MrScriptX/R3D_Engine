@@ -178,12 +178,12 @@ VkDeviceMemory& GameObject::GetUBOMemory(const int32_t frame)
 	return m_ubo_memory[frame];
 }
 
-const size_t& GameObject::getMeshesCount()
+size_t GameObject::getMeshesCount() const noexcept
 {
 	return m_meshes.size();
 }
 
-const bool GameObject::Deleted()
+bool GameObject::Deleted() const noexcept
 {
 	return m_meshes.size() == 0;
 }

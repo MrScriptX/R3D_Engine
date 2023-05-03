@@ -44,8 +44,8 @@ class GameObject
 	VkBuffer& GetUBO(const int32_t frame);
 	VkDeviceMemory& GetUBOMemory(const int32_t frame);
 
-	const size_t& getMeshesCount();
-	const bool Deleted();
+	size_t getMeshesCount() const noexcept;
+	bool Deleted() const noexcept;
 
 	const std::vector<std::unique_ptr<Mesh>>& GetMeshInDeleteQueue() const;
 
