@@ -28,6 +28,9 @@
     <Filter Include="Engine\renderer">
       <UniqueIdentifier>{fc06610a-7ac2-4f0f-b638-951b5eff3bd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\renderer\types">
+      <UniqueIdentifier>{f3e3473b-cdcf-41cb-9b21-daffc534426b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Logger.cpp">
@@ -266,15 +269,6 @@
     <ClInclude Include="renderer\extensions.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\ihardware.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\queue_family.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\swapchain_details.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
     <ClInclude Include="renderer\parameters.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
@@ -282,9 +276,6 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="renderer\vinstance.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\frame.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\vshader.h">
@@ -299,14 +290,26 @@
     <ClInclude Include="renderer\vsync_obj.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\iswapchain.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
     <ClInclude Include="renderer\vswapchain.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\vrenderpass.h">
       <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\frame.h">
+      <Filter>Engine\renderer\types</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\iswapchain.h">
+      <Filter>Engine\renderer\types</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\ihardware.h">
+      <Filter>Engine\renderer\types</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\queue_family.h">
+      <Filter>Engine\renderer\types</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\swapchain_details.h">
+      <Filter>Engine\renderer\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

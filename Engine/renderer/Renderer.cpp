@@ -16,6 +16,7 @@
 #include "vsurface.h"
 #include "vsync_obj.h"
 #include "vswapchain.h"
+#include "vrenderpass.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
@@ -59,8 +60,10 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	m_graphic.swapchain_details.format = m_swapchain.format;
 	m_graphic.swapchain_images = m_swapchain.images;
 	m_graphic.images_view = m_swapchain.images_view;
+	m_graphic.render_pass = m_swapchain.main_render_pass;
+	m_ui.render_pass = m_swapchain.ui_render_pass;
 
-	setupRenderPass();
+	// setupRenderPass();
 	setupDescriptorSetLayout();
 	createCommandPool();
 
@@ -463,9 +466,15 @@ void Renderer::setup_debug_callback(VkInstance& instance)
 
 void Renderer::create_swapchain(const VkExtent2D& extent)
 {
+	// create swapchain
 	m_swapchain = vred::renderer::create_swapchain(m_interface, extent);
 	m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
 	m_swapchain.images_view = vred::renderer::create_swapchain_views(m_interface.device, m_swapchain);
+
+	// create renderpass
+	VkFormat depth_format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	m_swapchain.main_render_pass = vred::renderer::create_renderpass(m_swapchain.format, depth_format, m_interface.device);
+	m_swapchain.ui_render_pass = vred::renderer::create_renderpass(m_swapchain.format, m_interface.device);
 }
 
 void Renderer::createFramebuffer()
@@ -834,7 +843,7 @@ VkFormat Renderer::findSupportedFormat(const std::vector<VkFormat>& candidates, 
 	for (VkFormat format : candidates)
 	{
 		VkFormatProperties props;
-		vkGetPhysicalDeviceFormatProperties(m_graphic.physical_device, format, &props);
+		vkGetPhysicalDeviceFormatProperties(m_interface.physical_device, format, &props);
 
 		if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
 		{

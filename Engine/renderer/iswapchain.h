@@ -15,7 +15,8 @@ namespace vred::renderer
 		std::vector<VkImage> images;
 		std::vector<VkImageView> images_view;
 
-		VkRenderPass render_pass;
+		VkRenderPass main_render_pass;
+		VkRenderPass ui_render_pass;
 	};
 }
 
