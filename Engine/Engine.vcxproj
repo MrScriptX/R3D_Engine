@@ -58,6 +58,7 @@
     <ClCompile Include="renderer\Renderer.cpp" />
     <ClCompile Include="renderer\vdevices.cpp" />
     <ClCompile Include="renderer\vinstance.cpp" />
+    <ClCompile Include="renderer\vrenderpass.cpp" />
     <ClCompile Include="renderer\vshader.cpp" />
     <ClCompile Include="renderer\vsurface.cpp" />
     <ClCompile Include="renderer\vswapchain.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\iswapchain.h" />
     <ClInclude Include="renderer\vinstance.h" />
+    <ClInclude Include="renderer\vrenderpass.h" />
     <ClInclude Include="renderer\vshader.h" />
     <ClInclude Include="renderer\vsurface.h" />
     <ClInclude Include="renderer\vswapchain.h" />

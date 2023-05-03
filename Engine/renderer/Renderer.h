@@ -87,7 +87,10 @@ class Renderer
 	void cleanSwapchain();
 
   private:
+	
 	void setup_debug_callback(VkInstance& instance);
+	void create_swapchain(const VkExtent2D& extent);
+
 	void setupRenderPass();
 	void setupDescriptorSetLayout();
 	void createCommandPool();

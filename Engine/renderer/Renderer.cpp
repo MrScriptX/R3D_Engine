@@ -44,9 +44,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 
 	// setup swapchain
 	const VkExtent2D extent = { width, height };
-	m_swapchain = vred::renderer::create_swapchain(m_interface, extent);
-	m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
-	m_swapchain.images_view = vred::renderer::create_swapchain_views(m_interface.device, m_swapchain);
+	create_swapchain(extent);
 
 	m_graphic.instance = m_interface.instance;
 	m_graphic.surface = m_interface.surface;
@@ -461,6 +459,13 @@ void Renderer::setup_debug_callback(VkInstance& instance)
 	{
 		throw std::runtime_error("Failed to setup debug callback");
 	}
+}
+
+void Renderer::create_swapchain(const VkExtent2D& extent)
+{
+	m_swapchain = vred::renderer::create_swapchain(m_interface, extent);
+	m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
+	m_swapchain.images_view = vred::renderer::create_swapchain_views(m_interface.device, m_swapchain);
 }
 
 void Renderer::createFramebuffer()

@@ -1,5 +1,5 @@
-#ifndef VRED_RENDERER_SWAPCHAIN_H
-#define VRED_RENDERER_SWAPCHAIN_H
+#ifndef VRED_RENDERER_ISWAPCHAIN_H
+#define VRED_RENDERER_ISWAPCHAIN_H
 
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -14,7 +14,9 @@ namespace vred::renderer
 
 		std::vector<VkImage> images;
 		std::vector<VkImageView> images_view;
-	};
-};
 
-#endif // !VRED_RENDERER_SWAPCHAIN_H
+		VkRenderPass render_pass;
+	};
+}
+
+#endif // !VRED_RENDERER_ISWAPCHAIN_H
