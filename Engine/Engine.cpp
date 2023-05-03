@@ -145,7 +145,7 @@ void Engine::BindKeyToFunc(const int& key, std::function<void()>& func, const Ac
 	mp_controller->SetKeyToFunc(key, func, type);
 }
 
-const std::shared_ptr<Camera> Engine::GetMainCamera()
+std::shared_ptr<Camera> Engine::GetMainCamera() const
 {
 	return mp_main_camera;
 }
@@ -175,9 +175,9 @@ void Engine::RenderUI(UI& ui)
 	m_UIs.push_back(&ui);
 }
 
-void Engine::RemoveUI(UI& ui)
+void Engine::RemoveUI(const UI& ui)
 {
-	for (auto it = m_UIs.begin(); it != m_UIs.end(); it++)
+	for (auto it = m_UIs.begin(); it != m_UIs.end(); ++it)
 	{
 		if (*it == &ui)
 		{
@@ -187,7 +187,7 @@ void Engine::RemoveUI(UI& ui)
 	}
 }
 
-const bool& Engine::shouldClose()
+bool Engine::shouldClose() const
 {
 	return glfwWindowShouldClose(&mp_window->getHandle());
 }
@@ -196,8 +196,8 @@ void Engine::update()
 {
 	glfwPollEvents();
 
-	std::chrono::time_point<std::chrono::high_resolution_clock> current_time = std::chrono::high_resolution_clock::now();
-	float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_last_time).count();
+	const std::chrono::time_point<std::chrono::high_resolution_clock> current_time = std::chrono::high_resolution_clock::now();
+	const float delta_time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - m_last_time).count();
 
 	mp_controller->Update(delta_time);
 

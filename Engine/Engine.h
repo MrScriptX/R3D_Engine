@@ -38,7 +38,7 @@ class Engine
 	void BindKeyToFunc(const int& key, std::function<void()>& func, const ActionType& type = ActionType::R3D_PRESS);
 
 	// CAMERA
-	const std::shared_ptr<Camera> GetMainCamera();
+	std::shared_ptr<Camera> GetMainCamera() const;
 
 	// VIEWING
 	void SetWireframeMode();
@@ -47,9 +47,9 @@ class Engine
 	void SetColorMode(const ColorMode color_map);
 
 	void RenderUI(UI& ui);
-	void RemoveUI(UI& ui);
+	void RemoveUI(const UI& ui);
 
-	const bool& shouldClose();
+	bool shouldClose() const;
 
   private:
 	std::unique_ptr<Window> mp_window;
