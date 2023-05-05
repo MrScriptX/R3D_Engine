@@ -57,6 +57,7 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="renderer\Renderer.cpp" />
     <ClCompile Include="renderer\vdevices.cpp" />
+    <ClCompile Include="renderer\vimage.cpp" />
     <ClCompile Include="renderer\vinstance.cpp" />
     <ClCompile Include="renderer\vrenderpass.cpp" />
     <ClCompile Include="renderer\vshader.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="renderer\parameters.h" />
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\iswapchain.h" />
+    <ClInclude Include="renderer\vimage.h" />
     <ClInclude Include="renderer\vinstance.h" />
     <ClInclude Include="renderer\vrenderpass.h" />
     <ClInclude Include="renderer\vshader.h" />

@@ -141,6 +141,9 @@
     <ClCompile Include="renderer\vrenderpass.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\vimage.cpp">
+      <Filter>Engine\renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -310,6 +313,9 @@
     </ClInclude>
     <ClInclude Include="renderer\swapchain_details.h">
       <Filter>Engine\renderer\types</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vimage.h">
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -17,6 +17,7 @@
 #include "vsync_obj.h"
 #include "vswapchain.h"
 #include "vrenderpass.h"
+#include "vimage.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
@@ -68,7 +69,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	createCommandPool();
 
 	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_graphic);
-
+	
 	createDepthResources();
 	createFramebuffer();
 	createDescriptorPool();
@@ -471,8 +472,19 @@ void Renderer::create_swapchain(const VkExtent2D& extent)
 	m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
 	m_swapchain.images_view = vred::renderer::create_swapchain_views(m_interface.device, m_swapchain);
 
-	// create renderpass
+	// create depth ressources
+	VkExtent3D depth_extent = {};
+	depth_extent.width = m_swapchain.extent.width;
+	depth_extent.height = m_swapchain.extent.height;
+	depth_extent.depth = 1;
+
 	VkFormat depth_format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	
+	m_swapchain.depth_image = vred::renderer::create_image(m_interface.device, depth_extent, depth_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	m_swapchain.depth_memory = vred::renderer::create_image_memory(m_interface.device, m_interface.physical_device, m_swapchain.depth_image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	m_swapchain.depth_image_view = vred::renderer::create_image_view(m_interface.device, m_swapchain.depth_image, depth_format, VK_IMAGE_ASPECT_DEPTH_BIT);
+
+	// create renderpass
 	m_swapchain.main_render_pass = vred::renderer::create_renderpass(m_swapchain.format, depth_format, m_interface.device);
 	m_swapchain.ui_render_pass = vred::renderer::create_renderpass(m_swapchain.format, m_interface.device);
 }

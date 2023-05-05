@@ -17,6 +17,10 @@ namespace vred::renderer
 
 		VkRenderPass main_render_pass;
 		VkRenderPass ui_render_pass;
+
+		VkImage depth_image;
+		VkDeviceMemory depth_memory;
+		VkImageView depth_image_view;
 	};
 }
 
