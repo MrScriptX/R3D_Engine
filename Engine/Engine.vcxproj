@@ -56,6 +56,7 @@
     <ClCompile Include="graphics\Math.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="renderer\Renderer.cpp" />
+    <ClCompile Include="renderer\vdescriptorset.cpp" />
     <ClCompile Include="renderer\vdevices.cpp" />
     <ClCompile Include="renderer\vimage.cpp" />
     <ClCompile Include="renderer\vinstance.cpp" />
@@ -109,6 +110,8 @@
     <ClInclude Include="renderer\parameters.h" />
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\iswapchain.h" />
+    <ClInclude Include="renderer\vdescriptorset.h" />
+    <ClInclude Include="renderer\vframebuffer.h" />
     <ClInclude Include="renderer\vimage.h" />
     <ClInclude Include="renderer\vinstance.h" />
     <ClInclude Include="renderer\vrenderpass.h" />

@@ -84,7 +84,7 @@ class Renderer
 	// Cleaning Ressource
 	void destroyUniformBuffer();
 	void destroyBuffers(Buffer& buffers);
-	void cleanSwapchain();
+	void clean_swapchain();
 
   private:
 	

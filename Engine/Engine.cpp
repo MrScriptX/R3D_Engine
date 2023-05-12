@@ -32,7 +32,7 @@ Engine::~Engine()
 {
 	vkDeviceWaitIdle(mp_renderer->GetDevice());
 
-	mp_renderer->cleanSwapchain();
+	mp_renderer->clean_swapchain();
 
 	mp_scene->CleanRessources(mp_renderer);
 	mp_scene.reset();

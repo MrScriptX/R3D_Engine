@@ -21,6 +21,8 @@ namespace vred::renderer
 		VkImage depth_image;
 		VkDeviceMemory depth_memory;
 		VkImageView depth_image_view;
+
+		std::vector<VkFramebuffer> framebuffers;
 	};
 }
 

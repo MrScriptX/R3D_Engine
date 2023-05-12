@@ -711,7 +711,7 @@ void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkI
 
 void Renderer::recreateSwapchain()
 {
-	cleanSwapchain();
+	clean_swapchain();
 
 	// m_pSwapchain->createSwapchain();
 	const VkExtent2D extent = { *WIDTH, *HEIGHT };
@@ -765,7 +765,7 @@ void Renderer::initUI(GLFWwindow& window)
 	ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
 
-void Renderer::cleanSwapchain()
+void Renderer::clean_swapchain()
 {
 	vkDeviceWaitIdle(m_interface.device);
 	vkQueueWaitIdle(m_interface.graphics_queue);
