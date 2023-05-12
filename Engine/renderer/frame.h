@@ -10,7 +10,12 @@ namespace vred::renderer
 		VkFence render_fence;
 		VkSemaphore image_available;
 		VkSemaphore render_finished;
-		VkCommandBuffer command_buffer;
+		
+		VkCommandBuffer main_command_buffer;
+		VkCommandBuffer ui_command_buffer;
+		
+		VkFramebuffer main_framebuffer;
+		VkFramebuffer ui_framebuffer;
 	};
 }
 

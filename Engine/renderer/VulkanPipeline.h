@@ -7,6 +7,10 @@
 #include "../graphics/Shaders.h"
 #include "../graphics/Vertex.h"
 
+#include "ihardware.h"
+#include "iswapchain.h"
+#include "render.h"
+
 enum class TSHADER
 {
 	DEFAULT,
@@ -18,7 +22,7 @@ enum class TSHADER
 class VulkanPipeline
 {
   public:
-	VulkanPipeline(Graphics& m_graphic);
+	VulkanPipeline(vred::renderer::ihardware& hw, vred::renderer::iswapchain& swapchain, vred::renderer::render& render_objects);
 	~VulkanPipeline();
 
 	void CreatePipelines();
@@ -33,7 +37,9 @@ class VulkanPipeline
 	std::vector<char> readFile(const std::string& filename); // should be in other file
 
 	std::array<Pipeline, 4> m_pipelines;
-	Graphics& m_graphic; // should be shared ptr
+	vred::renderer::ihardware& m_hw;
+	vred::renderer::iswapchain& m_swapchain;
+	vred::renderer::render& m_render_objects;
 	Shaders m_shaders;
 };
 

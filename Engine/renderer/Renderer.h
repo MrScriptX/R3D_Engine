@@ -32,6 +32,7 @@
 #include "ihardware.h"
 #include "iswapchain.h"
 #include "frame.h"
+#include "render.h"
 
 class Renderer
 {
@@ -142,6 +143,7 @@ class Renderer
 	vred::renderer::ihardware m_interface;// hardware interface
 	vred::renderer::iswapchain m_swapchain;
 	std::array<vred::renderer::frame, 3> m_frames;
+	vred::renderer::render m_render_objects;
 };
 
 #endif // !R3DENGINE_RENDERER_H_

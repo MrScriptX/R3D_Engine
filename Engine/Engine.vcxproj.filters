@@ -147,6 +147,12 @@
     <ClCompile Include="renderer\vdescriptorset.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\vframebuffer.cpp">
+      <Filter>Engine\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vcommandbuffer.cpp">
+      <Filter>Engine\renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -325,6 +331,12 @@
     </ClInclude>
     <ClInclude Include="renderer\vframebuffer.h">
       <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vcommandbuffer.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\render.h">
+      <Filter>Engine\renderer\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

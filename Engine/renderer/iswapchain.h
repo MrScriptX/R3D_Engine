@@ -22,7 +22,8 @@ namespace vred::renderer
 		VkDeviceMemory depth_memory;
 		VkImageView depth_image_view;
 
-		std::vector<VkFramebuffer> framebuffers;
+		VkCommandPool main_command_pool;
+		VkCommandPool ui_command_pool;
 	};
 }
 

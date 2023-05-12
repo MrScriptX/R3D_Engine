@@ -18,6 +18,9 @@
 #include "vswapchain.h"
 #include "vrenderpass.h"
 #include "vimage.h"
+#include "vframebuffer.h"
+#include "vcommandbuffer.h"
+#include "vdescriptorset.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
@@ -25,7 +28,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	HEIGHT = std::make_unique<uint32_t>(height);
 	m_is_updated = { false };
 
-	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_graphic);
+	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_interface);
 
 	// setupInstance(window);
 	m_interface.instance = vred::renderer::create_instance();
@@ -48,32 +51,59 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 	const VkExtent2D extent = { width, height };
 	create_swapchain(extent);
 
-	m_graphic.instance = m_interface.instance;
-	m_graphic.surface = m_interface.surface;
-	m_graphic.physical_device = m_interface.physical_device;
-	m_graphic.device = m_interface.device;
-	m_graphic.queue_indices.graphic_family = m_interface.queue_indices.graphic_family;
-	m_graphic.queue_indices.present_family = m_interface.queue_indices.present_family;
-	m_graphic.graphics_queue = m_interface.graphics_queue;
-	m_graphic.present_queue = m_interface.present_queue;
-	m_graphic.swapchain = m_swapchain.handle;
-	m_graphic.swapchain_details.extent = m_swapchain.extent;
-	m_graphic.swapchain_details.format = m_swapchain.format;
-	m_graphic.swapchain_images = m_swapchain.images;
-	m_graphic.images_view = m_swapchain.images_view;
-	m_graphic.render_pass = m_swapchain.main_render_pass;
-	m_ui.render_pass = m_swapchain.ui_render_pass;
+	std::vector<VkDescriptorSetLayoutBinding> main_descriptor_bindings(2);
+	main_descriptor_bindings[0] = vred::renderer::create_descriptor_set_layout_binding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, 1, 0);
+	main_descriptor_bindings[1] = vred::renderer::create_descriptor_set_layout_binding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, 1, 1);
+	
+	m_render_objects.main_descriptor_set_layout = vred::renderer::create_descriptor_set_layout(m_interface.device, main_descriptor_bindings);
+
+	VkDescriptorSetLayoutBinding light_ubo_binding = vred::renderer::create_descriptor_set_layout_binding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT, 1, 0);
+	m_render_objects.light_descriptor_set_layout = vred::renderer::create_descriptor_set_layout(m_interface.device, { light_ubo_binding });
+
+	std::vector<VkDescriptorPoolSize> pool_sizes(2);
+	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	pool_sizes[0].descriptorCount = 10;
+	pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	pool_sizes[1].descriptorCount = 10;
+
+	m_render_objects.main_pool = vred::renderer::create_descriptor_pool(m_interface.device, pool_sizes);
+
+	pool_sizes.resize(11);
+	pool_sizes[0].type = VK_DESCRIPTOR_TYPE_SAMPLER;
+	pool_sizes[0].descriptorCount = 1000;
+	pool_sizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	pool_sizes[1].descriptorCount = 1000;
+	pool_sizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	pool_sizes[2].descriptorCount = 1000;
+	pool_sizes[3].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+	pool_sizes[3].descriptorCount = 1000;
+	pool_sizes[4].type = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+	pool_sizes[4].descriptorCount = 1000;
+	pool_sizes[5].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+	pool_sizes[5].descriptorCount = 1000;
+	pool_sizes[6].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	pool_sizes[6].descriptorCount = 1000;
+	pool_sizes[7].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	pool_sizes[7].descriptorCount = 1000;
+	pool_sizes[8].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+	pool_sizes[8].descriptorCount = 1000;
+	pool_sizes[9].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+	pool_sizes[9].descriptorCount = 1000;
+	pool_sizes[10].type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+	pool_sizes[10].descriptorCount = 1000;
+
+	m_render_objects.ui_pool = vred::renderer::create_descriptor_pool(m_interface.device, pool_sizes);
 
 	// setupRenderPass();
-	setupDescriptorSetLayout();
-	createCommandPool();
+	// setupDescriptorSetLayout();
+	// createCommandPool();
 
-	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_graphic);
+	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_interface, m_swapchain, m_render_objects);
 	
-	createDepthResources();
-	createFramebuffer();
-	createDescriptorPool();
-	allocateCommandBuffers();
+	// createDepthResources();
+	// createFramebuffer();
+	// createDescriptorPool();
+	// allocateCommandBuffers();
 
 	initUI(window);
 }
@@ -85,10 +115,13 @@ Renderer::~Renderer()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	vkDestroyDescriptorPool(m_graphic.device, m_graphic.descriptor_pool, nullptr);
-	vkDestroyDescriptorPool(m_graphic.device, m_ui.decriptor_pool, nullptr);
-	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.descriptor_set_layout, nullptr);
-	vkDestroyDescriptorSetLayout(m_graphic.device, m_graphic.light_descriptor_layout, nullptr);
+	// clean main descriptor
+	vkDestroyDescriptorPool(m_interface.device, m_render_objects.main_pool, nullptr);
+	vkDestroyDescriptorSetLayout(m_interface.device, m_render_objects.main_descriptor_set_layout, nullptr);
+
+	// clean ImGui descriptor
+	vkDestroyDescriptorPool(m_interface.device, m_render_objects.ui_pool, nullptr);
+	vkDestroyDescriptorSetLayout(m_interface.device, m_render_objects.light_descriptor_set_layout, nullptr);
 
 	for (const vred::renderer::frame& f: m_frames)
 	{
@@ -96,9 +129,6 @@ Renderer::~Renderer()
 		vkDestroySemaphore(m_interface.device, f.render_finished, nullptr);
 		vkDestroyFence(m_interface.device, f.render_fence, nullptr);
 	}
-
-	vkDestroyCommandPool(m_graphic.device, m_graphic.command_pool, nullptr);
-	vkDestroyCommandPool(m_graphic.device, m_ui.command_pool, nullptr);
 
 	vkDestroyDevice(m_interface.device, nullptr);
 
@@ -125,7 +155,7 @@ int32_t Renderer::draw()
 	constexpr VkPipelineStageFlags wait_stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submit_info.pWaitDstStageMask = wait_stages;
 
-	const std::array<VkCommandBuffer, 2> command_buffers = { m_graphic.command_buffers[m_current_image], m_ui.command_buffers[m_current_image] };
+	const std::array<VkCommandBuffer, 2> command_buffers = { m_frames[m_current_image].main_command_buffer, m_frames[m_current_image].ui_command_buffer };
 	submit_info.commandBufferCount = command_buffers.size();
 	submit_info.pCommandBuffers = command_buffers.data();
 
@@ -173,37 +203,33 @@ int32_t Renderer::draw()
 
 void Renderer::UpdateUI()
 {
-	VkCommandBufferBeginInfo cmdBufferBegin = {};
-	cmdBufferBegin.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	cmdBufferBegin.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	VkCommandBufferBeginInfo cmd_buffer_begin_info = {};
+	cmd_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	cmd_buffer_begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-	if (vkBeginCommandBuffer(m_ui.command_buffers[m_current_image], &cmdBufferBegin) != VK_SUCCESS)
-	{
+	if (vkBeginCommandBuffer(m_frames[m_current_image].ui_command_buffer, &cmd_buffer_begin_info) != VK_SUCCESS)
 		throw std::runtime_error("Unable to start recording UI command buffer!");
-	}
 
-	const VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-	VkRenderPassBeginInfo renderPassBeginInfo = {};
-	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassBeginInfo.renderPass = m_ui.render_pass;
-	renderPassBeginInfo.framebuffer = m_ui.framebuffers[m_current_image];
-	renderPassBeginInfo.renderArea.extent.width = m_graphic.swapchain_details.extent.width;
-	renderPassBeginInfo.renderArea.extent.height = m_graphic.swapchain_details.extent.height;
-	renderPassBeginInfo.clearValueCount = 1;
-	renderPassBeginInfo.pClearValues = &clearColor;
+	const VkClearValue clear_color = { 0.0f, 0.0f, 0.0f, 1.0f };
+	VkRenderPassBeginInfo render_pass_begin_info = {};
+	render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	render_pass_begin_info.renderPass = m_swapchain.ui_render_pass;
+	render_pass_begin_info.framebuffer = m_frames[m_current_image].ui_framebuffer;
+	render_pass_begin_info.renderArea.extent.width = m_swapchain.extent.width;
+	render_pass_begin_info.renderArea.extent.height = m_swapchain.extent.height;
+	render_pass_begin_info.clearValueCount = 1;
+	render_pass_begin_info.pClearValues = &clear_color;
 
-	vkCmdBeginRenderPass(m_ui.command_buffers[m_current_image], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(m_frames[m_current_image].ui_command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
 	// Grab and record the draw data for Dear Imgui
-	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_ui.command_buffers[m_current_image]);
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_frames[m_current_image].ui_command_buffer);
 
 	// End and submit render pass
-	vkCmdEndRenderPass(m_ui.command_buffers[m_current_image]);
+	vkCmdEndRenderPass(m_frames[m_current_image].ui_command_buffer);
 
-	if (vkEndCommandBuffer(m_ui.command_buffers[m_current_image]) != VK_SUCCESS)
-	{
+	if (vkEndCommandBuffer(m_frames[m_current_image].ui_command_buffer) != VK_SUCCESS)
 		throw std::runtime_error("Failed to record command buffers!");
-	}
 }
 
 int32_t Renderer::AcquireNextImage()
@@ -255,31 +281,31 @@ void Renderer::createCommandPool()
 
 void Renderer::SetPolygonFillingMode(const VkPolygonMode& mode)
 {
-	m_graphic.polygone_mode = mode;
+	m_render_objects.polygone_mode = mode;
 
 	recreateSwapchain();
 }
 
 void Renderer::SetColorMode(const ColorMode map)
 {
-	m_graphic.color_map = map;
+	m_render_objects.color_map = map;
 
 	recreateSwapchain();
 }
 
 const VkDevice& Renderer::GetDevice()
 {
-	return m_graphic.device;
+	return m_interface.device;
 }
 
 VkFramebuffer& Renderer::GetFrameBuffer(const size_t& i)
 {
-	return m_graphic.framebuffers[i];
+	return m_frames[i].main_framebuffer;
 }
 
 VkCommandBuffer& Renderer::GetCommandBuffer(const size_t& i)
 {
-	return m_graphic.command_buffers[i];
+	return m_frames[i].main_command_buffer;
 }
 
 std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
@@ -309,18 +335,18 @@ void Renderer::SetUpdated(const size_t& i)
 
 void Renderer::destroyBuffers(Buffer& buffer)
 {
-	vkQueueWaitIdle(m_graphic.graphics_queue);
+	vkQueueWaitIdle(m_interface.graphics_queue);
 
-	for (uint32_t i = 0; i < m_graphic.command_buffers.size(); i++)
+	for (uint32_t i = 0; i < m_frames.size(); i++)
 	{
-		vkResetCommandBuffer(m_graphic.command_buffers[i], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+		vkResetCommandBuffer(m_frames[i].main_command_buffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 	}
 
-	vkDestroyBuffer(m_graphic.device, buffer.index, nullptr);
-	vkFreeMemory(m_graphic.device, buffer.index_memory, nullptr);
+	vkDestroyBuffer(m_interface.device, buffer.index, nullptr);
+	vkFreeMemory(m_interface.device, buffer.index_memory, nullptr);
 
-	vkDestroyBuffer(m_graphic.device, buffer.vertex, nullptr);
-	vkFreeMemory(m_graphic.device, buffer.vertex_memory, nullptr);
+	vkDestroyBuffer(m_interface.device, buffer.vertex, nullptr);
+	vkFreeMemory(m_interface.device, buffer.vertex_memory, nullptr);
 }
 
 void Renderer::CreateVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer)
@@ -329,20 +355,18 @@ void Renderer::CreateVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertice
 
 	VkBuffer staging_buffer;
 	VkDeviceMemory staging_buffer_memory;
-	m_pBufferFactory->createBuffer(staging_buffer, staging_buffer_memory, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-	                               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	m_pBufferFactory->createBuffer(staging_buffer, staging_buffer_memory, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	void* data;
-	vkMapMemory(m_graphic.device, staging_buffer_memory, 0, buffer_size, 0, &data);
+	vkMapMemory(m_interface.device, staging_buffer_memory, 0, buffer_size, 0, &data);
 	memcpy(data, vertices->data(), (size_t)buffer_size);
-	vkUnmapMemory(m_graphic.device, staging_buffer_memory);
+	vkUnmapMemory(m_interface.device, staging_buffer_memory);
 
-	m_pBufferFactory->createBuffer(buffer.vertex, buffer.vertex_memory, buffer_size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-	                               VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	m_pBufferFactory->createBuffer(buffer.vertex, buffer.vertex_memory, buffer_size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 	copyBuffer(staging_buffer, buffer.vertex, buffer_size);
 
-	vkDestroyBuffer(m_graphic.device, staging_buffer, nullptr);
-	vkFreeMemory(m_graphic.device, staging_buffer_memory, nullptr);
+	vkDestroyBuffer(m_interface.device, staging_buffer, nullptr);
+	vkFreeMemory(m_interface.device, staging_buffer_memory, nullptr);
 }
 
 void Renderer::CreateIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer)
@@ -355,16 +379,16 @@ void Renderer::CreateIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indice
 	                               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	void* data;
-	vkMapMemory(m_graphic.device, staging_buffer_mem, 0, buffer_size, 0, &data);
+	vkMapMemory(m_interface.device, staging_buffer_mem, 0, buffer_size, 0, &data);
 	memcpy(data, indices->data(), (size_t)buffer_size);
-	vkUnmapMemory(m_graphic.device, staging_buffer_mem);
+	vkUnmapMemory(m_interface.device, staging_buffer_mem);
 
 	m_pBufferFactory->createBuffer(buffer.index, buffer.index_memory, buffer_size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 	                               VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 	copyBuffer(staging_buffer, buffer.index, buffer_size);
 
-	vkDestroyBuffer(m_graphic.device, staging_buffer, nullptr);
-	vkFreeMemory(m_graphic.device, staging_buffer_mem, nullptr);
+	vkDestroyBuffer(m_interface.device, staging_buffer, nullptr);
+	vkFreeMemory(m_interface.device, staging_buffer_mem, nullptr);
 }
 
 void Renderer::CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size)
@@ -427,11 +451,11 @@ void Renderer::BeginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFrame
 
 	VkRenderPassBeginInfo renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassInfo.renderPass = m_graphic.render_pass;
+	renderPassInfo.renderPass = m_swapchain.main_render_pass;
 	renderPassInfo.framebuffer = frameBuffer;
 
 	renderPassInfo.renderArea.offset = { 0, 0 };
-	renderPassInfo.renderArea.extent = m_graphic.swapchain_details.extent;
+	renderPassInfo.renderArea.extent = m_swapchain.extent;
 
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clear_values.size());
 	renderPassInfo.pClearValues = clear_values.data();
@@ -487,6 +511,27 @@ void Renderer::create_swapchain(const VkExtent2D& extent)
 	// create renderpass
 	m_swapchain.main_render_pass = vred::renderer::create_renderpass(m_swapchain.format, depth_format, m_interface.device);
 	m_swapchain.ui_render_pass = vred::renderer::create_renderpass(m_swapchain.format, m_interface.device);
+
+	// create framebuffer
+	for (size_t i = 0; i < m_swapchain.images_view.size(); ++i)
+	{
+		const std::vector<VkImageView> attachements = { m_swapchain.images_view[i], m_swapchain.depth_image_view };
+		m_frames[i].main_framebuffer = vred::renderer::create_framebuffer(m_interface.device, m_swapchain.main_render_pass, attachements, extent);
+		m_frames[i].ui_framebuffer = vred::renderer::create_framebuffer(m_interface.device, m_swapchain.ui_render_pass, { attachements[0] }, extent);
+	}
+
+	// create commandpool
+	m_swapchain.main_command_pool = vred::renderer::create_command_pool(m_interface.device, m_interface.queue_indices.graphic_family);
+	m_swapchain.ui_command_pool = vred::renderer::create_command_pool(m_interface.device, m_interface.queue_indices.graphic_family);
+
+	// allocate commandbuffers
+	std::vector<VkCommandBuffer> main_command_buffers = vred::renderer::allocate_command_buffers(m_frames.size(), m_interface.device, m_swapchain.main_command_pool);
+	std::vector<VkCommandBuffer> ui_command_buffers = vred::renderer::allocate_command_buffers(m_frames.size(), m_interface.device, m_swapchain.ui_command_pool);
+	for (size_t i = 0; i < m_frames.size(); ++i)
+	{
+		m_frames[i].main_command_buffer = main_command_buffers[i];
+		m_frames[i].ui_command_buffer = ui_command_buffers[i];
+	}
 }
 
 void Renderer::createFramebuffer()
@@ -545,14 +590,14 @@ void Renderer::createDescriptorPool()
 
 void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
 {
-	VkDescriptorSetLayout layouts[] = { m_graphic.descriptor_set_layout };
+	VkDescriptorSetLayout layouts[] = { m_render_objects.main_descriptor_set_layout };
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = m_graphic.descriptor_pool;
+	allocInfo.descriptorPool = m_render_objects.main_pool;
 	allocInfo.descriptorSetCount = 1;
 	allocInfo.pSetLayouts = layouts;
 
-	VkResult result = vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &descriptor_set);
+	VkResult result = vkAllocateDescriptorSets(m_interface.device, &allocInfo, &descriptor_set);
 	if (result != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate descriptor set!");
@@ -561,14 +606,14 @@ void Renderer::allocateDescriptorSet(VkDescriptorSet& descriptor_set)
 
 void Renderer::allocateDescriptorSetLight(VkDescriptorSet& descriptor_set)
 {
-	VkDescriptorSetLayout layouts[] = { m_graphic.light_descriptor_layout };
+	VkDescriptorSetLayout layouts[] = { m_render_objects.light_descriptor_set_layout };
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = m_graphic.descriptor_pool;
+	allocInfo.descriptorPool = m_render_objects.main_pool;
 	allocInfo.descriptorSetCount = 1;
 	allocInfo.pSetLayouts = layouts;
 
-	VkResult result = vkAllocateDescriptorSets(m_graphic.device, &allocInfo, &descriptor_set);
+	VkResult result = vkAllocateDescriptorSets(m_interface.device, &allocInfo, &descriptor_set);
 	if (result != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate descriptor set!");
@@ -592,7 +637,7 @@ void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& d
 	descriptorWrites[0].descriptorCount = 1;
 	descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-	vkUpdateDescriptorSets(m_graphic.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	vkUpdateDescriptorSets(m_interface.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& descriptor_set, const VkImageView& image_view, const VkSampler& image_sampler)
@@ -625,7 +670,7 @@ void Renderer::updateDescriptorSet(const VkBuffer& ubo, const VkDescriptorSet& d
 	descriptorWrites[1].descriptorCount = 1;
 	descriptorWrites[1].pImageInfo = &imageInfo;
 
-	vkUpdateDescriptorSets(m_graphic.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	vkUpdateDescriptorSets(m_interface.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 void Renderer::createDepthResources()
@@ -641,8 +686,8 @@ void Renderer::createDepthResources()
 
 void Renderer::destroyUniformBuffer()
 {
-	vkDestroyBuffer(m_graphic.device, m_graphic.uniform_buffer, nullptr);
-	vkFreeMemory(m_graphic.device, m_graphic.uniform_memory, nullptr);
+	vkDestroyBuffer(m_interface.device, m_graphic.uniform_buffer, nullptr);
+	vkFreeMemory(m_interface.device, m_graphic.uniform_memory, nullptr);
 }
 
 VkImageView Renderer::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
@@ -713,21 +758,22 @@ void Renderer::recreateSwapchain()
 {
 	clean_swapchain();
 
-	// m_pSwapchain->createSwapchain();
 	const VkExtent2D extent = { *WIDTH, *HEIGHT };
-	m_swapchain = vred::renderer::create_swapchain(m_interface, extent);
-	m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
-	m_swapchain.images_view = vred::renderer::create_swapchain_views(m_interface.device, m_swapchain);
+	create_swapchain(extent);
 
-	const VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
-	                                      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-	m_pRenderpass->CreateRenderPass(format);
-	m_pRenderpass->CreateImGuiRenderPass(m_ui);
+	// m_swapchain = vred::renderer::create_swapchain(m_interface, extent);
+	// m_swapchain.images = vred::renderer::create_swapchain_images(m_interface.device, m_swapchain.handle);
+	// m_swapchain.images_view = vred::renderer::create_swapchain_views(m_interface.device, m_swapchain);
+	// 
+	// const VkFormat format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL,
+	//                                       VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	// m_pRenderpass->CreateRenderPass(format);
+	// m_pRenderpass->CreateImGuiRenderPass(m_ui);
 
 	mp_pipelines_manager->CreatePipelines();
-	createDepthResources();
-	createFramebuffer();
-	allocateCommandBuffers();
+	// createDepthResources();
+	// createFramebuffer();
+	// allocateCommandBuffers();
 
 	m_is_updated.set();
 }
@@ -745,18 +791,18 @@ void Renderer::initUI(GLFWwindow& window)
 
 	ImGui_ImplGlfw_InitForVulkan(&window, true);
 	ImGui_ImplVulkan_InitInfo init_info = {};
-	init_info.Instance = m_graphic.instance;
-	init_info.PhysicalDevice = m_graphic.physical_device;
-	init_info.Device = m_graphic.device;
-	init_info.QueueFamily = m_graphic.queue_indices.graphic_family;
-	init_info.Queue = m_graphic.graphics_queue;
+	init_info.Instance = m_interface.instance;
+	init_info.PhysicalDevice = m_interface.physical_device;
+	init_info.Device = m_interface.device;
+	init_info.QueueFamily = m_interface.queue_indices.graphic_family;
+	init_info.Queue = m_interface.graphics_queue;
 	init_info.PipelineCache = VK_NULL_HANDLE;
-	init_info.DescriptorPool = m_ui.decriptor_pool;
+	init_info.DescriptorPool = m_render_objects.ui_pool;
 	init_info.Allocator = nullptr;
-	init_info.MinImageCount = m_graphic.swapchain_images.size();
-	init_info.ImageCount = m_graphic.framebuffers.size();
+	init_info.MinImageCount = m_swapchain.images.size();
+	init_info.ImageCount = m_frames.size();
 	init_info.CheckVkResultFn = nullptr;
-	ImGui_ImplVulkan_Init(&init_info, m_ui.render_pass);
+	ImGui_ImplVulkan_Init(&init_info, m_swapchain.ui_render_pass);
 
 	// upload textures to gpu
 	VkCommandBuffer command_buffer = beginCommands();
@@ -771,27 +817,23 @@ void Renderer::clean_swapchain()
 	vkQueueWaitIdle(m_interface.graphics_queue);
 	vkQueueWaitIdle(m_interface.present_queue);
 
-	vkDestroyImageView(m_interface.device, m_graphic.depth_view, nullptr);
-	vkDestroyImage(m_interface.device, m_graphic.depth_image, nullptr);
-	vkFreeMemory(m_interface.device, m_graphic.depth_memory, nullptr);
+	vkDestroyImageView(m_interface.device, m_swapchain.depth_image_view, nullptr);
+	vkDestroyImage(m_interface.device, m_swapchain.depth_image, nullptr);
+	vkFreeMemory(m_interface.device, m_swapchain.depth_memory, nullptr);
 
-	for (size_t i = 0; i < m_graphic.framebuffers.size(); i++)
+	for (size_t i = 0; i < m_frames.size(); i++)
 	{
-		vkDestroyFramebuffer(m_graphic.device, m_graphic.framebuffers[i], nullptr);
+		vkDestroyFramebuffer(m_interface.device, m_frames[i].main_framebuffer, nullptr);
+		vkDestroyFramebuffer(m_interface.device, m_frames[i].ui_framebuffer, nullptr);
 	}
 
-	for (size_t i = 0; i < m_ui.framebuffers.size(); i++)
-	{
-		vkDestroyFramebuffer(m_graphic.device, m_ui.framebuffers[i], nullptr);
-	}
-
-	vkFreeCommandBuffers(m_graphic.device, m_graphic.command_pool, static_cast<uint32_t>(m_graphic.command_buffers.size()), m_graphic.command_buffers.data());
-	vkFreeCommandBuffers(m_graphic.device, m_ui.command_pool, static_cast<uint32_t>(m_ui.command_buffers.size()), m_ui.command_buffers.data());
+	vkDestroyCommandPool(m_interface.device, m_swapchain.main_command_pool, nullptr);
+	vkDestroyCommandPool(m_interface.device, m_swapchain.ui_command_pool, nullptr);
 
 	mp_pipelines_manager->DestroyPipelines();
 
-	vkDestroyRenderPass(m_graphic.device, m_graphic.render_pass, nullptr);
-	vkDestroyRenderPass(m_graphic.device, m_ui.render_pass, nullptr);
+	vkDestroyRenderPass(m_interface.device, m_swapchain.main_render_pass, nullptr);
+	vkDestroyRenderPass(m_interface.device, m_swapchain.ui_render_pass, nullptr);
 
 	for (const auto& image_view : m_swapchain.images_view)
 	{
@@ -804,7 +846,7 @@ void Renderer::clean_swapchain()
 uint32_t Renderer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(m_graphic.physical_device, &memProperties);
+	vkGetPhysicalDeviceMemoryProperties(m_interface.physical_device, &memProperties);
 
 	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
 	{
@@ -886,11 +928,11 @@ VkCommandBuffer Renderer::beginCommands()
 	VkCommandBufferAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandPool = m_graphic.command_pool;
+	allocInfo.commandPool = m_swapchain.main_command_pool;
 	allocInfo.commandBufferCount = 1;
 
 	VkCommandBuffer commandBuffer;
-	vkAllocateCommandBuffers(m_graphic.device, &allocInfo, &commandBuffer);
+	vkAllocateCommandBuffers(m_interface.device, &allocInfo, &commandBuffer);
 
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -910,10 +952,10 @@ void Renderer::endCommands(VkCommandBuffer commandBuffer)
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 
-	vkQueueSubmit(m_graphic.graphics_queue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(m_graphic.graphics_queue);
+	vkQueueSubmit(m_interface.graphics_queue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(m_interface.graphics_queue);
 
-	vkFreeCommandBuffers(m_graphic.device, m_graphic.command_pool, 1, &commandBuffer);
+	vkFreeCommandBuffers(m_interface.device, m_swapchain.main_command_pool, 1, &commandBuffer);
 }
 
 void Renderer::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)

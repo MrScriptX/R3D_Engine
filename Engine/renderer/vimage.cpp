@@ -36,13 +36,15 @@ VkDeviceMemory vred::renderer::create_image_memory(const VkDevice& device, const
 	VkMemoryAllocateInfo alloc_info = {};
 	alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	alloc_info.allocationSize = requirements.size;
-	alloc_info.memoryTypeIndex = find_memory_type(requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, physical_device);
+	alloc_info.memoryTypeIndex = find_memory_type(requirements.memoryTypeBits, properties, physical_device);
 
-	VkDeviceMemory memory;
+	VkDeviceMemory memory = VK_NULL_HANDLE;
 	if (vkAllocateMemory(device, &alloc_info, nullptr, &memory) != VK_SUCCESS)
 		throw std::runtime_error("failed to allocate image memory !");
 
 	vkBindImageMemory(device, image, memory, 0);
+
+	return memory;
 }
 
 VkImageView vred::renderer::create_image_view(const VkDevice& device, VkImage image, VkFormat format, VkImageAspectFlags flags)

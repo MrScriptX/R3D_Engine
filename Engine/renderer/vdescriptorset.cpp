@@ -27,3 +27,18 @@ VkDescriptorSetLayout vred::renderer::create_descriptor_set_layout(const VkDevic
 
 	return descriptor_set_layout;
 }
+
+VkDescriptorPool vred::renderer::create_descriptor_pool(const VkDevice& device, const std::vector<VkDescriptorPoolSize>& pool_sizes)
+{
+	VkDescriptorPoolCreateInfo pool_info = {};
+	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	pool_info.poolSizeCount = static_cast<uint32_t>(pool_sizes.size());
+	pool_info.pPoolSizes = pool_sizes.data();
+	pool_info.maxSets = 100;
+
+	VkDescriptorPool descriptor_pool;
+	if (vkCreateDescriptorPool(device, &pool_info, nullptr, &descriptor_pool) != VK_SUCCESS)
+		throw std::runtime_error("failed to create descriptor pool!");
+
+	return descriptor_pool;
+}
