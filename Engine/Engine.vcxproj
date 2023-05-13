@@ -57,6 +57,7 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="renderer\callback.cpp" />
     <ClCompile Include="renderer\helper.cpp" />
+    <ClCompile Include="renderer\pipeline.cpp" />
     <ClCompile Include="renderer\Renderer.cpp" />
     <ClCompile Include="renderer\vbuffer.cpp" />
     <ClCompile Include="renderer\vcommandbuffer.cpp" />
@@ -112,7 +113,7 @@
     <ClInclude Include="renderer\frame.h" />
     <ClInclude Include="renderer\helper.h" />
     <ClInclude Include="renderer\parameters.h" />
-    <ClInclude Include="renderer\pipeline_builder.h" />
+    <ClInclude Include="renderer\pipeline.h" />
     <ClInclude Include="renderer\render.h" />
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\iswapchain.h" />

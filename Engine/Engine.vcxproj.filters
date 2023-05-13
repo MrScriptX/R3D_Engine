@@ -154,8 +154,13 @@
     <ClCompile Include="renderer\vsync_obj.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="renderer\vbuffer.cpp" />
     <ClCompile Include="renderer\helper.cpp">
+      <Filter>Engine\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\pipeline.cpp">
+      <Filter>Engine\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vbuffer.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
   </ItemGroup>
@@ -343,7 +348,7 @@
     <ClInclude Include="renderer\helper.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\pipeline_builder.h">
+    <ClInclude Include="renderer\pipeline.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
   </ItemGroup>
