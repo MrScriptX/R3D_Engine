@@ -69,11 +69,8 @@
     <ClCompile Include="renderer\vswapchain.cpp" />
     <ClCompile Include="renderer\vsync_obj.cpp" />
     <ClCompile Include="renderer\VulkanBuffer.cpp" />
-    <ClCompile Include="renderer\VulkanCommandBuffer.cpp" />
-    <ClCompile Include="renderer\VulkanCommandPool.cpp" />
     <ClCompile Include="renderer\VulkanDescriptor.cpp" />
     <ClCompile Include="renderer\VulkanPipeline.cpp" />
-    <ClCompile Include="renderer\VulkanRenderPass.cpp" />
     <ClCompile Include="ui\ConsoleUI.cpp" />
     <ClCompile Include="ui\UI.cpp" />
     <ClCompile Include="ui\Watcher.cpp" />
@@ -126,11 +123,8 @@
     <ClInclude Include="renderer\vswapchain.h" />
     <ClInclude Include="renderer\vsync_obj.h" />
     <ClInclude Include="renderer\VulkanBuffer.h" />
-    <ClInclude Include="renderer\VulkanCommandBuffer.h" />
-    <ClInclude Include="renderer\VulkanCommandPool.h" />
     <ClInclude Include="renderer\VulkanDescriptor.h" />
     <ClInclude Include="renderer\VulkanPipeline.h" />
-    <ClInclude Include="renderer\VulkanRenderPass.h" />
     <ClInclude Include="ui\ConsoleUI.h" />
     <ClInclude Include="ui\UI.h" />
     <ClInclude Include="ui\Watcher.h" />

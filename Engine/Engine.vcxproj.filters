@@ -99,19 +99,10 @@
     <ClCompile Include="renderer\VulkanBuffer.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="renderer\VulkanCommandBuffer.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\VulkanCommandPool.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
     <ClCompile Include="renderer\VulkanDescriptor.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\VulkanPipeline.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\VulkanRenderPass.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="ui\UI.cpp">
@@ -255,19 +246,10 @@
     <ClInclude Include="renderer\VulkanBuffer.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\VulkanCommandBuffer.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\VulkanCommandPool.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
     <ClInclude Include="renderer\VulkanDescriptor.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanPipeline.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\VulkanRenderPass.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="ui\UI.h">

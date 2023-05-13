@@ -19,10 +19,8 @@
 #include <imgui_impl_vulkan.h>
 
 #include "VulkanBuffer.h"
-#include "VulkanCommandPool.h"
 #include "VulkanDescriptor.h"
 #include "VulkanPipeline.h"
-#include "VulkanRenderPass.h"
 
 #include "../graphics/CameraUBO.h"
 #include "../graphics/Graphics.h"
@@ -90,22 +88,11 @@ class Renderer
   private:
 	
 	void setup_debug_callback(VkInstance& instance);
+
 	void create_swapchain(const VkExtent2D& extent);
-
-	void setupRenderPass();
-	void setupDescriptorSetLayout();
-	void createCommandPool();
-	void createFramebuffer();
-	void createDescriptorPool();
-	void allocateCommandBuffers();
-	void createDepthResources();
-
-	void recreateSwapchain();
+	void recreate_swapchain();
 
 	void initUI(GLFWwindow& window);
-
-	SwapchainDetails querySwapChainSupport(VkPhysicalDevice device);
-	QueueFamilyIndices findQueueFamily(VkPhysicalDevice device);
 
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
@@ -116,16 +103,13 @@ class Renderer
 	void endCommands(VkCommandBuffer commandBuffer);
 
 	VkDebugReportCallbackEXT callback;
-	Graphics m_graphic;
 	UIObject m_ui;
-	std::unique_ptr<uint32_t> WIDTH;
-	std::unique_ptr<uint32_t> HEIGHT;
 
-	std::unique_ptr<VulkanRenderPass> m_pRenderpass;
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
-	std::unique_ptr<VulkanCommandPool> m_commandPool;
 	std::unique_ptr<VulkanPipeline> mp_pipelines_manager;
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
+
+	VkExtent2D m_window_extent;
 
 	uint32_t m_current_image = 0;
 	uint32_t m_last_image = 0;

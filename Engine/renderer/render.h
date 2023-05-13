@@ -15,6 +15,9 @@ namespace vred::renderer
 
 		VkPolygonMode polygone_mode = VK_POLYGON_MODE_FILL;
 		ColorMode color_map = ColorMode::DEFAULT;
+
+		VkBuffer uniform_buffer;
+		VkDeviceMemory uniform_memory;
 	};
 }
 
