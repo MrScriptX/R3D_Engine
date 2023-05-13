@@ -56,7 +56,9 @@
     <ClCompile Include="graphics\Math.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="renderer\callback.cpp" />
+    <ClCompile Include="renderer\helper.cpp" />
     <ClCompile Include="renderer\Renderer.cpp" />
+    <ClCompile Include="renderer\vbuffer.cpp" />
     <ClCompile Include="renderer\vcommandbuffer.cpp" />
     <ClCompile Include="renderer\vdescriptorset.cpp" />
     <ClCompile Include="renderer\vdevices.cpp" />
@@ -108,10 +110,12 @@
     <ClInclude Include="log_type.h" />
     <ClInclude Include="renderer\callback.h" />
     <ClInclude Include="renderer\frame.h" />
+    <ClInclude Include="renderer\helper.h" />
     <ClInclude Include="renderer\parameters.h" />
     <ClInclude Include="renderer\render.h" />
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\iswapchain.h" />
+    <ClInclude Include="renderer\vbuffer.h" />
     <ClInclude Include="renderer\vcommandbuffer.h" />
     <ClInclude Include="renderer\vdescriptorset.h" />
     <ClInclude Include="renderer\vframebuffer.h" />

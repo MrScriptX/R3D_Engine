@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-uint32_t find_memory_type(uint32_t type_filter, VkMemoryPropertyFlags properties, const VkPhysicalDevice& physical_device);
+#include "helper.h"
 
 VkImage vred::renderer::create_image(const VkDevice& device, VkExtent3D extent, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage)
 {
@@ -65,20 +65,4 @@ VkImageView vred::renderer::create_image_view(const VkDevice& device, VkImage im
 		throw std::runtime_error("failed to create texture image view!");
 
 	return image_view;
-}
-
-uint32_t find_memory_type(uint32_t type_filter, VkMemoryPropertyFlags properties, const VkPhysicalDevice& physical_device)
-{
-	VkPhysicalDeviceMemoryProperties mem_properties;
-	vkGetPhysicalDeviceMemoryProperties(physical_device, &mem_properties);
-
-	for (uint32_t i = 0; i < mem_properties.memoryTypeCount; i++)
-	{
-		if (type_filter & (1 << i) && (mem_properties.memoryTypes[i].propertyFlags & properties) == properties)
-		{
-			return i;
-		}
-	}
-
-	throw std::runtime_error("failed to find suitable memory type!");
 }

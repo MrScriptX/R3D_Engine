@@ -22,6 +22,7 @@
 #include "vcommandbuffer.h"
 #include "vdescriptorset.h"
 #include "callback.h"
+#include "vbuffer.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height) : m_window_extent({ width, height }), m_is_updated({ false })
 {
@@ -316,16 +317,17 @@ void Renderer::CreateVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertice
 {
 	VkDeviceSize buffer_size = sizeof(vertices->at(0)) * vertices->size();
 
-	VkBuffer staging_buffer;
-	VkDeviceMemory staging_buffer_memory;
-	m_pBufferFactory->createBuffer(staging_buffer, staging_buffer_memory, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	VkBuffer staging_buffer = vred::renderer::create_buffer(m_interface, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
+	VkDeviceMemory staging_buffer_memory = vred::renderer::allocate_buffer(m_interface, staging_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	void* data;
 	vkMapMemory(m_interface.device, staging_buffer_memory, 0, buffer_size, 0, &data);
 	memcpy(data, vertices->data(), (size_t)buffer_size);
 	vkUnmapMemory(m_interface.device, staging_buffer_memory);
 
-	m_pBufferFactory->createBuffer(buffer.vertex, buffer.vertex_memory, buffer_size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	buffer.vertex = vred::renderer::create_buffer(m_interface, buffer_size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+	buffer.vertex_memory = vred::renderer::allocate_buffer(m_interface, buffer.vertex, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
 	copyBuffer(staging_buffer, buffer.vertex, buffer_size);
 
 	vkDestroyBuffer(m_interface.device, staging_buffer, nullptr);
@@ -338,8 +340,7 @@ void Renderer::CreateIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indice
 
 	VkBuffer staging_buffer;
 	VkDeviceMemory staging_buffer_mem;
-	m_pBufferFactory->createBuffer(staging_buffer, staging_buffer_mem, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-	                               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	m_pBufferFactory->createBuffer(staging_buffer, staging_buffer_mem, buffer_size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	void* data;
 	vkMapMemory(m_interface.device, staging_buffer_mem, 0, buffer_size, 0, &data);

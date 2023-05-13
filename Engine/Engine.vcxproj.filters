@@ -31,6 +31,15 @@
     <Filter Include="Engine\renderer\types">
       <UniqueIdentifier>{f3e3473b-cdcf-41cb-9b21-daffc534426b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\renderer\hardware">
+      <UniqueIdentifier>{c08b9ff5-11d7-40f4-bac1-16823a923614}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\renderer\swapchain">
+      <UniqueIdentifier>{194b00b0-2548-4fe1-8830-be83c872e1c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\renderer\render">
+      <UniqueIdentifier>{5e1a27b0-312e-4894-a2ea-2d7d8d59fac9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Logger.cpp">
@@ -111,40 +120,44 @@
     <ClCompile Include="ui\Watcher.cpp">
       <Filter>Engine\UI</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\callback.cpp" />
     <ClCompile Include="renderer\vdevices.cpp">
-      <Filter>Engine\renderer</Filter>
+      <Filter>Engine\renderer\hardware</Filter>
     </ClCompile>
     <ClCompile Include="renderer\vinstance.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\vshader.cpp">
-      <Filter>Engine\renderer</Filter>
+      <Filter>Engine\renderer\hardware</Filter>
     </ClCompile>
     <ClCompile Include="renderer\vsurface.cpp">
-      <Filter>Engine\renderer</Filter>
+      <Filter>Engine\renderer\hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vswapchain.cpp">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vframebuffer.cpp">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vdescriptorset.cpp">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vrenderpass.cpp">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vcommandbuffer.cpp">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vshader.cpp">
+      <Filter>Engine\renderer\render</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vimage.cpp">
+      <Filter>Engine\renderer\render</Filter>
     </ClCompile>
     <ClCompile Include="renderer\vsync_obj.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="renderer\vswapchain.cpp">
+    <ClCompile Include="renderer\vbuffer.cpp" />
+    <ClCompile Include="renderer\helper.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="renderer\vrenderpass.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\vimage.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\vdescriptorset.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\vframebuffer.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\vcommandbuffer.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\callback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -258,9 +271,6 @@
     <ClInclude Include="ui\Watcher.h">
       <Filter>Engine\UI</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\vdevices.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
     <ClInclude Include="renderer\extensions.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
@@ -270,26 +280,8 @@
     <ClInclude Include="version.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\vinstance.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\vshader.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
     <ClInclude Include="log_type.h">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\vsurface.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\vsync_obj.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\vswapchain.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\vrenderpass.h">
-      <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\frame.h">
       <Filter>Engine\renderer\types</Filter>
@@ -306,22 +298,49 @@
     <ClInclude Include="renderer\swapchain_details.h">
       <Filter>Engine\renderer\types</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\vimage.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\vdescriptorset.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\vframebuffer.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\vcommandbuffer.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
     <ClInclude Include="renderer\render.h">
       <Filter>Engine\renderer\types</Filter>
     </ClInclude>
     <ClInclude Include="renderer\callback.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vbuffer.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vdevices.h">
+      <Filter>Engine\renderer\hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vinstance.h">
+      <Filter>Engine\renderer\hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vsurface.h">
+      <Filter>Engine\renderer\hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vswapchain.h">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vframebuffer.h">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vdescriptorset.h">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vrenderpass.h">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vcommandbuffer.h">
+      <Filter>Engine\renderer\swapchain</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vshader.h">
+      <Filter>Engine\renderer\render</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vimage.h">
+      <Filter>Engine\renderer\render</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\vsync_obj.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\helper.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
   </ItemGroup>
