@@ -343,6 +343,9 @@
     <ClInclude Include="renderer\helper.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\pipeline_builder.h">
+      <Filter>Engine\renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

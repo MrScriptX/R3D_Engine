@@ -112,6 +112,7 @@
     <ClInclude Include="renderer\frame.h" />
     <ClInclude Include="renderer\helper.h" />
     <ClInclude Include="renderer\parameters.h" />
+    <ClInclude Include="renderer\pipeline_builder.h" />
     <ClInclude Include="renderer\render.h" />
     <ClInclude Include="renderer\Renderer.h" />
     <ClInclude Include="renderer\iswapchain.h" />
