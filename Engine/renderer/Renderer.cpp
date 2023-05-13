@@ -126,6 +126,52 @@ Renderer::~Renderer()
 	vkDestroyInstance(m_interface.instance, nullptr);
 }
 
+void Renderer::begin_render(size_t frame)
+{
+	const VkCommandBuffer& current_command_buffer = m_frames[frame].main_command_buffer;
+
+	// reset command buffer
+	if (vkResetCommandBuffer(current_command_buffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VK_SUCCESS)
+		throw std::runtime_error("Failed to reset command buffer!");
+
+	// begin command buffer
+	VkCommandBufferBeginInfo begin_buffer_info = {};
+	begin_buffer_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	begin_buffer_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+	begin_buffer_info.pInheritanceInfo = nullptr;
+
+	if (vkBeginCommandBuffer(current_command_buffer, &begin_buffer_info) != VK_SUCCESS)
+		throw std::runtime_error("failed to begin recording command buffer!");
+
+	// begin render pass
+	VkRenderPassBeginInfo render_pass_info = {};
+	render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	render_pass_info.renderPass = m_swapchain.main_render_pass;
+	render_pass_info.framebuffer = m_frames[frame].main_framebuffer;
+
+	render_pass_info.renderArea.offset = { 0, 0 };
+	render_pass_info.renderArea.extent = m_swapchain.extent;
+
+	std::array<VkClearValue, 2> clear_values = {};
+	clear_values[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
+	clear_values[1].depthStencil = { 1.0f, 0 };
+
+	render_pass_info.clearValueCount = static_cast<uint32_t>(clear_values.size());
+	render_pass_info.pClearValues = clear_values.data();
+
+	vkCmdBeginRenderPass(current_command_buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void Renderer::end_render(size_t frame)
+{
+	const VkCommandBuffer& current_command_buffer = m_frames[frame].main_command_buffer;
+
+	vkCmdEndRenderPass(current_command_buffer);
+
+	if (vkEndCommandBuffer(current_command_buffer) != VK_SUCCESS)
+		throw std::runtime_error("failed to record command buffer!");
+}
+
 int32_t Renderer::draw()
 {
 	if (vred::renderer::parameters::validation_layer_enable)
@@ -358,52 +404,6 @@ void Renderer::CreateIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indice
 void Renderer::CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size)
 {
 	m_pBufferFactory->createBuffer(buffer, memory, size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-}
-
-void Renderer::BeginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer)
-{
-	// reset command buffer
-	if (vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Failed to reset command buffer!");
-	}
-
-	std::array<VkClearValue, 2> clear_values = {};
-	clear_values[0].color = { 0.0f, 0.0f, 0.0f, 1.0f };
-	clear_values[1].depthStencil = { 1.0f, 0 };
-
-	VkCommandBufferBeginInfo begin_buffer_info = {};
-	begin_buffer_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	begin_buffer_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-	begin_buffer_info.pInheritanceInfo = nullptr;
-
-	if (vkBeginCommandBuffer(commandBuffer, &begin_buffer_info) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
-
-	VkRenderPassBeginInfo renderPassInfo = {};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassInfo.renderPass = m_swapchain.main_render_pass;
-	renderPassInfo.framebuffer = frameBuffer;
-
-	renderPassInfo.renderArea.offset = { 0, 0 };
-	renderPassInfo.renderArea.extent = m_swapchain.extent;
-
-	renderPassInfo.clearValueCount = static_cast<uint32_t>(clear_values.size());
-	renderPassInfo.pClearValues = clear_values.data();
-
-	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-}
-
-void Renderer::EndRecordCommandBuffers(VkCommandBuffer& commandBuffer)
-{
-	vkCmdEndRenderPass(commandBuffer);
-
-	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to record command buffer!");
-	}
 }
 
 void Renderer::setup_debug_callback(VkInstance& instance)

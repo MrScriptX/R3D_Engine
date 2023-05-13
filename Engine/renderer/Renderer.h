@@ -38,6 +38,9 @@ class Renderer
 	Renderer(GLFWwindow& window, uint32_t width, uint32_t height);
 	~Renderer();
 
+	void begin_render(size_t frame);
+	void end_render(size_t frame);
+
 	int32_t draw();
 	void UpdateUI();
 	int32_t AcquireNextImage();
@@ -63,10 +66,6 @@ class Renderer
 	void CreateIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer);
 	void CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size);
 
-	// Record Command Buffer
-	void BeginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer);
-	void EndRecordCommandBuffers(VkCommandBuffer& commandBuffer);
-
 	// Ressource allocation and update
 	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
 	void allocateDescriptorSetLight(VkDescriptorSet& descriptor_set);
@@ -86,7 +85,6 @@ class Renderer
 	void clean_swapchain();
 
   private:
-	
 	void setup_debug_callback(VkInstance& instance);
 
 	void create_swapchain(const VkExtent2D& extent);
