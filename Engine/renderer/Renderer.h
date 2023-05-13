@@ -107,15 +107,6 @@ class Renderer
 	SwapchainDetails querySwapChainSupport(VkPhysicalDevice device);
 	QueueFamilyIndices findQueueFamily(VkPhysicalDevice device);
 
-	// static fonctions
-	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code,
-	                                                    const char* layerPrefix, const char* msg, void* userData);
-
-	// proxy fonctions
-	VkResult CreateDebugReportCallbackEXT(VkInstance& instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator,
-	                                      VkDebugReportCallbackEXT* pCallback);
-	void DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
-
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 	VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);

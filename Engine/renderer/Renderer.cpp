@@ -21,6 +21,7 @@
 #include "vframebuffer.h"
 #include "vcommandbuffer.h"
 #include "vdescriptorset.h"
+#include "callback.h"
 
 Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height)
 {
@@ -133,7 +134,7 @@ Renderer::~Renderer()
 	vkDestroyDevice(m_interface.device, nullptr);
 
 	if (vred::renderer::parameters::validation_layer_enable)
-		DestroyDebugReportCallbackEXT(m_interface.instance, callback, nullptr);
+		vred::renderer::destroy_debug_report_callback(m_interface.instance, callback, nullptr);
 
 	vkDestroySurfaceKHR(m_interface.instance, m_interface.surface, nullptr);
 	vkDestroyInstance(m_interface.instance, nullptr);
@@ -481,12 +482,10 @@ void Renderer::setup_debug_callback(VkInstance& instance)
 	VkDebugReportCallbackCreateInfoEXT create_info = {};
 	create_info.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
 	create_info.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
-	create_info.pfnCallback = debugCallback;
+	create_info.pfnCallback = vred::renderer::debug_callback;
 
-	if (CreateDebugReportCallbackEXT(instance, &create_info, nullptr, &callback) != VK_SUCCESS)
-	{
+	if (vred::renderer::create_debug_report_callback(instance, &create_info, nullptr, &callback) != VK_SUCCESS)
 		throw std::runtime_error("Failed to setup debug callback");
-	}
 }
 
 void Renderer::create_swapchain(const VkExtent2D& extent)
@@ -516,8 +515,8 @@ void Renderer::create_swapchain(const VkExtent2D& extent)
 	for (size_t i = 0; i < m_swapchain.images_view.size(); ++i)
 	{
 		const std::vector<VkImageView> attachements = { m_swapchain.images_view[i], m_swapchain.depth_image_view };
-		m_frames[i].main_framebuffer = vred::renderer::create_framebuffer(m_interface.device, m_swapchain.main_render_pass, attachements, extent);
-		m_frames[i].ui_framebuffer = vred::renderer::create_framebuffer(m_interface.device, m_swapchain.ui_render_pass, { attachements[0] }, extent);
+		m_frames[i].main_framebuffer = vred::renderer::create_framebuffer(m_interface.device, m_swapchain.main_render_pass, attachements, m_swapchain.extent);
+		m_frames[i].ui_framebuffer = vred::renderer::create_framebuffer(m_interface.device, m_swapchain.ui_render_pass, { attachements[0] }, m_swapchain.extent);
 	}
 
 	// create commandpool
@@ -705,7 +704,7 @@ VkImageView Renderer::createImageView(VkImage image, VkFormat format, VkImageAsp
 	viewInfo.subresourceRange.baseArrayLayer = 0;
 	viewInfo.subresourceRange.layerCount = 1;
 
-	if (vkCreateImageView(m_graphic.device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+	if (vkCreateImageView(m_interface.device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create texture image view!");
 	}
@@ -713,8 +712,7 @@ VkImageView Renderer::createImageView(VkImage image, VkFormat format, VkImageAsp
 	return imageView;
 }
 
-void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image,
-                           VkDeviceMemory& imageMemory)
+void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
 {
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -733,25 +731,25 @@ void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkI
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageInfo.flags = 0;
 
-	if (vkCreateImage(m_graphic.device, &imageInfo, nullptr, &image) != VK_SUCCESS)
+	if (vkCreateImage(m_interface.device, &imageInfo, nullptr, &image) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create image!");
 	}
 
 	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements(m_graphic.device, image, &memRequirements);
+	vkGetImageMemoryRequirements(m_interface.device, image, &memRequirements);
 
 	VkMemoryAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-	if (vkAllocateMemory(m_graphic.device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
+	if (vkAllocateMemory(m_interface.device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate image memory!");
 	}
 
-	vkBindImageMemory(m_graphic.device, image, imageMemory, 0);
+	vkBindImageMemory(m_interface.device, image, imageMemory, 0);
 }
 
 void Renderer::recreateSwapchain()
@@ -1090,37 +1088,4 @@ QueueFamilyIndices Renderer::findQueueFamily(VkPhysicalDevice device)
 	}
 
 	return indices;
-}
-
-VKAPI_ATTR VkBool32 VKAPI_CALL Renderer::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code,
-                                                       const char* layerPrefix, const char* msg, void* userData)
-{
-
-	std::cerr << "\nvalidation layer: " << msg << std::endl;
-	Logger::registerError("\nvalidation layer: " + std::string(msg));
-
-	return VK_FALSE;
-}
-
-VkResult Renderer::CreateDebugReportCallbackEXT(VkInstance& instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator,
-                                                VkDebugReportCallbackEXT* pCallback)
-{
-	auto func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
-	if (func != nullptr)
-	{
-		return func(instance, pCreateInfo, pAllocator, pCallback);
-	}
-	else
-	{
-		return VK_ERROR_EXTENSION_NOT_PRESENT;
-	}
-}
-
-void Renderer::DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator)
-{
-	auto func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
-	if (func != nullptr)
-	{
-		func(instance, callback, pAllocator);
-	}
 }

@@ -153,6 +153,7 @@
     <ClCompile Include="renderer\vcommandbuffer.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\callback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dependencies\imgui-1.87\imconfig.h">
@@ -337,6 +338,9 @@
     </ClInclude>
     <ClInclude Include="renderer\render.h">
       <Filter>Engine\renderer\types</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\callback.h">
+      <Filter>Engine\renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
