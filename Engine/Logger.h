@@ -48,7 +48,7 @@ namespace vred
 
 
 	template<typename ...Args>
-	void Log::message(const LOG_TYPE& type, const std::string& message, Args && ...args) noexcept
+	static void Log::message(const LOG_TYPE& type, const std::string& message, Args && ...args) noexcept
 	{
 		const std::string msg = std::vformat(message, std::make_format_args(args));
 		Log::message(type, msg);

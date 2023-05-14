@@ -434,7 +434,7 @@ void Renderer::create_swapchain(const VkExtent2D& extent)
 	depth_extent.depth = 1;
 
 	VkFormat depth_format = findSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-	
+
 	m_swapchain.depth_image = vred::renderer::create_image(m_interface.device, depth_extent, depth_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	m_swapchain.depth_memory = vred::renderer::create_image_memory(m_interface.device, m_interface.physical_device, m_swapchain.depth_image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 	m_swapchain.depth_image_view = vred::renderer::create_image_view(m_interface.device, m_swapchain.depth_image, depth_format, VK_IMAGE_ASPECT_DEPTH_BIT);
