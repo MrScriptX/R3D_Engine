@@ -33,6 +33,7 @@ Engine::~Engine()
 	vkDeviceWaitIdle(mp_renderer->GetDevice());
 
 	mp_renderer->clean_swapchain();
+	mp_renderer->GetPipelineFactory()->DestroyPipelines();
 
 	mp_scene->CleanRessources(mp_renderer);
 	mp_scene.reset();
@@ -228,7 +229,14 @@ void Engine::update()
 
 	const int32_t frame = mp_renderer->AcquireNextImage();
 	if (frame == -1)
+	{
+		mp_renderer->reset();
+
+		mp_renderer->GetPipelineFactory()->DestroyPipelines();
+		mp_renderer->GetPipelineFactory()->CreatePipelines();
+
 		return;
+	}
 
 	if (mp_scene->IsUpdate(frame) || mp_renderer->NeedUpdate(frame))
 	{
@@ -267,6 +275,8 @@ void Engine::draw()
 	if (mp_renderer->draw() != 0)
 	{
 		mp_renderer->reset();
+
+		mp_renderer->GetPipelineFactory()->DestroyPipelines();
 		mp_renderer->GetPipelineFactory()->CreatePipelines();
 	}
 }

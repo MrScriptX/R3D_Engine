@@ -91,7 +91,6 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height) : m_wind
 
 	initUI(window);
 
-
 	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_interface, m_swapchain, m_render_objects);
 	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_interface);
 }
@@ -189,7 +188,6 @@ int32_t Renderer::draw()
 	VkSubmitInfo submit_info = {};
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	// const VkSemaphore wait_semaphores[] = { m_graphic.semaphores_image_available[m_last_image] };
 	const VkSemaphore wait_semaphores[] = { m_frames[m_last_image].image_available };
 	submit_info.waitSemaphoreCount = 1;
 	submit_info.pWaitSemaphores = wait_semaphores;
@@ -201,7 +199,6 @@ int32_t Renderer::draw()
 	submit_info.commandBufferCount = command_buffers.size();
 	submit_info.pCommandBuffers = command_buffers.data();
 
-	// VkSemaphore signalSemaphores[] = { m_graphic.semaphores_render_finished[m_last_image] };
 	const VkSemaphore signal_semaphores[] = { m_frames[m_last_image].render_finished };
 
 	submit_info.signalSemaphoreCount = 1;
@@ -229,10 +226,7 @@ int32_t Renderer::draw()
 
 	int return_code = 0;
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
-	{
-		// recreate_swapchain();
 		return_code = 1;
-	}
 	else if (result != VK_SUCCESS)
 		throw std::runtime_error("failed to present swap chain image!");
 
@@ -277,14 +271,9 @@ int32_t Renderer::AcquireNextImage()
 	 const VkResult result = vkAcquireNextImageKHR(m_interface.device, m_swapchain.handle, std::numeric_limits<uint64_t>::max(), m_frames[m_current_image].image_available, VK_NULL_HANDLE, &m_current_image);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
-	{
-		recreate_swapchain();
 		return -1;
-	}
 	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
-	{
 		throw std::runtime_error("failed to acquire swapchain image!");
-	}
 
 	return m_current_image;
 }
@@ -297,15 +286,11 @@ void Renderer::WaitForSwapchainImageFence()
 void Renderer::SetPolygonFillingMode(const VkPolygonMode& mode)
 {
 	m_render_objects.polygone_mode = mode;
-
-	// recreate_swapchain();
 }
 
 void Renderer::SetColorMode(const ColorMode map)
 {
 	m_render_objects.color_map = map;
-
-	// recreate_swapchain();
 }
 
 const VkDevice& Renderer::GetDevice()
@@ -687,8 +672,6 @@ void Renderer::clean_swapchain()
 	vkDeviceWaitIdle(m_interface.device);
 	vkQueueWaitIdle(m_interface.graphics_queue);
 	vkQueueWaitIdle(m_interface.present_queue);
-
-	mp_pipelines_manager->DestroyPipelines();
 
 	vkDestroyImageView(m_interface.device, m_swapchain.depth_image_view, nullptr);
 	vkDestroyImage(m_interface.device, m_swapchain.depth_image, nullptr);
