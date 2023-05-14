@@ -8,7 +8,12 @@ int main()
 {
 	try
 	{
-		Engine engine(1920, 1080);
+		vred::settings settings;
+		settings.app_name = "VRED Engine - Moving Light";
+		settings.window_width = 1920;
+		settings.window_height = 1080;
+
+		Engine engine(settings);
 		Logger::init();
 		vred::Log::init();
 

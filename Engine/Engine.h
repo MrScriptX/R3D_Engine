@@ -17,10 +17,12 @@
 #include "renderer/vpipeline.h"
 #include "renderer/pipeline.h"
 
+#include "settings.h"
+
 class Engine
 {
-  public:
-	Engine(uint32_t width, uint32_t height);
+public:
+	Engine(const vred::settings& settings);
 	~Engine();
 
 	void update();
@@ -58,15 +60,17 @@ class Engine
 
 	bool shouldClose() const;
 
-  private:
+private:
+	void update_window_size();
+
 	std::unique_ptr<Window> mp_window;
 	std::shared_ptr<Renderer> mp_renderer;
 	std::shared_ptr<Scene> mp_scene;
 
 	std::shared_ptr<Camera> mp_main_camera;
 	std::shared_ptr<Controller> mp_controller;
-	std::shared_ptr<Config> mp_config;
 
+	VkExtent2D m_extent;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_last_time;
 
 	std::unordered_map<uint16_t, vred::renderer::ipipeline> m_pipelines;

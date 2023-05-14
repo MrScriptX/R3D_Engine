@@ -4,7 +4,11 @@ int main()
 {
 	try
 	{
-		Engine engine(1280, 720);
+		vred::settings settings;
+		settings.window_width = 1280;
+		settings.window_height = 720;
+
+		Engine engine(settings);
 		Logger::init();
 
 		std::shared_ptr<Material> room_texture = engine.CreateMaterial(TSHADER::TEXTURE);

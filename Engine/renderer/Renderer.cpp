@@ -24,7 +24,7 @@
 #include "callback.h"
 #include "vbuffer.h"
 
-Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height) : m_window_extent({ width, height }), m_is_updated({ false })
+Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height) : m_is_updated({ false })
 {
 	// setupInstance(window);
 	m_interface.instance = vred::renderer::create_instance();
@@ -44,7 +44,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height) : m_wind
 	}
 
 	// setup swapchain
-	create_swapchain(m_window_extent);
+	create_swapchain({ width, height });
 
 	std::vector<VkDescriptorSetLayoutBinding> main_descriptor_bindings(2);
 	main_descriptor_bindings[0] = vred::renderer::create_descriptor_set_layout_binding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, 1, 0);
@@ -172,10 +172,10 @@ void Renderer::end_render(size_t frame)
 		throw std::runtime_error("failed to record command buffer!");
 }
 
-void Renderer::reset()
+void Renderer::reset(VkExtent2D window_size)
 {
 	clean_swapchain();
-	create_swapchain(m_window_extent);
+	create_swapchain(window_size);
 
 	m_is_updated.set();
 }
@@ -622,16 +622,6 @@ void Renderer::createImage(uint32_t width, uint32_t height, VkFormat format, VkI
 	}
 
 	vkBindImageMemory(m_interface.device, image, imageMemory, 0);
-}
-
-void Renderer::recreate_swapchain()
-{
-	clean_swapchain();
-	create_swapchain(m_window_extent);
-
-	mp_pipelines_manager->CreatePipelines();
-
-	m_is_updated.set();
 }
 
 void Renderer::initUI(GLFWwindow& window)

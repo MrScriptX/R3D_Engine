@@ -1,13 +1,13 @@
 #include "Window.h"
 
-Window::Window(std::shared_ptr<Config>& config, Controller& controller)
+Window::Window(const vred::settings& setting, Controller& controller)
 {
 	glfwInit();
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	m_handle = glfwCreateWindow(config->width, config->height, "Vulkan", nullptr, nullptr);
+	m_handle = glfwCreateWindow(setting.window_width, setting.window_height, setting.app_name.c_str(), nullptr, nullptr);
 
 	glfwSetInputMode(m_handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetWindowUserPointer(m_handle, &controller);

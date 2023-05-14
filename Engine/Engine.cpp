@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_resolution_clock::now())
+Engine::Engine(const vred::settings& settings) : m_extent({ settings.window_width, settings.window_height }), m_last_time(std::chrono::high_resolution_clock::now())
 {
 	mp_main_camera = std::make_shared<Camera>();
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
@@ -18,14 +18,9 @@ Engine::Engine(uint32_t width, uint32_t height) : m_last_time(std::chrono::high_
 
 	m_UIs.push_back(watcher);
 
-	// load config
-	mp_config = std::make_shared<Config>();
-	mp_config->width = width;
-	mp_config->height = height;
-
 	// start the interface
-	mp_window = std::make_unique<Window>(mp_config, *mp_controller.get());
-	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), mp_config->width, mp_config->height);
+	mp_window = std::make_unique<Window>(settings, *mp_controller.get());
+	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), m_extent.width, m_extent.height);
 }
 
 Engine::~Engine()
@@ -40,7 +35,6 @@ Engine::~Engine()
 
 	mp_renderer.reset();
 	mp_window.reset();
-	mp_config.reset();
 }
 
 void Engine::setScene(std::shared_ptr<Scene> p_scene)
@@ -216,6 +210,14 @@ bool Engine::shouldClose() const
 	return glfwWindowShouldClose(&mp_window->getHandle());
 }
 
+void Engine::update_window_size()
+{
+	int width, height = 0;
+	glfwGetWindowSize(&mp_window->getHandle(), &width, &height);
+
+	m_extent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
+}
+
 void Engine::update()
 {
 	glfwPollEvents();
@@ -230,7 +232,8 @@ void Engine::update()
 	const int32_t frame = mp_renderer->AcquireNextImage();
 	if (frame == -1)
 	{
-		mp_renderer->reset();
+		update_window_size();
+		mp_renderer->reset(m_extent);
 
 		mp_renderer->GetPipelineFactory()->DestroyPipelines();
 		mp_renderer->GetPipelineFactory()->CreatePipelines();
@@ -252,7 +255,7 @@ void Engine::update()
 		mp_renderer->SetUpdated(frame);
 	}
 
-	mp_main_camera->UpdateUBO(static_cast<float>(mp_config->width), static_cast<float>(mp_config->height), frame);
+	mp_main_camera->UpdateUBO(m_extent.width, m_extent.height, frame);
 	mp_scene->UpdateUBO(mp_main_camera, mp_renderer, frame);
 	mp_scene->UpdateSceneUBO(mp_renderer);
 
@@ -262,7 +265,7 @@ void Engine::update()
 	ImGui::NewFrame();
 
 	for (size_t i = 0; i < m_UIs.size(); i++)
-		m_UIs[i]->Update(mp_config->width, mp_config->height);
+		m_UIs[i]->Update(m_extent.width, m_extent.height);
 
 	ImGui::Render();
 
@@ -274,7 +277,9 @@ void Engine::draw()
 	mp_renderer->UpdateUI();
 	if (mp_renderer->draw() != 0)
 	{
-		mp_renderer->reset();
+		update_window_size();
+
+		mp_renderer->reset(m_extent);
 
 		mp_renderer->GetPipelineFactory()->DestroyPipelines();
 		mp_renderer->GetPipelineFactory()->CreatePipelines();

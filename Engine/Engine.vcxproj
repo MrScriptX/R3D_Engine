@@ -132,6 +132,7 @@
     <ClInclude Include="renderer\VulkanBuffer.h" />
     <ClInclude Include="renderer\VulkanDescriptor.h" />
     <ClInclude Include="renderer\VulkanPipeline.h" />
+    <ClInclude Include="settings.h" />
     <ClInclude Include="ui\ConsoleUI.h" />
     <ClInclude Include="ui\UI.h" />
     <ClInclude Include="ui\Watcher.h" />

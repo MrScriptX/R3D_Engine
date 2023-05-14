@@ -41,7 +41,7 @@ class Renderer
 	void begin_render(size_t frame);
 	void end_render(size_t frame);
 
-	void reset();
+	void reset(VkExtent2D window_size);
 
 	int32_t draw();
 	void UpdateUI();
@@ -91,10 +91,7 @@ class Renderer
 
   private:
 	void setup_debug_callback(VkInstance& instance);
-
 	void create_swapchain(const VkExtent2D& extent);
-	void recreate_swapchain();
-
 	void initUI(GLFWwindow& window);
 
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
@@ -111,8 +108,6 @@ class Renderer
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
 	std::unique_ptr<VulkanPipeline> mp_pipelines_manager;
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
-
-	VkExtent2D m_window_extent;
 
 	uint32_t m_current_image = 0;
 	uint32_t m_last_image = 0;

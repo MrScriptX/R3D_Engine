@@ -5,7 +5,10 @@ int main()
 {
 	try
 	{
-		Engine engine(1280, 720);
+		vred::settings settings;
+		settings.app_name = "VRED Engine - Normal Map";
+
+		Engine engine(settings);
 		Logger::init();
 
 		// setup 3D models

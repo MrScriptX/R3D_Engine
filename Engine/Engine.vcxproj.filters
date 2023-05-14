@@ -37,7 +37,7 @@
     <Filter Include="Engine\renderer\swapchain">
       <UniqueIdentifier>{194b00b0-2548-4fe1-8830-be83c872e1c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\renderer\render">
+    <Filter Include="Engine\renderer\rendering">
       <UniqueIdentifier>{5e1a27b0-312e-4894-a2ea-2d7d8d59fac9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -145,18 +145,15 @@
       <Filter>Engine\renderer\swapchain</Filter>
     </ClCompile>
     <ClCompile Include="renderer\vshader.cpp">
-      <Filter>Engine\renderer\render</Filter>
+      <Filter>Engine\renderer\rendering</Filter>
     </ClCompile>
     <ClCompile Include="renderer\vimage.cpp">
-      <Filter>Engine\renderer\render</Filter>
+      <Filter>Engine\renderer\rendering</Filter>
     </ClCompile>
     <ClCompile Include="renderer\vsync_obj.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\helper.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\vpipeline.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
     <ClCompile Include="renderer\vbuffer.cpp">
@@ -167,6 +164,9 @@
     </ClCompile>
     <ClCompile Include="renderer\callback.cpp">
       <Filter>Engine\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\vpipeline.cpp">
+      <Filter>Engine\renderer\rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -342,10 +342,10 @@
       <Filter>Engine\renderer\swapchain</Filter>
     </ClInclude>
     <ClInclude Include="renderer\vshader.h">
-      <Filter>Engine\renderer\render</Filter>
+      <Filter>Engine\renderer\rendering</Filter>
     </ClInclude>
     <ClInclude Include="renderer\vimage.h">
-      <Filter>Engine\renderer\render</Filter>
+      <Filter>Engine\renderer\rendering</Filter>
     </ClInclude>
     <ClInclude Include="renderer\vsync_obj.h">
       <Filter>Engine\renderer</Filter>
@@ -354,7 +354,10 @@
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\vpipeline.h">
-      <Filter>Engine\renderer</Filter>
+      <Filter>Engine\renderer\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="settings.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
