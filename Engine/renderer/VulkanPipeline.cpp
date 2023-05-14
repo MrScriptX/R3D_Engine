@@ -43,9 +43,6 @@ const Pipeline& VulkanPipeline::GetPipeline(const TSHADER shader)
 
 void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragment_shader_file, const std::string& vertex_shader_file)
 {
-	auto bindingDescription = Vertex::getBindingDescription();
-	auto attributeDescriptions = Vertex::getAttributeDescriptions();
-
 	auto vertShaderCode = readFile(vertex_shader_file);
 	auto fragShaderCode = readFile(fragment_shader_file);
 
@@ -65,6 +62,9 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragm
 	fragShaderStageInfo.pName = "main";
 
 	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+	auto bindingDescription = Vertex::getBindingDescription();
+	auto attributeDescriptions = Vertex::getAttributeDescriptions();
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

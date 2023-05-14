@@ -91,6 +91,7 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height) : m_wind
 
 	initUI(window);
 
+
 	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_interface, m_swapchain, m_render_objects);
 	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_interface);
 }
@@ -306,6 +307,16 @@ void Renderer::SetColorMode(const ColorMode map)
 const VkDevice& Renderer::GetDevice()
 {
 	return m_interface.device;
+}
+
+std::vector<VkDescriptorSetLayout> Renderer::get_descriptor_set_layout() const
+{
+	return { m_render_objects.main_descriptor_set_layout, m_render_objects.light_descriptor_set_layout };
+}
+
+const vred::renderer::iswapchain& Renderer::get_swapchain() const
+{
+	return m_swapchain;
 }
 
 VkFramebuffer& Renderer::GetFrameBuffer(const size_t& i)

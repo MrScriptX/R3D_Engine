@@ -50,6 +50,8 @@ class Renderer
 	void SetColorMode(const ColorMode map);
 
 	const VkDevice& GetDevice();
+	std::vector<VkDescriptorSetLayout> get_descriptor_set_layout() const;
+	const vred::renderer::iswapchain& get_swapchain() const;
 	VkCommandBuffer& GetCommandBuffer(const size_t& i);
 	VkFramebuffer& GetFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();

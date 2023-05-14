@@ -53,6 +53,21 @@ void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
 	mp_scene->AddGameObject(gameobject);
 }
 
+uint16_t Engine::create_pipeline(const vred::renderer::shader_stages& shaders)
+{
+	vred::renderer::ipipeline pipeline;
+	pipeline.layout = vred::renderer::create_pipeline_layout(mp_renderer->GetDevice(), mp_renderer->get_descriptor_set_layout());
+	pipeline.handle = vred::renderer::create_pipeline(shaders, pipeline.layout, mp_renderer->GetDevice(), mp_renderer->get_swapchain());
+
+	uint16_t id = 0;
+	while (m_pipelines.find(id) != m_pipelines.end())
+		++id;
+
+	m_pipelines.insert({ id, pipeline });
+	
+	return id;
+}
+
 const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader)
 {
 	return std::make_shared<Material>(shader, mp_renderer);

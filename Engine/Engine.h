@@ -1,6 +1,8 @@
 #ifndef R3DENGINE_INCLUDES_ENGINE_H_
 #define R3DENGINE_INCLUDES_ENGINE_H_
 
+#include <unordered_map>
+
 #include "Window.h"
 
 #include "world/GameObject.h"
@@ -11,6 +13,9 @@
 
 #include "ui/ConsoleUI.h"
 #include "ui/Watcher.h"
+
+#include "renderer/vpipeline.h"
+#include "renderer/pipeline.h"
 
 class Engine
 {
@@ -23,6 +28,8 @@ class Engine
 
 	void setScene(std::shared_ptr<Scene> p_scene);
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
+
+	uint16_t create_pipeline(const vred::renderer::shader_stages& shaders);
 
 	// CREATE MATERIAL
 	const std::shared_ptr<Material> CreateMaterial(const TSHADER shader);
@@ -61,6 +68,8 @@ class Engine
 	std::shared_ptr<Config> mp_config;
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_last_time;
+
+	std::unordered_map<uint16_t, vred::renderer::ipipeline> m_pipelines;
 
 	// UI
 	std::vector<UI*> m_UIs;
