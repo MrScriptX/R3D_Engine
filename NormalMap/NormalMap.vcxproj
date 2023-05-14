@@ -123,7 +123,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;$(SolutionDir)\dependencies\assimp-5.0.1\lib\Debug;$(SolutionDir)\dependencies\glew-2.1.0\lib;$(SolutionDir)dependencies\glfw-3.3.7\lib\win;$(SolutionDir)\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;assimp-vc142-mtd.lib;Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;assimp-vc142-mtd.lib;glslangd.lib;OGLCompilerd.lib;SPIRVd.lib;HLSLd.lib;OSDependentd.lib;MachineIndependentd.lib;GenericCodeGend.lib;SPIRV-Tools-optd.lib;SPIRV-Toolsd.lib;SPVRemapperd.lib;Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

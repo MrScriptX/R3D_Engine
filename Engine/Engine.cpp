@@ -168,21 +168,29 @@ std::shared_ptr<Camera> Engine::GetMainCamera() const
 void Engine::SetWireframeMode()
 {
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_LINE);
+	mp_renderer->GetPipelineFactory()->DestroyPipelines();
+	mp_renderer->GetPipelineFactory()->CreatePipelines();
 }
 
 void Engine::SetPointMode()
 {
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_POINT);
+	mp_renderer->GetPipelineFactory()->DestroyPipelines();
+	mp_renderer->GetPipelineFactory()->CreatePipelines();
 }
 
 void Engine::SetFillMode()
 {
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL);
+	mp_renderer->GetPipelineFactory()->DestroyPipelines();
+	mp_renderer->GetPipelineFactory()->CreatePipelines();
 }
 
 void Engine::SetColorMode(const ColorMode color_map)
 {
 	mp_renderer->SetColorMode(color_map);
+	mp_renderer->GetPipelineFactory()->DestroyPipelines();
+	mp_renderer->GetPipelineFactory()->CreatePipelines();
 }
 
 void Engine::RenderUI(UI& ui)
@@ -256,5 +264,9 @@ void Engine::update()
 void Engine::draw()
 {
 	mp_renderer->UpdateUI();
-	mp_renderer->draw();
+	if (mp_renderer->draw() != 0)
+	{
+		mp_renderer->reset();
+		mp_renderer->GetPipelineFactory()->CreatePipelines();
+	}
 }

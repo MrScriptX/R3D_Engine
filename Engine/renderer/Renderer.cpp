@@ -173,6 +173,14 @@ void Renderer::end_render(size_t frame)
 		throw std::runtime_error("failed to record command buffer!");
 }
 
+void Renderer::reset()
+{
+	clean_swapchain();
+	create_swapchain(m_window_extent);
+
+	m_is_updated.set();
+}
+
 int32_t Renderer::draw()
 {
 	if (vred::renderer::parameters::validation_layer_enable)
@@ -203,9 +211,7 @@ int32_t Renderer::draw()
 
 	VkResult result = vkQueueSubmit(m_interface.graphics_queue, 1, &submit_info, m_frames[m_current_image].render_fence);
 	if (result != VK_SUCCESS)
-	{
 		throw std::runtime_error("failed to submit draw command buffer!");
-	}
 
 	VkPresentInfoKHR present_info = {};
 	present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -224,13 +230,11 @@ int32_t Renderer::draw()
 	int return_code = 0;
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 	{
-		recreate_swapchain();
+		// recreate_swapchain();
 		return_code = 1;
 	}
 	else if (result != VK_SUCCESS)
-	{
 		throw std::runtime_error("failed to present swap chain image!");
-	}
 
 	return return_code;
 }
@@ -294,14 +298,14 @@ void Renderer::SetPolygonFillingMode(const VkPolygonMode& mode)
 {
 	m_render_objects.polygone_mode = mode;
 
-	recreate_swapchain();
+	// recreate_swapchain();
 }
 
 void Renderer::SetColorMode(const ColorMode map)
 {
 	m_render_objects.color_map = map;
 
-	recreate_swapchain();
+	// recreate_swapchain();
 }
 
 const VkDevice& Renderer::GetDevice()
@@ -352,6 +356,11 @@ bool Renderer::NeedUpdate(const size_t& i) const
 void Renderer::SetUpdated(const size_t& i)
 {
 	m_is_updated[i] = false;
+}
+
+void Renderer::update_all()
+{
+	m_is_updated.set();
 }
 
 void Renderer::destroyBuffers(Buffer& buffer)
@@ -679,6 +688,8 @@ void Renderer::clean_swapchain()
 	vkQueueWaitIdle(m_interface.graphics_queue);
 	vkQueueWaitIdle(m_interface.present_queue);
 
+	mp_pipelines_manager->DestroyPipelines();
+
 	vkDestroyImageView(m_interface.device, m_swapchain.depth_image_view, nullptr);
 	vkDestroyImage(m_interface.device, m_swapchain.depth_image, nullptr);
 	vkFreeMemory(m_interface.device, m_swapchain.depth_memory, nullptr);
@@ -691,8 +702,6 @@ void Renderer::clean_swapchain()
 
 	vkDestroyCommandPool(m_interface.device, m_swapchain.main_command_pool, nullptr);
 	vkDestroyCommandPool(m_interface.device, m_swapchain.ui_command_pool, nullptr);
-
-	mp_pipelines_manager->DestroyPipelines();
 
 	vkDestroyRenderPass(m_interface.device, m_swapchain.main_render_pass, nullptr);
 	vkDestroyRenderPass(m_interface.device, m_swapchain.ui_render_pass, nullptr);

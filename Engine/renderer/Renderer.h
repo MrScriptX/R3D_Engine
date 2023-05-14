@@ -41,6 +41,8 @@ class Renderer
 	void begin_render(size_t frame);
 	void end_render(size_t frame);
 
+	void reset();
+
 	int32_t draw();
 	void UpdateUI();
 	int32_t AcquireNextImage();
@@ -59,6 +61,7 @@ class Renderer
 
 	// Track State
 	void SetUpdated(const size_t& i);
+	void update_all();
 
 	bool IsUpdated() const;
 	bool NeedUpdate(const size_t& i) const;
