@@ -1,6 +1,6 @@
 #include "VulkanBuffer.h"
 
-VulkanBuffer::VulkanBuffer(Graphics& graphic) : m_graphic(graphic)
+VulkanBuffer::VulkanBuffer(vred::renderer::ihardware& hw) : m_hw(hw)
 {
 }
 
@@ -18,7 +18,7 @@ void VulkanBuffer::createBuffer(VkBuffer& buffer, VkDeviceMemory& bufferMemory, 
 	bufferInfo.usage = usage;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	result = vkCreateBuffer(m_graphic.device, &bufferInfo, nullptr, &buffer);
+	result = vkCreateBuffer(m_hw.device, &bufferInfo, nullptr, &buffer);
 	switch (result)
 	{
 	case VK_SUCCESS:
@@ -35,14 +35,14 @@ void VulkanBuffer::createBuffer(VkBuffer& buffer, VkDeviceMemory& bufferMemory, 
 	}
 
 	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(m_graphic.device, buffer, &memRequirements);
+	vkGetBufferMemoryRequirements(m_hw.device, buffer, &memRequirements);
 
 	VkMemoryAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-	result = vkAllocateMemory(m_graphic.device, &allocInfo, nullptr, &bufferMemory);
+	result = vkAllocateMemory(m_hw.device, &allocInfo, nullptr, &bufferMemory);
 	switch (result)
 	{
 	case VK_SUCCESS:
@@ -65,7 +65,7 @@ void VulkanBuffer::createBuffer(VkBuffer& buffer, VkDeviceMemory& bufferMemory, 
 		break;
 	}
 
-	result = vkBindBufferMemory(m_graphic.device, buffer, bufferMemory, 0);
+	result = vkBindBufferMemory(m_hw.device, buffer, bufferMemory, 0);
 	switch (result)
 	{
 	case VK_SUCCESS:
@@ -85,7 +85,7 @@ void VulkanBuffer::createBuffer(VkBuffer& buffer, VkDeviceMemory& bufferMemory, 
 uint32_t VulkanBuffer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(m_graphic.physical_device, &memProperties);
+	vkGetPhysicalDeviceMemoryProperties(m_hw.physical_device, &memProperties);
 
 	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
 	{

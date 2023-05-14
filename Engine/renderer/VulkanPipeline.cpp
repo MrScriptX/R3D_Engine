@@ -1,6 +1,6 @@
 #include "VulkanPipeline.h"
 
-VulkanPipeline::VulkanPipeline(Graphics& m_graphic) : m_graphic(m_graphic)
+VulkanPipeline::VulkanPipeline(vred::renderer::ihardware& hw, vred::renderer::iswapchain& swapchain, vred::renderer::render& render_objects) : m_hw(hw), m_swapchain(swapchain), m_render_objects(render_objects)
 {
 	CreatePipelines();
 }
@@ -13,7 +13,7 @@ void VulkanPipeline::CreatePipelines()
 {
 	for (size_t i = 0; i < m_pipelines.size(); i++)
 	{
-		createPipeline(m_pipelines[i], m_shaders.fragment_shader_files[i], m_shaders.vertex_shader_files[static_cast<size_t>(m_graphic.color_map)]);
+		createPipeline(m_pipelines[i], m_shaders.fragment_shader_files[i], m_shaders.vertex_shader_files[static_cast<size_t>(m_render_objects.color_map)]);
 	}
 }
 
@@ -21,8 +21,8 @@ void VulkanPipeline::DestroyPipelines()
 {
 	for (size_t i = 0; i < m_pipelines.size(); i++)
 	{
-		vkDestroyPipeline(m_graphic.device, m_pipelines[i].handle, nullptr);
-		vkDestroyPipelineLayout(m_graphic.device, m_pipelines[i].layout, nullptr);
+		vkDestroyPipeline(m_hw.device, m_pipelines[i].handle, nullptr);
+		vkDestroyPipelineLayout(m_hw.device, m_pipelines[i].layout, nullptr);
 	}
 }
 
@@ -83,14 +83,14 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragm
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
-	viewport.width = (float)m_graphic.swapchain_details.extent.width;
-	viewport.height = (float)m_graphic.swapchain_details.extent.height;
+	viewport.width = static_cast<float>(m_swapchain.extent.width);
+	viewport.height = static_cast<float>(m_swapchain.extent.height);
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
 	VkRect2D scissor = {};
 	scissor.offset = { 0, 0 };
-	scissor.extent = m_graphic.swapchain_details.extent;
+	scissor.extent = m_swapchain.extent;
 
 	VkPipelineViewportStateCreateInfo viewportState = {};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -103,7 +103,7 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragm
 	rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	rasterizer.depthClampEnable = VK_FALSE;
 	rasterizer.rasterizerDiscardEnable = VK_FALSE;
-	rasterizer.polygonMode = m_graphic.polygone_mode;
+	rasterizer.polygonMode = m_render_objects.polygone_mode;
 	rasterizer.lineWidth = 1.0f;
 	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
 	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
@@ -137,13 +137,13 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragm
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::array<VkDescriptorSetLayout, 2> layouts = { m_graphic.descriptor_set_layout, m_graphic.light_descriptor_layout };
+	std::array<VkDescriptorSetLayout, 2> layouts = { m_render_objects.main_descriptor_set_layout, m_render_objects.light_descriptor_set_layout };
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	pipelineLayoutInfo.setLayoutCount = layouts.size();
 	pipelineLayoutInfo.pSetLayouts = layouts.data();
 
-	if (vkCreatePipelineLayout(m_graphic.device, &pipelineLayoutInfo, nullptr, &pipeline.layout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(m_hw.device, &pipelineLayoutInfo, nullptr, &pipeline.layout) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create pipeline layout!");
 	}
@@ -160,17 +160,17 @@ void VulkanPipeline::createPipeline(Pipeline& pipeline, const std::string& fragm
 	pipelineInfo.pDepthStencilState = &depthStencil;
 	pipelineInfo.pColorBlendState = &colorBlending;
 	pipelineInfo.layout = pipeline.layout;
-	pipelineInfo.renderPass = m_graphic.render_pass;
+	pipelineInfo.renderPass = m_swapchain.main_render_pass;
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateGraphicsPipelines(m_graphic.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.handle) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(m_hw.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline.handle) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create graphics pipeline!");
 	}
 
-	vkDestroyShaderModule(m_graphic.device, fragShaderModule, nullptr);
-	vkDestroyShaderModule(m_graphic.device, vertShaderModule, nullptr);
+	vkDestroyShaderModule(m_hw.device, fragShaderModule, nullptr);
+	vkDestroyShaderModule(m_hw.device, vertShaderModule, nullptr);
 }
 
 VkShaderModule VulkanPipeline::createShaderModule(const std::vector<char>& code)
@@ -181,7 +181,7 @@ VkShaderModule VulkanPipeline::createShaderModule(const std::vector<char>& code)
 	shader_module_info.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
 	VkShaderModule shaderModule;
-	if (vkCreateShaderModule(m_graphic.device, &shader_module_info, nullptr, &shaderModule) != VK_SUCCESS)
+	if (vkCreateShaderModule(m_hw.device, &shader_module_info, nullptr, &shaderModule) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create shader module!");
 	}

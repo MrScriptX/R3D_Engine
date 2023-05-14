@@ -27,10 +27,6 @@ Controller::Controller(std::shared_ptr<Camera> p_camera) : m_mouse_lock(true)
 	m_onrelease_actions = std::make_unique<std::array<std::function<void()>, 348>>();
 }
 
-Controller::~Controller()
-{
-}
-
 void Controller::setInput(int32_t key, int32_t scancode, int32_t mods, int32_t action)
 {
 	if (action == GLFW_PRESS)
@@ -81,7 +77,7 @@ void Controller::updateRotation(const double& xpos, const double& ypos)
 	m_last_mouse_pos_y = std::abs(ypos);
 }
 
-void Controller::Update(const float& dt)
+void Controller::Update(const float& dt) const
 {
 	for (size_t i = 0; i < m_hold_actions.size(); i++)
 	{

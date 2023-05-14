@@ -18,11 +18,11 @@ class GameObject
 	void Clean(const size_t frame);
 	void Destroy(const int32_t frame);
 
-	void RegisterDrawCmd(VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame);
+	void RegisterDrawCmd(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame);
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
 	// MESH
-	int32_t LoadMesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices);
+	int32_t LoadMesh(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 	int32_t LoadMesh(const std::string& mesh_path);
 
 	void UpdateMesh(const size_t& index, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
@@ -33,19 +33,19 @@ class GameObject
 	std::vector<uint32_t> GetIndices(const size_t& index);
 
 	const std::unique_ptr<Mesh>& getMesh(const size_t& index);
-	void setMesh(const size_t& index, std::vector<Vertex> vertices);
+	void setMesh(const size_t& index, const std::vector<Vertex>& vertices);
 
 	void setPosition(const glm::vec3& pos);
-	const glm::vec3& getPosition();
+	const glm::vec3& getPosition() const noexcept;
 
 	void setRotation(const glm::vec3& rot);
-	const glm::vec3& getRotation();
+	const glm::vec3& getRotation() const noexcept;
 
 	VkBuffer& GetUBO(const int32_t frame);
 	VkDeviceMemory& GetUBOMemory(const int32_t frame);
 
-	const size_t& getMeshesCount();
-	const bool Deleted();
+	size_t getMeshesCount() const noexcept;
+	bool Deleted() const noexcept;
 
 	const std::vector<std::unique_ptr<Mesh>>& GetMeshInDeleteQueue() const;
 

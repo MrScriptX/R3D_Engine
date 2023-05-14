@@ -15,10 +15,6 @@ Camera::Camera()
 	m_ubo.fill({ {}, {}, {} });
 }
 
-Camera::~Camera()
-{
-}
-
 void Camera::UpdateUBO(const float& width, const float& height, const int32_t frame)
 {
 	m_ubo[frame].position = m_position;

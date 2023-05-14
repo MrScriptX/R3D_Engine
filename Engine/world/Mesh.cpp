@@ -26,13 +26,13 @@ void Mesh::draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descript
 {
 	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().handle);
 
-	VkBuffer vertex_buffer[] = { m_buffer[frame].vertex };
-	VkDeviceSize offsets[] = { 0 };
+	const VkBuffer vertex_buffer[] = { m_buffer[frame].vertex };
+	const VkDeviceSize offsets[] = { 0 };
 
 	vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffer, offsets);
 	vkCmdBindIndexBuffer(command_buffer, m_buffer[frame].index, 0, VK_INDEX_TYPE_UINT32);
 
-	VkDescriptorSet sets[] = { p_material->getDescriptorSet(), descriptorset };
+	const VkDescriptorSet sets[] = { p_material->getDescriptorSet(), descriptorset };
 
 	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 2, sets, 0, nullptr);
 	// vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, , 0, nullptr);

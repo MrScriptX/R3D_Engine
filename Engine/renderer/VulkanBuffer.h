@@ -6,10 +6,12 @@
 
 #include "../graphics/Graphics.h"
 
+#include "ihardware.h"
+
 class VulkanBuffer
 {
   public:
-	VulkanBuffer(Graphics& graphic);
+	VulkanBuffer(vred::renderer::ihardware& hw);
 	~VulkanBuffer();
 
 	void createBuffer(VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
@@ -17,7 +19,7 @@ class VulkanBuffer
   private:
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
-	Graphics& m_graphic;
+	vred::renderer::ihardware& m_hw;
 };
 
 #endif // !R3DENGINE_VULKANBUFFER_H_

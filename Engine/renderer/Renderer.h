@@ -19,25 +19,27 @@
 #include <imgui_impl_vulkan.h>
 
 #include "VulkanBuffer.h"
-#include "VulkanCommandPool.h"
 #include "VulkanDescriptor.h"
 #include "VulkanPipeline.h"
-#include "VulkanRenderPass.h"
-#include "VulkanSwapchain.h"
 
 #include "../graphics/CameraUBO.h"
 #include "../graphics/Graphics.h"
 
 #include "../Logger.h"
 
-#include "interface.h"
+#include "ihardware.h"
+#include "iswapchain.h"
 #include "frame.h"
+#include "render.h"
 
 class Renderer
 {
   public:
 	Renderer(GLFWwindow& window, uint32_t width, uint32_t height);
 	~Renderer();
+
+	void begin_render(size_t frame);
+	void end_render(size_t frame);
 
 	int32_t draw();
 	void UpdateUI();
@@ -56,17 +58,13 @@ class Renderer
 	// Track State
 	void SetUpdated(const size_t& i);
 
-	const bool IsUpdated();
-	const bool NeedUpdate(const size_t& i);
+	bool IsUpdated() const;
+	bool NeedUpdate(const size_t& i) const;
 
 	// Create Buffers
 	void CreateVerticesBuffer(std::shared_ptr<std::vector<Vertex>> vertices, Buffer& buffer);
 	void CreateIndicesBuffer(std::shared_ptr<std::vector<uint32_t>> indices, Buffer& buffer);
 	void CreateUniformBuffer(VkBuffer& buffer, VkDeviceMemory& memory, VkDeviceSize size);
-
-	// Record Command Buffer
-	void BeginRecordCommandBuffers(VkCommandBuffer& commandBuffer, VkFramebuffer& frameBuffer);
-	void EndRecordCommandBuffers(VkCommandBuffer& commandBuffer);
 
 	// Ressource allocation and update
 	void allocateDescriptorSet(VkDescriptorSet& descriptor_set);
@@ -84,34 +82,15 @@ class Renderer
 	// Cleaning Ressource
 	void destroyUniformBuffer();
 	void destroyBuffers(Buffer& buffers);
-	void cleanSwapchain();
+	void clean_swapchain();
 
   private:
 	void setup_debug_callback(VkInstance& instance);
-	void setupSwapchain();
-	void setupRenderPass();
-	void setupDescriptorSetLayout();
-	void createCommandPool();
-	void createFramebuffer();
-	void createDescriptorPool();
-	void allocateCommandBuffers();
-	void createDepthResources();
 
-	void recreateSwapchain();
+	void create_swapchain(const VkExtent2D& extent);
+	void recreate_swapchain();
 
 	void initUI(GLFWwindow& window);
-
-	SwapchainDetails querySwapChainSupport(VkPhysicalDevice device);
-	QueueFamilyIndices findQueueFamily(VkPhysicalDevice device);
-
-	// static fonctions
-	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code,
-	                                                    const char* layerPrefix, const char* msg, void* userData);
-
-	// proxy fonctions
-	VkResult CreateDebugReportCallbackEXT(VkInstance& instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator,
-	                                      VkDebugReportCallbackEXT* pCallback);
-	void DestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
 
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
@@ -122,24 +101,22 @@ class Renderer
 	void endCommands(VkCommandBuffer commandBuffer);
 
 	VkDebugReportCallbackEXT callback;
-	Graphics m_graphic;
 	UIObject m_ui;
-	std::unique_ptr<uint32_t> WIDTH;
-	std::unique_ptr<uint32_t> HEIGHT;
 
-	std::unique_ptr<VulkanSwapchain> m_swapchain;
-	std::unique_ptr<VulkanRenderPass> m_pRenderpass;
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
-	std::unique_ptr<VulkanCommandPool> m_commandPool;
 	std::unique_ptr<VulkanPipeline> mp_pipelines_manager;
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
+
+	VkExtent2D m_window_extent;
 
 	uint32_t m_current_image = 0;
 	uint32_t m_last_image = 0;
 	std::bitset<3> m_is_updated;
 
-	vred::renderer::interface m_interface;
+	vred::renderer::ihardware m_interface;// hardware interface
+	vred::renderer::iswapchain m_swapchain;
 	std::array<vred::renderer::frame, 3> m_frames;
+	vred::renderer::render m_render_objects;
 };
 
 #endif // !R3DENGINE_RENDERER_H_

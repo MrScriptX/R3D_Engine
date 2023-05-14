@@ -28,12 +28,12 @@ class Controller
 {
   public:
 	Controller(std::shared_ptr<Camera> p_camera);
-	~Controller();
+	~Controller() = default;
 
 	void setInput(int32_t key, int32_t scancode, int32_t mods, int32_t action);
 	void SetKeyToFunc(const int32_t& key, std::function<void()>& func, const ActionType& type);
 
-	void Update(const float& dt);
+	void Update(const float& dt) const;
 	void updateRotation(const double& xpos, const double& ypos);
 
 	uint32_t getLoadRadius();

@@ -15,7 +15,7 @@ class Camera
 {
   public:
 	Camera();
-	~Camera();
+	~Camera() = default;
 
 	void UpdateUBO(const float& width, const float& height, const int32_t frame);
 	void UpdatePosition(const float& dt);
