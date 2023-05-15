@@ -111,9 +111,6 @@
     <ClCompile Include="renderer\VulkanDescriptor.cpp">
       <Filter>Engine\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="renderer\VulkanPipeline.cpp">
-      <Filter>Engine\renderer</Filter>
-    </ClCompile>
     <ClCompile Include="ui\UI.cpp">
       <Filter>Engine\UI</Filter>
     </ClCompile>
@@ -248,9 +245,6 @@
     <ClInclude Include="graphics\SceneUBO.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\Shaders.h">
-      <Filter>Engine\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\Vertex.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
@@ -270,9 +264,6 @@
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\VulkanDescriptor.h">
-      <Filter>Engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\VulkanPipeline.h">
       <Filter>Engine\renderer</Filter>
     </ClInclude>
     <ClInclude Include="ui\UI.h">

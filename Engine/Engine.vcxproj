@@ -74,7 +74,6 @@
     <ClCompile Include="renderer\vsync_obj.cpp" />
     <ClCompile Include="renderer\VulkanBuffer.cpp" />
     <ClCompile Include="renderer\VulkanDescriptor.cpp" />
-    <ClCompile Include="renderer\VulkanPipeline.cpp" />
     <ClCompile Include="ui\ConsoleUI.cpp" />
     <ClCompile Include="ui\UI.cpp" />
     <ClCompile Include="ui\Watcher.cpp" />
@@ -106,7 +105,6 @@
     <ClInclude Include="graphics\LightProperties.h" />
     <ClInclude Include="graphics\Math.h" />
     <ClInclude Include="graphics\SceneUBO.h" />
-    <ClInclude Include="graphics\Shaders.h" />
     <ClInclude Include="graphics\Vertex.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="log_type.h" />
@@ -131,7 +129,6 @@
     <ClInclude Include="renderer\vsync_obj.h" />
     <ClInclude Include="renderer\VulkanBuffer.h" />
     <ClInclude Include="renderer\VulkanDescriptor.h" />
-    <ClInclude Include="renderer\VulkanPipeline.h" />
     <ClInclude Include="settings.h" />
     <ClInclude Include="ui\ConsoleUI.h" />
     <ClInclude Include="ui\UI.h" />

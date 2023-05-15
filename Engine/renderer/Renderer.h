@@ -20,7 +20,6 @@
 
 #include "VulkanBuffer.h"
 #include "VulkanDescriptor.h"
-#include "VulkanPipeline.h"
 
 #include "../graphics/CameraUBO.h"
 #include "../graphics/Graphics.h"
@@ -57,7 +56,6 @@ class Renderer
 	VkCommandBuffer& GetCommandBuffer(const size_t& i);
 	VkFramebuffer& GetFrameBuffer(const size_t& i);
 	std::unique_ptr<VulkanBuffer>& getBufferFactory();
-	std::unique_ptr<VulkanPipeline>& GetPipelineFactory();
 
 	// Track State
 	void SetUpdated(const size_t& i);
@@ -106,7 +104,6 @@ class Renderer
 	UIObject m_ui;
 
 	std::unique_ptr<VulkanDescriptor> m_descriptor;
-	std::unique_ptr<VulkanPipeline> mp_pipelines_manager;
 	std::unique_ptr<VulkanBuffer> m_pBufferFactory;
 
 	uint32_t m_current_image = 0;

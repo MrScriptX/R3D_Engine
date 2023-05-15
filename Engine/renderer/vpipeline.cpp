@@ -5,7 +5,7 @@
 #include "../graphics/Vertex.h"
 #include "vshader.h"
 
-VkPipeline vred::renderer::create_pipeline(const shader_stages& stages, const VkPipelineLayout& layout, const VkDevice& device, const iswapchain& swapchain, VkPolygonMode polygon_mode)
+VkPipeline vred::renderer::create_pipeline(const shader_stages& stages, const VkPipelineLayout& layout, const VkDevice& device, const iswapchain& swapchain)
 {
 	// shader stages
 	std::vector<VkPipelineShaderStageCreateInfo> shader_stages;
@@ -41,7 +41,7 @@ VkPipeline vred::renderer::create_pipeline(const shader_stages& stages, const Vk
 
 	VkPipelineViewportStateCreateInfo viewport_state = create_viewport_state_info(viewport, scissor);
 	
-	VkPipelineRasterizationStateCreateInfo rasterizer = create_rasterization_state_info(polygon_mode);
+	VkPipelineRasterizationStateCreateInfo rasterizer = create_rasterization_state_info(stages.polygon_mode);
 	VkPipelineMultisampleStateCreateInfo multisampler = create_multisample_state_info();
 	VkPipelineDepthStencilStateCreateInfo depth_stencil_state = create_depth_stencil_state_info();
 
@@ -93,6 +93,8 @@ VkPipelineLayout vred::renderer::create_pipeline_layout(const VkDevice& device, 
 
 void vred::renderer::destroy_pipeline(const vred::renderer::ipipeline& pipeline, const VkDevice& device)
 {
+	vkDeviceWaitIdle(device);
+
 	vkDestroyPipeline(device, pipeline.handle, nullptr);
 	vkDestroyPipelineLayout(device, pipeline.layout, nullptr);
 }

@@ -32,6 +32,7 @@ public:
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
 
 	std::string create_pipeline(const std::string& name, const vred::renderer::shader_stages& shaders);
+	void destroy_pipeline(const std::string& name);
 
 	// CREATE MATERIAL
 	const std::shared_ptr<Material> CreateMaterial(const std::string& shader);

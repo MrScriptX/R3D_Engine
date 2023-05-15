@@ -91,7 +91,6 @@ Renderer::Renderer(GLFWwindow& window, uint32_t width, uint32_t height) : m_is_u
 
 	initUI(window);
 
-	mp_pipelines_manager = std::make_unique<VulkanPipeline>(m_interface, m_swapchain, m_render_objects);
 	m_pBufferFactory = std::make_unique<VulkanBuffer>(m_interface);
 }
 
@@ -321,11 +320,6 @@ VkCommandBuffer& Renderer::GetCommandBuffer(const size_t& i)
 std::unique_ptr<VulkanBuffer>& Renderer::getBufferFactory()
 {
 	return m_pBufferFactory;
-}
-
-std::unique_ptr<VulkanPipeline>& Renderer::GetPipelineFactory()
-{
-	return mp_pipelines_manager;
 }
 
 bool Renderer::IsUpdated() const

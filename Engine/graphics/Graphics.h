@@ -102,12 +102,6 @@ struct Graphics
 	ColorMode color_map = ColorMode::DEFAULT;
 };
 
-struct Pipeline
-{
-	VkPipeline handle = VK_NULL_HANDLE;
-	VkPipelineLayout layout = VK_NULL_HANDLE;
-};
-
 struct Buffer
 {
 	VkBuffer vertex = VK_NULL_HANDLE;

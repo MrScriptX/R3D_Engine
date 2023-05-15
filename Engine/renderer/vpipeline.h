@@ -14,9 +14,11 @@ namespace vred::renderer
 	{
 		std::string vertex;
 		std::string fragment;
+
+		VkPolygonMode polygon_mode = VkPolygonMode::VK_POLYGON_MODE_FILL;
 	};
 
-	VkPipeline create_pipeline(const shader_stages& stages, const VkPipelineLayout& layout, const VkDevice& device, const iswapchain& swapchain, VkPolygonMode polygon_mode = VkPolygonMode::VK_POLYGON_MODE_FILL);
+	VkPipeline create_pipeline(const shader_stages& stages, const VkPipelineLayout& layout, const VkDevice& device, const iswapchain& swapchain);
 	VkPipelineLayout create_pipeline_layout(const VkDevice& device, const std::vector<VkDescriptorSetLayout>& descriptor_set_layouts);
 	void destroy_pipeline(const vred::renderer::ipipeline& pipeline, const VkDevice& device);
 

@@ -25,11 +25,7 @@ Engine::Engine(const vred::settings& config) : m_extent({ config.window_width, c
 
 Engine::~Engine()
 {
-	vkDeviceWaitIdle(mp_renderer->GetDevice());
-
 	mp_renderer->clean_swapchain();
-	mp_renderer->GetPipelineFactory()->DestroyPipelines();
-
 	destroy_pipelines();
 
 	mp_scene->CleanRessources(mp_renderer);
@@ -63,6 +59,15 @@ std::string Engine::create_pipeline(const std::string& name, const vred::rendere
 	m_shaders.insert({ name, shaders });
 	
 	return name;
+}
+
+void Engine::destroy_pipeline(const std::string& name)
+{
+	const auto& pipeline = m_pipelines.find(name);
+	vred::renderer::destroy_pipeline(pipeline->second, mp_renderer->GetDevice());
+
+	m_pipelines.erase(name);
+	m_shaders.erase(name);
 }
 
 const std::shared_ptr<Material> Engine::CreateMaterial(const std::string& shader)
@@ -164,31 +169,51 @@ std::shared_ptr<Camera> Engine::GetMainCamera() const
 
 void Engine::SetWireframeMode()
 {
-	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_LINE);
+	// mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_LINE);
 
-	mp_renderer->GetPipelineFactory()->DestroyPipelines();
-	mp_renderer->GetPipelineFactory()->CreatePipelines();
+	for (auto& shader : m_shaders)
+		shader.second.polygon_mode = VK_POLYGON_MODE_LINE;
+
+	destroy_pipelines();
+	create_pipelines();
+
+	mp_scene->ToUpdate();
 }
 
 void Engine::SetPointMode()
 {
-	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_POINT);
-	mp_renderer->GetPipelineFactory()->DestroyPipelines();
-	mp_renderer->GetPipelineFactory()->CreatePipelines();
+	// mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_POINT);
+
+	for (auto& shader : m_shaders)
+		shader.second.polygon_mode = VK_POLYGON_MODE_POINT;
+
+	destroy_pipelines();
+	create_pipelines();
+
+	mp_scene->ToUpdate();
 }
 
 void Engine::SetFillMode()
 {
-	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL);
-	mp_renderer->GetPipelineFactory()->DestroyPipelines();
-	mp_renderer->GetPipelineFactory()->CreatePipelines();
+	// mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_FILL);
+
+	for (auto& shader : m_shaders)
+		shader.second.polygon_mode = VK_POLYGON_MODE_FILL;
+
+	destroy_pipelines();
+	create_pipelines();
+
+	mp_scene->ToUpdate();
 }
 
 void Engine::SetColorMode(const ColorMode color_map)
 {
 	mp_renderer->SetColorMode(color_map);
-	mp_renderer->GetPipelineFactory()->DestroyPipelines();
-	mp_renderer->GetPipelineFactory()->CreatePipelines();
+
+	destroy_pipelines();
+	create_pipelines();
+
+	mp_scene->ToUpdate();
 }
 
 void Engine::RenderUI(UI& ui)
@@ -238,8 +263,8 @@ void Engine::update()
 		update_window_size();
 		mp_renderer->reset(m_extent);
 
-		mp_renderer->GetPipelineFactory()->DestroyPipelines();
-		mp_renderer->GetPipelineFactory()->CreatePipelines();
+		destroy_pipelines();
+		create_pipelines();
 
 		return;
 	}
@@ -284,8 +309,8 @@ void Engine::draw()
 
 		mp_renderer->reset(m_extent);
 
-		mp_renderer->GetPipelineFactory()->DestroyPipelines();
-		mp_renderer->GetPipelineFactory()->CreatePipelines();
+		destroy_pipelines();
+		create_pipelines();
 	}
 }
 
@@ -305,4 +330,6 @@ void Engine::destroy_pipelines()
 {
 	for (const auto& pipeline : m_pipelines)
 		vred::renderer::destroy_pipeline(pipeline.second, mp_renderer->GetDevice());
+
+	m_pipelines.clear();
 }

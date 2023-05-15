@@ -21,15 +21,16 @@ class Material
 
 	std::shared_ptr<glm::vec3> getColor();
 	std::shared_ptr<Texture> getTexture();
-	const std::string& pipeline() const;
 	VkDescriptorSet& getDescriptorSet();
+
+	void set_pipeline(const std::string& pipeline);
+	const std::string& pipeline() const;
 
   private:
 	std::shared_ptr<Texture> m_texture;
 	std::shared_ptr<glm::vec3> m_color;
 
-	// const TSHADER m_shader;
-	std::string m_shader;
+	std::string m_pipeline;
 	VkDescriptorSet m_descriptor_set;
 	std::shared_ptr<Renderer> mp_renderer;
 };
