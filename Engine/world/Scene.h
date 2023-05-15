@@ -38,9 +38,11 @@ class Scene
 
 	void ToUpdate();
 	void Update(const int32_t frame);
+	void SetUpdated(const int32_t frame);
 	const bool IsUpdate(const int i) const;
 	const bool IsUpdated() const;
-	std::vector<std::shared_ptr<GameObject>>& getObjects();
+	std::vector<std::shared_ptr<GameObject>>& get_objects();
+	VkDescriptorSet GetDescriptorSet();
 
   private:
 	R3DResult addDirectionalLight(std::shared_ptr<DirectionalLight> lightobject);

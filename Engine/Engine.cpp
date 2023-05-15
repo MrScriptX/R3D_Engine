@@ -276,9 +276,38 @@ void Engine::update()
 		mp_scene->Update(frame);
 
 		mp_renderer->begin_render(frame);
-		mp_scene->Render(mp_renderer->GetCommandBuffer(frame), frame, m_pipelines);
-		mp_renderer->end_render(frame);
+		// mp_scene->Render(mp_renderer->GetCommandBuffer(frame), frame, m_pipelines);
 
+		// test new render loop
+		auto objects = mp_scene->get_objects();
+		for (auto& object : objects)
+		{
+			for (size_t i = 0; i < object->getMeshesCount(); ++i)
+			{
+				Buffer& buffer = object->getMesh(i)->GetBuffer(frame);
+				std::shared_ptr<Material> material = object->getMesh(i)->getMaterial();
+
+				vred::renderer::ipipeline pipeline = m_pipelines.find(material->pipeline())->second;
+
+				vkCmdBindPipeline(mp_renderer->GetCommandBuffer(frame), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle);
+
+				const VkBuffer vertex_buffer[] = { buffer.vertex };
+				const VkDeviceSize offsets[] = { 0 };
+
+				vkCmdBindVertexBuffers(mp_renderer->GetCommandBuffer(frame), 0, 1, vertex_buffer, offsets);
+				vkCmdBindIndexBuffer(mp_renderer->GetCommandBuffer(frame), buffer.index, 0, VK_INDEX_TYPE_UINT32);
+
+				const VkDescriptorSet sets[] = { material->getDescriptorSet(), mp_scene->GetDescriptorSet() };
+
+				vkCmdBindDescriptorSets(mp_renderer->GetCommandBuffer(frame), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 2, sets, 0, nullptr);
+
+				vkCmdDrawIndexed(mp_renderer->GetCommandBuffer(frame), static_cast<uint32_t>(object->getMesh(i)->get_indices().size()), 1, 0, 0, 0);
+			}
+		}
+		mp_scene->SetUpdated(frame);
+		//
+		mp_renderer->end_render(frame);
+		
 		mp_scene->Clean(frame);
 		mp_renderer->SetUpdated(frame);
 	}

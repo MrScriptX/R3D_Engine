@@ -204,6 +204,11 @@ void Scene::Update(const int32_t frame)
 	}
 }
 
+void Scene::SetUpdated(const int32_t frame)
+{
+	m_changed.set(frame, false);
+}
+
 const bool Scene::IsUpdate(const int i) const
 {
 	return m_changed[i];
@@ -214,9 +219,14 @@ const bool Scene::IsUpdated() const
 	return m_changed == false;
 }
 
-std::vector<std::shared_ptr<GameObject>>& Scene::getObjects()
+std::vector<std::shared_ptr<GameObject>>& Scene::get_objects()
 {
 	return vp_objects;
+}
+
+VkDescriptorSet Scene::GetDescriptorSet()
+{
+	return m_descriptorset;
 }
 
 R3DResult Scene::addDirectionalLight(std::shared_ptr<DirectionalLight> lightobject)
