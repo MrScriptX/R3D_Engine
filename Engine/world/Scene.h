@@ -29,7 +29,7 @@ class Scene
 	R3DResult RemoveLight(std::shared_ptr<SpotLight> lightobject);
 
 	void Load(std::shared_ptr<Renderer> p_renderer);
-	void Render(VkCommandBuffer& command_buffer, const int32_t frame);
+	void Render(VkCommandBuffer& command_buffer, const int32_t frame, const std::unordered_map<std::string, vred::renderer::ipipeline>& pipelines);
 	void Clean(const int32_t frame);
 	void CleanRessources(std::shared_ptr<Renderer> p_renderer);
 

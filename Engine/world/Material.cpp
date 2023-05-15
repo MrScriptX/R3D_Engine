@@ -1,6 +1,6 @@
 #include "Material.h"
 
-Material::Material(const TSHADER shader, std::shared_ptr<Renderer> p_renderer)
+Material::Material(const std::string& shader, std::shared_ptr<Renderer> p_renderer)
     : m_shader(shader), mp_renderer(p_renderer), m_descriptor_set(VK_NULL_HANDLE), m_texture(nullptr), m_color(nullptr)
 {
 	mp_renderer->allocateDescriptorSet(m_descriptor_set);
@@ -46,9 +46,9 @@ std::shared_ptr<Texture> Material::getTexture()
 	return m_texture;
 }
 
-const Pipeline& Material::GetPipeline()
+const std::string& Material::pipeline() const
 {
-	return mp_renderer->GetPipelineFactory()->GetPipeline(m_shader);
+	return m_shader;
 }
 
 VkDescriptorSet& Material::getDescriptorSet()

@@ -13,6 +13,7 @@
 
 #include "../graphics/Vertex.h"
 #include "../renderer/Renderer.h"
+#include "../renderer/vpipeline.h"
 
 class Mesh
 {
@@ -21,7 +22,7 @@ class Mesh
 	Mesh(const std::string& obj_path, std::shared_ptr<Renderer> p_renderer);
 	~Mesh(); // two destructors | one for move contrutor and one for classic destruction
 
-	void draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame);
+	void draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame, const std::unordered_map<std::string, vred::renderer::ipipeline>& pipelines);
 	void loadModel();
 	void bindMaterial(std::shared_ptr<Material> mat, VkBuffer& ubo, std::shared_ptr<Renderer> renderer);
 

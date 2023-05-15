@@ -18,7 +18,7 @@ class GameObject
 	void Clean(const size_t frame);
 	void Destroy(const int32_t frame);
 
-	void RegisterDrawCmd(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame);
+	void RegisterDrawCmd(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame, const std::unordered_map<std::string, vred::renderer::ipipeline>& pipelines);
 	void bindMatToMesh(const size_t& index, std::shared_ptr<Material> p_material);
 
 	// MESH

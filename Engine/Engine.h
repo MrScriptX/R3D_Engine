@@ -22,7 +22,7 @@
 class Engine
 {
 public:
-	Engine(const vred::settings& settings);
+	Engine(const vred::settings& config);
 	~Engine();
 
 	void update();
@@ -31,11 +31,11 @@ public:
 	void setScene(std::shared_ptr<Scene> p_scene);
 	void registerGameObject(std::shared_ptr<GameObject> gameobject);
 
-	uint16_t create_pipeline(const vred::renderer::shader_stages& shaders);
+	std::string create_pipeline(const std::string& name, const vred::renderer::shader_stages& shaders);
 
 	// CREATE MATERIAL
-	const std::shared_ptr<Material> CreateMaterial(const TSHADER shader);
-	const std::shared_ptr<Material> CreateMaterial(const TSHADER shader, const std::string& texture_file);
+	const std::shared_ptr<Material> CreateMaterial(const std::string& shader);
+	const std::shared_ptr<Material> CreateMaterial(const std::string& shader, const std::string& texture_file);
 
 	// CREATE GAMEOBJECT
 	const std::shared_ptr<GameObject> CreateGameObject();
@@ -63,6 +63,9 @@ public:
 private:
 	void update_window_size();
 
+	void create_pipelines();
+	void destroy_pipelines();
+
 	std::unique_ptr<Window> mp_window;
 	std::shared_ptr<Renderer> mp_renderer;
 	std::shared_ptr<Scene> mp_scene;
@@ -73,7 +76,8 @@ private:
 	VkExtent2D m_extent;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_last_time;
 
-	std::unordered_map<uint16_t, vred::renderer::ipipeline> m_pipelines;
+	std::unordered_map<std::string, vred::renderer::ipipeline> m_pipelines;
+	std::unordered_map<std::string, vred::renderer::shader_stages> m_shaders;
 
 	// UI
 	std::vector<UI*> m_UIs;

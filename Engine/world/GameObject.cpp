@@ -74,11 +74,11 @@ void GameObject::Destroy(const int32_t frame)
 	m_ubo_memory[frame] = VK_NULL_HANDLE;
 }
 
-void GameObject::RegisterDrawCmd(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame)
+void GameObject::RegisterDrawCmd(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame, const std::unordered_map<std::string, vred::renderer::ipipeline>& pipelines)
 {
 	for (auto it = m_meshes.begin(); it != m_meshes.end(); ++it)
 	{
-		it->second->draw(command_buffer, descriptorset, frame);
+		it->second->draw(command_buffer, descriptorset, frame, pipelines);
 	}
 }
 

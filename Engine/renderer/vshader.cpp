@@ -7,6 +7,24 @@
 std::vector<char> read_file(const std::string& filename);
 TBuiltInResource InitResources() noexcept;
 
+std::vector<char> vred::renderer::read_shader_file(const std::string& shader_path)
+{
+    std::ifstream file(shader_path, std::ios::ate | std::ios::binary);
+
+    if (!file.is_open())
+        throw std::runtime_error("failed to open file : " + shader_path);
+
+    size_t fileSize = (size_t)file.tellg();
+    std::vector<char> buffer(fileSize);
+
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
+
+    file.close();
+
+    return buffer;
+}
+
 std::vector<uint32_t> vred::renderer::compile_shader(const std::string& shader_path, const EShLanguage& stage)
 {
 	std::vector<char> file = read_file(shader_path);
@@ -28,7 +46,7 @@ std::vector<uint32_t> vred::renderer::compile_shader(const std::string& shader_p
 	shader.setStrings(tmp_buffer.data(), static_cast<int>(tmp_buffer.size()));
 	shader.setEnvInput(glslang::EShSource::EShSourceGlsl, target_stage, glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_3);
 	shader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_3);
-	shader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_6);
+	shader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_1);
 
 	auto message = static_cast<EShMessages>(EShMsgSpvRules | EShMsgVulkanRules);
 
@@ -67,17 +85,17 @@ std::vector<uint32_t> vred::renderer::compile_shader(const std::string& shader_p
     glslang::GlslangToSpv(*program.getIntermediate(target_stage), spv, &spv_options);
     glslang::FinalizeProcess();
 
-    std::cout << "data sie : " << spv.size() << std::endl;
+    std::cout << "data size : " << spv.size() << std::endl;
 
     return spv;
 }
 
-VkShaderModule vred::renderer::create_shader_module(const std::vector<uint32_t>& code, const VkDevice& device)
+VkShaderModule vred::renderer::create_shader_module(const std::vector<char>& code, const VkDevice& device)
 {
     VkShaderModuleCreateInfo shader_module_info = {};
     shader_module_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     shader_module_info.codeSize = code.size();
-    shader_module_info.pCode = code.data();
+    shader_module_info.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
     VkShaderModule shader_module;
     if (vkCreateShaderModule(device, &shader_module_info, nullptr, &shader_module) != VK_SUCCESS)

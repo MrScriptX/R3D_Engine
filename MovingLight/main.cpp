@@ -19,40 +19,53 @@ int main()
 
 		vred::Log::message(LOG_TYPE::INFO, "Moving Light Example Project");
 		
+		// build pipelines
+		vred::renderer::shader_stages cube_shader_stages;
+		cube_shader_stages.vertex = "../assets/shaders/vert.spv";
+		cube_shader_stages.fragment = "../assets/shaders/no_texture_shader.spv";
+
+		std::string cube_shader = engine.create_pipeline("main", cube_shader_stages);
+
+		vred::renderer::shader_stages light_shader_stages;
+		light_shader_stages.vertex = "../assets/shaders/vert.spv";
+		light_shader_stages.fragment = "../assets/shaders/light_source.spv";
+
+		std::string light_shader = engine.create_pipeline("light", light_shader_stages);
+
 		// create object
 		std::shared_ptr<GameObject> cube = engine.CreateCube({ .0f, .0f, .0f }, 1.f, { 1.f, .0f, .0f });
-		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> cube_texture = engine.CreateMaterial(cube_shader);
 		cube->bindMatToMesh(0, cube_texture);
 
 		ConsoleUI::Log("Create cube 1 at pos {} {} {}", .0f, .0f, .0f);
 
 		std::shared_ptr<GameObject> cube2 = engine.CreateCube({ .0f, .0f, 3.0f }, 1.f, { .0f, 1.0f, .0f });
-		std::shared_ptr<Material> cube_texture2 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> cube_texture2 = engine.CreateMaterial(cube_shader);
 		cube2->bindMatToMesh(0, cube_texture2);
 
 		ConsoleUI::Log("Create cube 2 at pos {} {} {}", .0f, .0f, 3.0f);
 
 		std::shared_ptr<GameObject> cube3 = engine.CreateCube({ 3.0f, .0f, .0f }, 1.f, { .0f, .0f, 1.0f });
-		std::shared_ptr<Material> cube_texture3 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> cube_texture3 = engine.CreateMaterial(cube_shader);
 		cube3->bindMatToMesh(0, cube_texture3);
 
 		ConsoleUI::Log("Create cube 3 at pos {} {} {}", -3.0f, .0f, .0f);
 
 		std::shared_ptr<GameObject> cube4 = engine.CreateCube({ -3.0f, .0f, .0f }, 1.f, { 1.0f, 1.0f, 1.0f });
-		std::shared_ptr<Material> cube_texture4 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> cube_texture4 = engine.CreateMaterial(cube_shader);
 		cube4->bindMatToMesh(0, cube_texture4);
 
 		ConsoleUI::Log("Create cube 4 at pos {} {} {}", -3.0f, .0f, .0f);
 
 		std::shared_ptr<GameObject> cube5 = engine.CreateCube({ .0f, .0f, -3.0f }, 1.f, { 1.0f, 1.0f, .0f });
-		std::shared_ptr<Material> cube_texture5 = engine.CreateMaterial(TSHADER::NO_TEXTURE);
+		std::shared_ptr<Material> cube_texture5 = engine.CreateMaterial(cube_shader);
 		cube5->bindMatToMesh(0, cube_texture5);
 
 		ConsoleUI::Log("Create cube 5 at pos {} {} {}", .0f, .0f, -3.0f);
 
 		glm::vec3 light_pos = { 2.0f, .0f, .0f };
 		std::shared_ptr<GameObject> light_cube = engine.CreateCube(light_pos, 0.2f, { 1.f, 1.f, 1.f });
-		std::shared_ptr<Material> cube_light_mat = engine.CreateMaterial(TSHADER::LIGHT_SOURCE);
+		std::shared_ptr<Material> cube_light_mat = engine.CreateMaterial(light_shader);
 		light_cube->bindMatToMesh(0, cube_light_mat);
 
 		ConsoleUI::Log("Create light at pos {} {} {}", 2.0f, .0f, .0f);

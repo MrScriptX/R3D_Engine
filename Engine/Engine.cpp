@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-Engine::Engine(const vred::settings& settings) : m_extent({ settings.window_width, settings.window_height }), m_last_time(std::chrono::high_resolution_clock::now())
+Engine::Engine(const vred::settings& config) : m_extent({ config.window_width, config.window_height }), m_last_time(std::chrono::high_resolution_clock::now())
 {
 	mp_main_camera = std::make_shared<Camera>();
 	mp_controller = std::make_shared<Controller>(mp_main_camera);
@@ -19,7 +19,7 @@ Engine::Engine(const vred::settings& settings) : m_extent({ settings.window_widt
 	m_UIs.push_back(watcher);
 
 	// start the interface
-	mp_window = std::make_unique<Window>(settings, *mp_controller.get());
+	mp_window = std::make_unique<Window>(config, *mp_controller.get());
 	mp_renderer = std::make_shared<Renderer>(mp_window->getHandle(), m_extent.width, m_extent.height);
 }
 
@@ -29,6 +29,8 @@ Engine::~Engine()
 
 	mp_renderer->clean_swapchain();
 	mp_renderer->GetPipelineFactory()->DestroyPipelines();
+
+	destroy_pipelines();
 
 	mp_scene->CleanRessources(mp_renderer);
 	mp_scene.reset();
@@ -48,27 +50,27 @@ void Engine::registerGameObject(std::shared_ptr<GameObject> gameobject)
 	mp_scene->AddGameObject(gameobject);
 }
 
-uint16_t Engine::create_pipeline(const vred::renderer::shader_stages& shaders)
+std::string Engine::create_pipeline(const std::string& name, const vred::renderer::shader_stages& shaders)
 {
 	vred::renderer::ipipeline pipeline;
 	pipeline.layout = vred::renderer::create_pipeline_layout(mp_renderer->GetDevice(), mp_renderer->get_descriptor_set_layout());
 	pipeline.handle = vred::renderer::create_pipeline(shaders, pipeline.layout, mp_renderer->GetDevice(), mp_renderer->get_swapchain());
 
-	uint16_t id = 0;
-	while (m_pipelines.find(id) != m_pipelines.end())
-		++id;
+	if (m_pipelines.find(name) != m_pipelines.end())
+		return "";
 
-	m_pipelines.insert({ id, pipeline });
+	m_pipelines.insert({ name, pipeline });
+	m_shaders.insert({ name, shaders });
 	
-	return id;
+	return name;
 }
 
-const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader)
+const std::shared_ptr<Material> Engine::CreateMaterial(const std::string& shader)
 {
 	return std::make_shared<Material>(shader, mp_renderer);
 }
 
-const std::shared_ptr<Material> Engine::CreateMaterial(const TSHADER shader, const std::string& texture_file)
+const std::shared_ptr<Material> Engine::CreateMaterial(const std::string& shader, const std::string& texture_file)
 {
 	std::shared_ptr<Material> mat = std::make_shared<Material>(shader, mp_renderer);
 	mat->LoadTexture(texture_file);
@@ -163,6 +165,7 @@ std::shared_ptr<Camera> Engine::GetMainCamera() const
 void Engine::SetWireframeMode()
 {
 	mp_renderer->SetPolygonFillingMode(VK_POLYGON_MODE_LINE);
+
 	mp_renderer->GetPipelineFactory()->DestroyPipelines();
 	mp_renderer->GetPipelineFactory()->CreatePipelines();
 }
@@ -248,7 +251,7 @@ void Engine::update()
 		mp_scene->Update(frame);
 
 		mp_renderer->begin_render(frame);
-		mp_scene->Render(mp_renderer->GetCommandBuffer(frame), frame);
+		mp_scene->Render(mp_renderer->GetCommandBuffer(frame), frame, m_pipelines);
 		mp_renderer->end_render(frame);
 
 		mp_scene->Clean(frame);
@@ -284,4 +287,22 @@ void Engine::draw()
 		mp_renderer->GetPipelineFactory()->DestroyPipelines();
 		mp_renderer->GetPipelineFactory()->CreatePipelines();
 	}
+}
+
+void Engine::create_pipelines()
+{
+	for (const auto& shader : m_shaders)
+	{
+		vred::renderer::ipipeline pipeline;
+		pipeline.layout = vred::renderer::create_pipeline_layout(mp_renderer->GetDevice(), mp_renderer->get_descriptor_set_layout());
+		pipeline.handle = vred::renderer::create_pipeline(shader.second, pipeline.layout, mp_renderer->GetDevice(), mp_renderer->get_swapchain());
+
+		m_pipelines.insert({ shader.first, pipeline });
+	}
+}
+
+void Engine::destroy_pipelines()
+{
+	for (const auto& pipeline : m_pipelines)
+		vred::renderer::destroy_pipeline(pipeline.second, mp_renderer->GetDevice());
 }

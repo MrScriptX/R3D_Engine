@@ -93,11 +93,11 @@ void Scene::Load(std::shared_ptr<Renderer> p_renderer)
 	p_renderer->updateDescriptorSet(m_light_buffer, m_descriptorset, sizeof(SceneUBO));
 }
 
-void Scene::Render(VkCommandBuffer& command_buffer, const int32_t frame)
+void Scene::Render(VkCommandBuffer& command_buffer, const int32_t frame, const std::unordered_map<std::string, vred::renderer::ipipeline>& pipelines)
 {
 	for (size_t i = 0; i < vp_objects.size(); i++)
 	{
-		vp_objects[i]->RegisterDrawCmd(command_buffer, m_descriptorset, frame);
+		vp_objects[i]->RegisterDrawCmd(command_buffer, m_descriptorset, frame, pipelines);
 	}
 
 	m_changed.set(frame, false);

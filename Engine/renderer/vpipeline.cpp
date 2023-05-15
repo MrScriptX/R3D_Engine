@@ -10,23 +10,46 @@ VkPipeline vred::renderer::create_pipeline(const shader_stages& stages, const Vk
 	// shader stages
 	std::vector<VkPipelineShaderStageCreateInfo> shader_stages;
 
-	std::vector<uint32_t> vertex_shader_code = compile_shader(stages.vertex, EShLanguage::EShLangVertex);
+	std::vector<char> vertex_shader_code = read_shader_file(stages.vertex); // compile_shader(stages.vertex, EShLanguage::EShLangVertex);
 	VkShaderModule vertex_module = create_shader_module(vertex_shader_code, device);
 	
 	shader_stages.push_back(create_shader_stage_info(VK_SHADER_STAGE_VERTEX_BIT, vertex_module));
 
-	std::vector<uint32_t> fragment_shader_code = compile_shader(stages.fragment, EShLanguage::EShLangFragment);
+	std::vector<char> fragment_shader_code = read_shader_file(stages.fragment); // compile_shader(stages.fragment, EShLanguage::EShLangFragment);
 	VkShaderModule fragment_module = create_shader_module(fragment_shader_code, device);
 	
 	shader_stages.push_back(create_shader_stage_info(VK_SHADER_STAGE_FRAGMENT_BIT, fragment_module));
 
-	VkPipelineVertexInputStateCreateInfo vertex_input_state = create_vertex_input_state_info();
+	VkVertexInputBindingDescription binding_description = Vertex::getBindingDescription();
+	std::vector<VkVertexInputAttributeDescription> attribute_descriptions = Vertex::getAttributeDescriptions();
+
+	VkPipelineVertexInputStateCreateInfo vertex_input_state = create_vertex_input_state_info(binding_description, attribute_descriptions);
+	
 	VkPipelineInputAssemblyStateCreateInfo input_assembly_state = create_input_assembly_state_info();
-	VkPipelineViewportStateCreateInfo viewport_state = create_viewport_state_info(swapchain.extent);
+
+	VkViewport viewport = {};
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = static_cast<float>(swapchain.extent.width);
+	viewport.height = static_cast<float>(swapchain.extent.height);
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+
+	VkRect2D scissor = {};
+	scissor.offset = { 0, 0 };
+	scissor.extent = swapchain.extent;
+
+	VkPipelineViewportStateCreateInfo viewport_state = create_viewport_state_info(viewport, scissor);
+	
 	VkPipelineRasterizationStateCreateInfo rasterizer = create_rasterization_state_info(polygon_mode);
 	VkPipelineMultisampleStateCreateInfo multisampler = create_multisample_state_info();
 	VkPipelineDepthStencilStateCreateInfo depth_stencil_state = create_depth_stencil_state_info();
-	VkPipelineColorBlendStateCreateInfo color_blender = create_color_blend_state_info();
+
+	VkPipelineColorBlendAttachmentState color_blend_attachment = {};
+	color_blend_attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	color_blend_attachment.blendEnable = VK_FALSE;
+
+	VkPipelineColorBlendStateCreateInfo color_blender = create_color_blend_state_info(color_blend_attachment);
 
 	VkGraphicsPipelineCreateInfo pipeline_info = {};
 	pipeline_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -44,7 +67,7 @@ VkPipeline vred::renderer::create_pipeline(const shader_stages& stages, const Vk
 	pipeline_info.subpass = 0;
 	pipeline_info.basePipelineHandle = VK_NULL_HANDLE;
 
-	VkPipeline pipeline;
+	VkPipeline pipeline = VK_NULL_HANDLE;
 	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipeline_info, nullptr, &pipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
 
@@ -68,29 +91,32 @@ VkPipelineLayout vred::renderer::create_pipeline_layout(const VkDevice& device, 
 	return pipeline_layout;
 }
 
-VkPipelineShaderStageCreateInfo vred::renderer::create_shader_stage_info(VkShaderStageFlagBits stage, VkShaderModule shader, const std::string& entry_point)
+void vred::renderer::destroy_pipeline(const vred::renderer::ipipeline& pipeline, const VkDevice& device)
+{
+	vkDestroyPipeline(device, pipeline.handle, nullptr);
+	vkDestroyPipelineLayout(device, pipeline.layout, nullptr);
+}
+
+VkPipelineShaderStageCreateInfo vred::renderer::create_shader_stage_info(VkShaderStageFlagBits stage, VkShaderModule shader)
 {
 	VkPipelineShaderStageCreateInfo shader_stage_info = {};
 	shader_stage_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	shader_stage_info.stage = stage;
 	shader_stage_info.module = shader;
-	shader_stage_info.pName = entry_point.c_str();
+	shader_stage_info.pName = "main";
 
     return shader_stage_info;
 }
 
-VkPipelineVertexInputStateCreateInfo vred::renderer::create_vertex_input_state_info()
+VkPipelineVertexInputStateCreateInfo vred::renderer::create_vertex_input_state_info(const VkVertexInputBindingDescription& binding, const std::vector<VkVertexInputAttributeDescription>& attributes)
 {
-	VkVertexInputBindingDescription binding_description = Vertex::getBindingDescription();
-	std::array<VkVertexInputAttributeDescription, 4> attribute_descriptions = Vertex::getAttributeDescriptions();
-
 	VkPipelineVertexInputStateCreateInfo vertex_input_info = {};
 	vertex_input_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertex_input_info.pNext = nullptr;
 	vertex_input_info.vertexBindingDescriptionCount = 1;
-	vertex_input_info.vertexAttributeDescriptionCount = static_cast<uint32_t>(attribute_descriptions.size());
-	vertex_input_info.pVertexBindingDescriptions = &binding_description;
-	vertex_input_info.pVertexAttributeDescriptions = attribute_descriptions.data();
+	vertex_input_info.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributes.size());
+	vertex_input_info.pVertexBindingDescriptions = &binding;
+	vertex_input_info.pVertexAttributeDescriptions = attributes.data();
 
 	return vertex_input_info;
 }
@@ -105,20 +131,8 @@ VkPipelineInputAssemblyStateCreateInfo vred::renderer::create_input_assembly_sta
 	return input_assembly_state;
 }
 
-VkPipelineViewportStateCreateInfo vred::renderer::create_viewport_state_info(VkExtent2D extent)
+VkPipelineViewportStateCreateInfo vred::renderer::create_viewport_state_info(const VkViewport& viewport, const VkRect2D& scissor)
 {
-	VkViewport viewport = {};
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.width = static_cast<float>(extent.width);
-	viewport.height = static_cast<float>(extent.height);
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-
-	VkRect2D scissor = {};
-	scissor.offset = { 0, 0 };
-	scissor.extent = extent;
-
 	VkPipelineViewportStateCreateInfo viewport_state_info = {};
 	viewport_state_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	viewport_state_info.viewportCount = 1;
@@ -167,12 +181,8 @@ VkPipelineDepthStencilStateCreateInfo vred::renderer::create_depth_stencil_state
 	return depth_stencil_info;
 }
 
-VkPipelineColorBlendStateCreateInfo vred::renderer::create_color_blend_state_info()
+VkPipelineColorBlendStateCreateInfo vred::renderer::create_color_blend_state_info(const VkPipelineColorBlendAttachmentState& color_blend_attachment)
 {
-	VkPipelineColorBlendAttachmentState color_blend_attachment = {};
-	color_blend_attachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	color_blend_attachment.blendEnable = VK_FALSE;
-
 	VkPipelineColorBlendStateCreateInfo color_blending = {};
 	color_blending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	color_blending.logicOpEnable = VK_FALSE;

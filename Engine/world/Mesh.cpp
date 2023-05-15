@@ -1,5 +1,7 @@
 #include "Mesh.h"
 
+#include "../renderer/vpipeline.h"
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::shared_ptr<Renderer> p_renderer) : m_vertices(vertices), m_indices(indices), mp_renderer(p_renderer)
 {
 	m_buffer.fill({ VK_NULL_HANDLE });
@@ -22,9 +24,11 @@ Mesh::~Mesh()
 	}
 }
 
-void Mesh::draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame)
+void Mesh::draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descriptorset, const int32_t frame, const std::unordered_map<std::string, vred::renderer::ipipeline>& pipelines)
 {
-	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().handle);
+	vred::renderer::ipipeline pipeline = pipelines.find(p_material->pipeline())->second;
+	
+	vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle);
 
 	const VkBuffer vertex_buffer[] = { m_buffer[frame].vertex };
 	const VkDeviceSize offsets[] = { 0 };
@@ -34,7 +38,7 @@ void Mesh::draw(const VkCommandBuffer& command_buffer, VkDescriptorSet& descript
 
 	const VkDescriptorSet sets[] = { p_material->getDescriptorSet(), descriptorset };
 
-	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 2, sets, 0, nullptr);
+	vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout, 0, 2, sets, 0, nullptr);
 	// vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, p_material->GetPipeline().layout, 0, 1, , 0, nullptr);
 
 	vkCmdDrawIndexed(command_buffer, static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
