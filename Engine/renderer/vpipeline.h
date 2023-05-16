@@ -16,6 +16,7 @@ namespace vred::renderer
 		std::string fragment;
 
 		VkPolygonMode polygon_mode = VkPolygonMode::VK_POLYGON_MODE_FILL;
+		bool precompiled = true;
 	};
 
 	VkPipeline create_pipeline(const shader_stages& stages, const VkPipelineLayout& layout, const VkDevice& device, const iswapchain& swapchain);

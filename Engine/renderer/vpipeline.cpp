@@ -10,13 +10,32 @@ VkPipeline vred::renderer::create_pipeline(const shader_stages& stages, const Vk
 	// shader stages
 	std::vector<VkPipelineShaderStageCreateInfo> shader_stages;
 
-	std::vector<char> vertex_shader_code = read_shader_file(stages.vertex); // compile_shader(stages.vertex, EShLanguage::EShLangVertex);
-	VkShaderModule vertex_module = create_shader_module(vertex_shader_code, device);
-	
+	VkShaderModule vertex_module;
+	if (!stages.precompiled)
+	{
+		std::vector<uint32_t> vertex_shader_code = compile_shader(stages.vertex, shaderc_vertex_shader);
+		vertex_module = create_shader_module(vertex_shader_code.data(), vertex_shader_code.size(), device);
+	}
+	else
+	{
+		std::vector<char> vertex_shader_code = read_shader_file(stages.vertex);
+		vertex_module = create_shader_module(reinterpret_cast<const uint32_t*>(vertex_shader_code.data()), vertex_shader_code.size(), device);
+	}
+
 	shader_stages.push_back(create_shader_stage_info(VK_SHADER_STAGE_VERTEX_BIT, vertex_module));
 
-	std::vector<char> fragment_shader_code = read_shader_file(stages.fragment); // compile_shader(stages.fragment, EShLanguage::EShLangFragment);
-	VkShaderModule fragment_module = create_shader_module(fragment_shader_code, device);
+
+	VkShaderModule fragment_module;
+	if (!stages.precompiled)
+	{
+		std::vector<uint32_t> frag_shader_code = compile_shader(stages.fragment, shaderc_fragment_shader);
+		fragment_module = create_shader_module(frag_shader_code.data(), frag_shader_code.size(), device);
+	}
+	else
+	{
+		std::vector<char> frag_shader_code = read_shader_file(stages.fragment);
+		fragment_module = create_shader_module(reinterpret_cast<const uint32_t*>(frag_shader_code.data()), frag_shader_code.size(), device);
+	}
 	
 	shader_stages.push_back(create_shader_stage_info(VK_SHADER_STAGE_FRAGMENT_BIT, fragment_module));
 
