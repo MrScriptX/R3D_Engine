@@ -13,6 +13,7 @@ jobs:
     
     - name: build
       run: |
+        ls
         cmake --version
         cmake -B build -DCMAKE_BUILD_TYPE=Debug
         cmake --build build
