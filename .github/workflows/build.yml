@@ -12,8 +12,8 @@ jobs:
       run: |
         choco install vulkan-sdk
         refreshenv
-        echo VULKAN_SDK
-        echo VK_SDK_PATH
+        echo $Env:VULKAN_SDK
+        echo $Env:VK_SDK_PATH
     - name: build
       run: |
         cmake --version
