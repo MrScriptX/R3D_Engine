@@ -1,0 +1,19 @@
+name: build
+
+on: [push]
+
+jobs:
+  win:
+    runs-on: windows-2022
+
+    steps:
+    - name: dependencies
+      run: |
+        choco install vulkan-sdk
+    
+    - name: build
+      run: |
+        cmake --version
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug
+        cmake --build build
+        
