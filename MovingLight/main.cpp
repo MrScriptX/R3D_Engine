@@ -21,11 +21,11 @@ int main()
 		
 		// build pipelines
 		vred::renderer::shader_stages cube_shader_stages;
-		cube_shader_stages.vertex = "../assets/shaders/HLSL/shader.vert";
-		cube_shader_stages.fragment = "../assets/shaders/HLSL/no_texture_shader.frag";
-		// cube_shader_stages.vertex = "../assets/shaders/vert.spv";
-		// cube_shader_stages.fragment = "../assets/shaders/no_texture_shader.spv";
-		cube_shader_stages.precompiled = false;
+		// cube_shader_stages.vertex = "../assets/shaders/HLSL/shader.vert";
+		// cube_shader_stages.fragment = "../assets/shaders/HLSL/no_texture_shader.frag";
+		cube_shader_stages.vertex = "../assets/shaders/vert.spv";
+		cube_shader_stages.fragment = "../assets/shaders/no_texture_shader.spv";
+		// cube_shader_stages.precompiled = false;
 
 		std::string cube_shader = engine.create_pipeline("main", cube_shader_stages);
 

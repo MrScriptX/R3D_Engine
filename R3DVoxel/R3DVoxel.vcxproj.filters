@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="VoxelEngine">
+      <UniqueIdentifier>{fdcdd7a5-e8f9-446b-9932-84b3545f509d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{14388d98-61f9-4b04-886c-2d198d0005f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{f9d7376d-ebf9-4af9-9d5d-099f60e88247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\UI">
+      <UniqueIdentifier>{5629d4e4-88ff-457d-83d6-8de20ad1ead0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelEngine\Chunk.cpp">
+      <Filter>VoxelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelEngine\ChunkManager.cpp">
+      <Filter>VoxelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelEngine\TerrainGenerator.cpp">
+      <Filter>VoxelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\perlin.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldMenu.cpp">
+      <Filter>Core\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelEngine\Chunk.h">
+      <Filter>VoxelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelEngine\Voxel.h">
+      <Filter>VoxelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelEngine\ChunkManager.h">
+      <Filter>VoxelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelEngine\Cube.h">
+      <Filter>VoxelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelEngine\TerrainGenerator.h">
+      <Filter>VoxelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\perlin.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldMenu.h">
+      <Filter>Core\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

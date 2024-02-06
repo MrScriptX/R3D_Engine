@@ -5,22 +5,22 @@ Controller::Controller(std::shared_ptr<Camera> p_camera) : m_mouse_lock(true)
 	mp_camera = p_camera;
 
 	// Set default controls
-	std::function<void()> default_func = [this]() { mp_camera->MoveForward(4.0f); };
+	std::function<void()> default_func = [this]() { mp_camera->MoveForward(6.0f); };
 	SetKeyToFunc(GLFW_KEY_W, default_func, ActionType::R3D_HOLD);
 
-	default_func = [this]() { mp_camera->MoveBackward(4.0f); };
+	default_func = [this]() { mp_camera->MoveBackward(10.0f); };
 	SetKeyToFunc(GLFW_KEY_S, default_func, ActionType::R3D_HOLD);
 
-	default_func = [this]() { mp_camera->MoveLeft(4.0f); };
+	default_func = [this]() { mp_camera->MoveLeft(10.0f); };
 	SetKeyToFunc(GLFW_KEY_A, default_func, ActionType::R3D_HOLD);
 
-	default_func = [this]() { mp_camera->MoveRight(4.0f); };
+	default_func = [this]() { mp_camera->MoveRight(10.0f); };
 	SetKeyToFunc(GLFW_KEY_D, default_func, ActionType::R3D_HOLD);
 
-	default_func = [this]() { mp_camera->MoveUp(4.0f); };
+	default_func = [this]() { mp_camera->MoveUp(10.0f); };
 	SetKeyToFunc(GLFW_KEY_LEFT_SHIFT, default_func, ActionType::R3D_HOLD);
 
-	default_func = [this]() { mp_camera->MoveDown(4.0f); };
+	default_func = [this]() { mp_camera->MoveDown(10.0f); };
 	SetKeyToFunc(GLFW_KEY_LEFT_CONTROL, default_func, ActionType::R3D_HOLD);
 
 	m_onpress_actions = std::make_unique<std::array<std::function<void()>, 348>>();

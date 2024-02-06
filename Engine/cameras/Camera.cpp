@@ -25,7 +25,7 @@ void Camera::UpdateUBO(const float& width, const float& height, const int32_t fr
 
 void Camera::UpdatePosition(const float& dt)
 {
-	m_position += m_delta_position * dt;
+	m_position += (m_delta_position * dt);
 
 	m_delta_position = glm::vec3 { 0.f, 0.f, 0.f };
 }
