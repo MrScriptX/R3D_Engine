@@ -8,6 +8,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <mutex>
 
 #include "log_type.h"
 
