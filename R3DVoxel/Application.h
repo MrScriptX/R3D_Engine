@@ -8,7 +8,7 @@
 class Application
 {
 public:
-	Application();
+	Application() = default;
 
 	void Start();
 

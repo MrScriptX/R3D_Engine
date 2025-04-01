@@ -1,9 +1,5 @@
 #include "Application.h"
 
-Application::Application()
-{
-}
-
 void Application::Start()
 {
 	vred::settings setting;
