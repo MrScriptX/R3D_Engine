@@ -13,7 +13,7 @@ class ChunkManager
 {
 public:
 	ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, std::shared_ptr<Camera> p_camera);
-	~ChunkManager();
+	~ChunkManager() = default;
 
 	void CreateWorld();
 	void UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<Camera> p_camera);
@@ -34,8 +34,8 @@ private:
 	uint8_t m_load_radius = 10;
 	glm::vec3 m_render_position;
 
-	glm::vec3 m_render_max;
-	glm::vec3 m_render_min;
+	glm::i32vec3 m_render_max;
+	glm::i32vec3 m_render_min;
 
 	WorldMenu m_worldmenu;
 };

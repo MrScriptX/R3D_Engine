@@ -1,15 +1,14 @@
 #include "ChunkManager.h"
 
-ChunkManager::ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, std::shared_ptr<Camera> p_camera) : mp_world(pworld), mp_world_mat(p_world_mat), m_worldmenu(m_load_radius)
+#include <utility>
+
+ChunkManager::ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, std::shared_ptr<Camera> p_camera) :
+	mp_world(std::move(pworld)), mp_world_mat(std::move(p_world_mat)), m_worldmenu(m_load_radius)
 {
 	mp_terrain_generator = std::make_unique<TerrainGenerator>();
 	m_render_position = p_camera->GetPosition();
 	m_render_max = { m_render_position.x + m_load_radius, m_render_position.y + m_load_radius, m_render_position.z + m_load_radius };
 	m_render_min = { m_render_position.x - m_load_radius, m_render_position.y - m_load_radius, m_render_position.z - m_load_radius };
-}
-
-ChunkManager::~ChunkManager()
-{
 }
 
 void ChunkManager::CreateWorld()
@@ -61,9 +60,9 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 
 		m_render_min.x = m_render_min.x + 1;
 
-		create_x = static_cast<int32_t>(m_render_max.x);
-		update_xplus = static_cast<int32_t>(m_render_max.x) - 1;
-		update_xmin = static_cast<int32_t>(m_render_min.x);
+		create_x = m_render_max.x;
+		update_xplus = m_render_max.x - 1;
+		update_xmin = m_render_min.x;
 		scene_x_need_update = true;
 	}
 	else if (p_camera->GetPosition().x < m_render_position.x - Voxel::CHUNK_SIZE)
@@ -83,9 +82,9 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 
 		m_render_max.x = m_render_max.x - 1;
 
-		create_x = static_cast<int32_t>(m_render_min.x);
-		update_xplus = static_cast<int32_t>(m_render_min.x) + 1;
-		update_xmin = static_cast<int32_t>(m_render_max.x);
+		create_x = m_render_min.x;
+		update_xplus = m_render_min.x + 1;
+		update_xmin = m_render_max.x;
 		scene_x_need_update = true;
 	}
 
@@ -111,9 +110,9 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 
 		m_render_min.z = m_render_min.z + 1;
 
-		create_z = static_cast<int32_t>(m_render_max.z);
-		update_zplus = static_cast<int32_t>(m_render_max.z) - 1;
-		update_zmin = static_cast<int32_t>(m_render_min.z);
+		create_z = m_render_max.z;
+		update_zplus = m_render_max.z - 1;
+		update_zmin = m_render_min.z;
 		scene_z_need_update = true;
 	}
 	else if (p_camera->GetPosition().z < m_render_position.z - Voxel::CHUNK_SIZE)
@@ -133,9 +132,9 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 
 		m_render_max.z = m_render_max.z - 1;
 
-		create_z = static_cast<int32_t>(m_render_min.z);
-		update_zplus = static_cast<int32_t>(m_render_min.z) + 1;
-		update_zmin = static_cast<int32_t>(m_render_max.z);
+		create_z = m_render_min.z;
+		update_zplus = m_render_min.z + 1;
+		update_zmin = m_render_max.z;
 		scene_z_need_update = true;
 	}
 
@@ -175,7 +174,7 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 
 void ChunkManager::CreateNewChunk(int32_t x, int32_t y, int32_t z)
 {
-	ChunkKey key = { x, y, z };
+	const ChunkKey key = { x, y, z };
 
 	std::unique_ptr<Chunk> p_chunk = mp_terrain_generator->SetupWorld(x, y, z);
 	m_chunk_map.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, std::move(p_chunk)));
@@ -183,7 +182,7 @@ void ChunkManager::CreateNewChunk(int32_t x, int32_t y, int32_t z)
 
 void ChunkManager::DestroyChunk(const int32_t x, const int32_t y, const int32_t z)
 {
-	ChunkKey key = { x, y, z };
+	const ChunkKey key = { x, y, z };
 
 	m_chunk_map.at(key)->DeleteChunk(mp_world);
 
