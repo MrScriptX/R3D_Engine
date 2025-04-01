@@ -15,7 +15,7 @@ template<class CharT>
 struct std::formatter<LOG_TYPE, CharT>
 {
     template<typename FormatParseContext>
-	auto parse(FormatParseContext& ctx)
+	constexpr auto parse(FormatParseContext& ctx)
 	{
         /*value_format = "{:";
         for (auto it = begin(ctx); it != end(ctx); ++it) 
@@ -32,7 +32,7 @@ struct std::formatter<LOG_TYPE, CharT>
 	}
 
     template <typename FormatContext>
-    auto format(LOG_TYPE v, FormatContext& ctx)
+    auto format(LOG_TYPE v, FormatContext& ctx) const
     {
         switch (v)
         {

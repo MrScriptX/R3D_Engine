@@ -8,6 +8,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <mutex>
 
 #include "log_type.h"
 
@@ -48,7 +49,7 @@ namespace vred
 
 
 	template<typename ...Args>
-	static void Log::message(const LOG_TYPE& type, const std::string& message, Args && ...args) noexcept
+	void Log::message(const LOG_TYPE& type, const std::string& message, Args && ...args) noexcept
 	{
 		const std::string msg = std::vformat(message, std::make_format_args(args));
 		Log::message(type, msg);
