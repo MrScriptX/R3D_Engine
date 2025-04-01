@@ -54,22 +54,22 @@ const T Lookup<T>::Gradients2D[] =
     -0.38268343236509f, -0.923879532511287f, -0.923879532511287f, -0.38268343236509f, -0.923879532511287f, 0.38268343236509f, -0.38268343236509f, 0.923879532511287f,
 };
 
-static int FastFloor(float f) { return f >= 0 ? (int)f : (int)f - 1; }
+static int FastFloor(float f) { return f >= 0 ? static_cast<int>(f) : static_cast<int>(f) - 1; }
 
 class PerlinNoise
 {
 public:
     PerlinNoise(unsigned int seed);
-    ~PerlinNoise();
+    ~PerlinNoise() = default;
 
-    float perlin(float x, float y);
-    void exportppm();
+    float perlin(float x, float y) const;
+    void exportppm() const;
 
 private:
-    float dotgridgradient(int ix, int iy, float x, float y);
-    double gradiant(int hash, double x, double y);
-    double lerp(float t, float a, float b);
-    double fade(double t);
+    float dotgridgradient(int ix, int iy, float x, float y) const;
+    double gradiant(int hash, double x, double y) const;
+    double lerp(float t, float a, float b) const;
+    double fade(double t) const;
 
     std::vector<int> perm;
     int m_seed;
