@@ -93,7 +93,7 @@ void Camera::SetPosition(const glm::vec3& position)
 	m_position = position;
 }
 
-const glm::vec3& Camera::GetPosition()
+const glm::vec3& Camera::GetPosition() const
 {
 	return m_position;
 }
@@ -103,7 +103,7 @@ void Camera::SetRotation(const glm::vec3& rotation)
 	m_rotation = rotation;
 }
 
-const glm::vec3& Camera::GetRotation()
+const glm::vec3& Camera::GetRotation() const
 {
 	return m_rotation;
 }
@@ -113,7 +113,7 @@ void Camera::setPitch(const float& pitch)
 	m_pitch = pitch;
 }
 
-const float& Camera::getPitch()
+const float& Camera::getPitch() const
 {
 	return m_pitch;
 }
@@ -123,7 +123,7 @@ void Camera::setYaw(const float& yaw)
 	m_yaw = yaw;
 }
 
-const float& Camera::getYaw()
+const float& Camera::getYaw() const
 {
 	return m_yaw;
 }

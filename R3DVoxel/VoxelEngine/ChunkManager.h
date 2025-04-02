@@ -12,7 +12,7 @@
 class ChunkManager
 {
 public:
-	ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, std::shared_ptr<Camera> p_camera);
+	ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, const Camera& camera);
 	~ChunkManager() = default;
 
 	void CreateWorld();

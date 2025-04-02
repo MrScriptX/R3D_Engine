@@ -3,11 +3,11 @@
 #include <utility>
 #include <barrier>
 
-ChunkManager::ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, std::shared_ptr<Camera> p_camera) :
+ChunkManager::ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, const Camera& camera) :
 	mp_world(std::move(pworld)), mp_world_mat(std::move(p_world_mat)), m_worldmenu(m_load_radius)
 {
 	mp_terrain_generator = std::make_unique<TerrainGenerator>();
-	m_render_position = p_camera->GetPosition();
+	m_render_position = camera.GetPosition();
 	m_render_max = { m_render_position.x + m_load_radius, m_render_position.y + m_load_radius, m_render_position.z + m_load_radius };
 	m_render_min = { m_render_position.x - m_load_radius, m_render_position.y - m_load_radius, m_render_position.z - m_load_radius };
 }

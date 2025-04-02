@@ -28,16 +28,16 @@ class Camera
 	void MoveDown(const float& speed);
 
 	void SetPosition(const glm::vec3& position);
-	const glm::vec3& GetPosition();
+	const glm::vec3& GetPosition() const;
 
 	void SetRotation(const glm::vec3& rotation);
-	const glm::vec3& GetRotation();
+	const glm::vec3& GetRotation() const;
 
 	void setPitch(const float& pitch);
-	const float& getPitch();
+	const float& getPitch() const;
 
 	void setYaw(const float& yaw);
-	const float& getYaw();
+	const float& getYaw() const;
 
 	UniformBufferObject& GetUBO(const int32_t frame);
 

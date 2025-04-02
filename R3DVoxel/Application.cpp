@@ -30,7 +30,7 @@ void Application::Start()
 
 	mp_engine->GetMainCamera()->SetPosition({ 0.f, 10.f, 0.f });
 
-	ChunkManager chunk_manager(world, world_mat, mp_engine->GetMainCamera());
+	ChunkManager chunk_manager(world, world_mat, *mp_engine->GetMainCamera());
 	chunk_manager.CreateWorld();
 
 	glm::vec3 lposition = { 50.0f, 10.0f, 0.0f };
