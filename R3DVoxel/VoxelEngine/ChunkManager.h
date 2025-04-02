@@ -5,9 +5,19 @@
 #include <utility>
 #include <cmath>
 
+#include "../utils/thread_pool.hpp"
 #include "../WorldMenu.h"
 #include "Chunk.h"
 #include "TerrainGenerator.h"
+
+struct render_update_t
+{
+	int32_t created = -1;
+	int32_t update_plus = -1;
+	int32_t update_min = -1;
+
+	bool updated = false;
+};
 
 class ChunkManager
 {
@@ -17,6 +27,12 @@ public:
 
 	void CreateWorld();
 	bool UpdateWorld(const Camera& camera);
+
+	render_update_t compute_world_update_x(const Camera& camera);
+	render_update_t compute_world_update_z(const Camera& camera);
+
+	void update_world_x(int32_t create_x, int32_t update_xplus, int32_t update_xmin) const;
+	void update_world_z(int32_t create_z, int32_t update_zplus, int32_t update_zmin) const;
 
 	void CreateNewChunk(int32_t x, int32_t y, int32_t z);
 	void DestroyChunk(const int32_t x, const int32_t y, const int32_t z);
@@ -40,6 +56,8 @@ private:
 	glm::i32vec3 m_render_min;
 
 	WorldMenu m_worldmenu;
+
+	thread_pool_t& _tpool;
 };
 
 #endif

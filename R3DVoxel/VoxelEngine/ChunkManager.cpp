@@ -4,7 +4,7 @@
 #include <barrier>
 
 ChunkManager::ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, const Camera& camera) :
-	mp_world(std::move(pworld)), mp_world_mat(std::move(p_world_mat)), m_worldmenu(m_load_radius)
+	mp_world(std::move(pworld)), mp_world_mat(std::move(p_world_mat)), m_worldmenu(m_load_radius), _tpool(thread_pool_t::instance())
 {
 	mp_terrain_generator = std::make_unique<TerrainGenerator>();
 	m_render_position = camera.GetPosition();
@@ -34,20 +34,19 @@ void ChunkManager::CreateWorld()
 
 	for (int32_t x = m_render_min.x; x <= m_render_max.x; x++)
 	{
-		std::thread t([&chunks, x, &sync, this]() { 
+		auto task = [x, &chunks, &sync, this]()
+		{
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
-			
 				for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
 				{
-					// CreateNewChunk(x, y, z);
 					chunks.at({ x, y, z }) = create_chunk(x, y, z);
 				}
 			}
+			sync.arrive_and_drop();
+		};
 
-			sync.arrive_and_wait();
-		});
-		t.detach();
+		_tpool.enqueue(task);
 	}
 
 	sync.arrive_and_wait(); // wait for all chunks to be created
@@ -197,6 +196,136 @@ bool ChunkManager::UpdateWorld(const Camera& camera)
 	Watcher::WatchPosition("render min", m_render_min);
 
 	return scene_x_need_update || scene_z_need_update;
+}
+
+render_update_t ChunkManager::compute_world_update_x(const Camera& camera)
+{
+	render_update_t render_update;
+
+	if (camera.GetPosition().x > m_render_position.x + Voxel::CHUNK_SIZE)
+	{
+		m_render_position.x = camera.GetPosition().x;
+
+		m_render_max.x = m_render_max.x + 1;
+
+		for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
+		{
+			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+			{
+				CreateNewChunk(m_render_max.x, y, z);
+				DestroyChunk(m_render_min.x, y, z);
+			}
+		}
+
+		m_render_min.x = m_render_min.x + 1;
+
+		render_update.created = m_render_max.x;
+		render_update.update_plus = m_render_max.x - 1;
+		render_update.update_min = m_render_min.x;
+		render_update.updated = true;
+	}
+	else if (camera.GetPosition().x < m_render_position.x - Voxel::CHUNK_SIZE)
+	{
+		m_render_position.x = camera.GetPosition().x;
+
+		m_render_min.x = m_render_min.x - 1;
+
+		for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
+		{
+			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+			{
+				CreateNewChunk(m_render_min.x, y, z);
+				DestroyChunk(m_render_max.x, y, z);
+			}
+		}
+
+		m_render_max.x = m_render_max.x - 1;
+
+		render_update.created = m_render_min.x;
+		render_update.update_plus = m_render_min.x + 1;
+		render_update.update_min = m_render_max.x;
+		render_update.updated = true;
+	}
+
+	return render_update;
+}
+
+render_update_t ChunkManager::compute_world_update_z(const Camera& camera)
+{
+	render_update_t render_update;
+
+	if (camera.GetPosition().z > m_render_position.z + Voxel::CHUNK_SIZE)
+	{
+		m_render_position.z = camera.GetPosition().z;
+
+		m_render_max.z = m_render_max.z + 1;
+
+		for (int32_t x = m_render_min.x; x <= m_render_max.x; x++)
+		{
+			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+			{
+				CreateNewChunk(x, y, m_render_max.z);
+				DestroyChunk(x, y, m_render_min.z);
+			}
+		}
+
+		m_render_min.z = m_render_min.z + 1;
+
+		render_update.created = m_render_max.z;
+		render_update.update_plus = m_render_max.z - 1;
+		render_update.update_min = m_render_min.z;
+		render_update.updated = true;
+	}
+	else if (camera.GetPosition().z < m_render_position.z - Voxel::CHUNK_SIZE)
+	{
+		m_render_position.z = camera.GetPosition().z;
+
+		m_render_min.z = m_render_min.z - 1;
+
+		for (int32_t x = m_render_min.x; x <= m_render_max.x; x++)
+		{
+			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+			{
+				CreateNewChunk(x, y, m_render_min.z);
+				DestroyChunk(x, y, m_render_max.z);
+			}
+		}
+
+		m_render_max.z = m_render_max.z - 1;
+
+		render_update.created = m_render_min.z;
+		render_update.update_plus = m_render_min.z + 1;
+		render_update.update_min = m_render_max.z;
+		render_update.updated = true;
+	}
+
+	return render_update;
+}
+
+void ChunkManager::update_world_x(int32_t create_x, int32_t update_xplus, int32_t update_xmin) const
+{
+	for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
+	{
+		for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+		{
+			m_chunk_map.at({ create_x, y, z })->BuildChunk(m_chunk_map, mp_world, mp_world_mat);
+			m_chunk_map.at({ update_xplus, y, z })->UpdateChunk(m_chunk_map, *mp_world);
+			m_chunk_map.at({ update_xmin, y, z })->UpdateChunk(m_chunk_map, *mp_world);
+		}
+	}
+}
+
+void ChunkManager::update_world_z(int32_t create_z, int32_t update_zplus, int32_t update_zmin) const
+{
+	for (int32_t x = m_render_min.x; x <= m_render_max.x; x++)
+	{
+		for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+		{
+			m_chunk_map.at({ x, y, create_z })->BuildChunk(m_chunk_map, mp_world, mp_world_mat);
+			m_chunk_map.at({ x, y, update_zplus })->UpdateChunk(m_chunk_map, *mp_world);
+			m_chunk_map.at({ x, y, update_zmin })->UpdateChunk(m_chunk_map, *mp_world);
+		}
+	}
 }
 
 void ChunkManager::CreateNewChunk(int32_t x, int32_t y, int32_t z)

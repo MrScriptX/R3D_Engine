@@ -2,13 +2,7 @@
 
 #include <type_traits>
 
-thread_pool_t& thread_pool_t::instance()
-{
-	static thread_pool_t instance;
-	return instance;
-}
-
-void thread_pool_t::init(size_t n)
+thread_pool_t::thread_pool_t(size_t n)
 {
 	workers.reserve(n);
 	for (size_t i = 0; i < n; ++i)
@@ -17,7 +11,7 @@ void thread_pool_t::init(size_t n)
 	}
 }
 
-void thread_pool_t::end()
+thread_pool_t::~thread_pool_t()
 {
 	{
 		std::unique_lock<std::mutex> lock(mutex);
@@ -29,6 +23,12 @@ void thread_pool_t::end()
 	{
 		worker.join();
 	}
+}
+
+thread_pool_t& thread_pool_t::instance()
+{
+	static thread_pool_t instance;
+	return instance;
 }
 
 void thread_pool_t::worker()
@@ -52,21 +52,4 @@ void thread_pool_t::worker()
 		}
 		cur_task();
 	}
-}
-
-template <typename F, typename... Args>
-inline auto thread_pool_t::enqueue(F&& f, Args&&... args) -> std::future<decltype(f(args...))>
-{
-	auto func = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
-	auto encapsulated_ptr = std::make_shared<std::packaged_task<decltype(f(args...))()>>(func);
-
-	std::future<std::invoke_result<F, Args...>> future_object = encapsulated_ptr->get_future();
-	{
-		std::unique_lock<std::mutex> lock(mutex);
-		queue.emplace([encapsulated_ptr]() {
-			(*encapsulated_ptr)(); // execute the fx
-		});
-	}
-	cv.notify_one();
-	return future_object;
 }
