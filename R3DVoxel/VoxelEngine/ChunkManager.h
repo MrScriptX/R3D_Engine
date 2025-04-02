@@ -24,6 +24,8 @@ public:
 	WorldMenu& GetMenu();
 
 private:
+	std::unique_ptr<Chunk> create_chunk(const int32_t& x, const int32_t& y, const int32_t& z) const;
+
 	std::unique_ptr<TerrainGenerator> mp_terrain_generator;
 
 	std::shared_ptr<GameObject> mp_world;

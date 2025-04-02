@@ -1,6 +1,7 @@
 #include "ChunkManager.h"
 
 #include <utility>
+#include <barrier>
 
 ChunkManager::ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<Material> p_world_mat, std::shared_ptr<Camera> p_camera) :
 	mp_world(std::move(pworld)), mp_world_mat(std::move(p_world_mat)), m_worldmenu(m_load_radius)
@@ -13,16 +14,43 @@ ChunkManager::ChunkManager(std::shared_ptr<GameObject> pworld, std::shared_ptr<M
 
 void ChunkManager::CreateWorld()
 {
+	// preallocate memory for chunks
+	std::map<ChunkKey, std::unique_ptr<Chunk>> chunks;
 	for (int32_t x = m_render_min.x; x <= m_render_max.x; x++)
 	{
 		for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 		{
 			for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
 			{
-				CreateNewChunk(x, y, z);
+				const ChunkKey key = { .x = x, .y = y, .z = z};
+				chunks.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, nullptr));
 			}
 		}
 	}
+
+	// compute chunks in parallel
+	const int64_t num_threads = (m_render_max.x - m_render_min.x) + 2;
+	std::barrier sync(num_threads, [this, &chunks]() noexcept { m_chunk_map = std::move(chunks); });
+
+	for (int32_t x = m_render_min.x; x <= m_render_max.x; x++)
+	{
+		std::thread t([&chunks, x, &sync, this]() { 
+			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+			{
+			
+				for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
+				{
+					// CreateNewChunk(x, y, z);
+					chunks.at({ x, y, z }) = create_chunk(x, y, z);
+				}
+			}
+
+			sync.arrive_and_wait();
+		});
+		t.detach();
+	}
+
+	sync.arrive_and_wait(); // wait for all chunks to be created
 
 	for (int32_t x = m_render_min.x; x <= m_render_max.x; x++)
 	{
@@ -193,4 +221,11 @@ void ChunkManager::DestroyChunk(const int32_t x, const int32_t y, const int32_t 
 WorldMenu& ChunkManager::GetMenu()
 {
 	return m_worldmenu;
+}
+
+std::unique_ptr<Chunk> ChunkManager::create_chunk(const int32_t& x, const int32_t& y, const int32_t& z) const
+{
+	const ChunkKey key = { .x = x, .y = y, .z = z};
+	auto p_chunk = mp_terrain_generator->compute_world_chunk(x, y, z);
+	return std::move(p_chunk);
 }
