@@ -64,16 +64,16 @@ void ChunkManager::CreateWorld()
 	}
 }
 
-void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<Camera> p_camera)
+bool ChunkManager::UpdateWorld(const Camera& camera)
 {
 	bool scene_x_need_update = false;
 
 	int32_t create_x = -1;
 	int32_t update_xplus = -1;
 	int32_t update_xmin = -1;
-	if (p_camera->GetPosition().x > m_render_position.x + Voxel::CHUNK_SIZE)
+	if (camera.GetPosition().x > m_render_position.x + Voxel::CHUNK_SIZE)
 	{
-		m_render_position.x = p_camera->GetPosition().x;
+		m_render_position.x = camera.GetPosition().x;
 
 		m_render_max.x = m_render_max.x + 1;
 
@@ -93,9 +93,9 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 		update_xmin = m_render_min.x;
 		scene_x_need_update = true;
 	}
-	else if (p_camera->GetPosition().x < m_render_position.x - Voxel::CHUNK_SIZE)
+	else if (camera.GetPosition().x < m_render_position.x - Voxel::CHUNK_SIZE)
 	{
-		m_render_position.x = p_camera->GetPosition().x;
+		m_render_position.x = camera.GetPosition().x;
 
 		m_render_min.x = m_render_min.x - 1;
 
@@ -121,9 +121,9 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 	int32_t create_z = -1;
 	int32_t update_zplus = -1;
 	int32_t update_zmin = -1;
-	if (p_camera->GetPosition().z > m_render_position.z + Voxel::CHUNK_SIZE)
+	if (camera.GetPosition().z > m_render_position.z + Voxel::CHUNK_SIZE)
 	{
-		m_render_position.z = p_camera->GetPosition().z;
+		m_render_position.z = camera.GetPosition().z;
 
 		m_render_max.z = m_render_max.z + 1;
 
@@ -143,9 +143,9 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 		update_zmin = m_render_min.z;
 		scene_z_need_update = true;
 	}
-	else if (p_camera->GetPosition().z < m_render_position.z - Voxel::CHUNK_SIZE)
+	else if (camera.GetPosition().z < m_render_position.z - Voxel::CHUNK_SIZE)
 	{
-		m_render_position.z = p_camera->GetPosition().z;
+		m_render_position.z = camera.GetPosition().z;
 
 		m_render_min.z = m_render_min.z - 1;
 
@@ -173,8 +173,8 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
 				m_chunk_map.at({ create_x, y, z })->BuildChunk(m_chunk_map, mp_world, mp_world_mat);
-				m_chunk_map.at({ update_xplus, y, z })->UpdateChunk(m_chunk_map, mp_world);
-				m_chunk_map.at({ update_xmin, y, z })->UpdateChunk(m_chunk_map, mp_world);
+				m_chunk_map.at({ update_xplus, y, z })->UpdateChunk(m_chunk_map, *mp_world);
+				m_chunk_map.at({ update_xmin, y, z })->UpdateChunk(m_chunk_map, *mp_world);
 			}
 		}
 	}
@@ -186,18 +186,17 @@ void ChunkManager::UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<C
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
 				m_chunk_map.at({ x, y, create_z })->BuildChunk(m_chunk_map, mp_world, mp_world_mat);
-				m_chunk_map.at({ x, y, update_zplus })->UpdateChunk(m_chunk_map, mp_world);
-				m_chunk_map.at({ x, y, update_zmin })->UpdateChunk(m_chunk_map, mp_world);
+				m_chunk_map.at({ x, y, update_zplus })->UpdateChunk(m_chunk_map, *mp_world);
+				m_chunk_map.at({ x, y, update_zmin })->UpdateChunk(m_chunk_map, *mp_world);
 			}
 		}
 	}
 
-	if (scene_x_need_update || scene_z_need_update)
-		p_scene->ToUpdate();
-
 	Watcher::WatchPosition("render position", m_render_position);
 	Watcher::WatchPosition("render max", m_render_max);
 	Watcher::WatchPosition("render min", m_render_min);
+
+	return scene_x_need_update || scene_z_need_update;
 }
 
 void ChunkManager::CreateNewChunk(int32_t x, int32_t y, int32_t z)

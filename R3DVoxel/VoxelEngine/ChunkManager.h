@@ -16,7 +16,7 @@ public:
 	~ChunkManager() = default;
 
 	void CreateWorld();
-	void UpdateWorld(std::shared_ptr<Scene> p_scene, std::shared_ptr<Camera> p_camera);
+	bool UpdateWorld(const Camera& camera);
 
 	void CreateNewChunk(int32_t x, int32_t y, int32_t z);
 	void DestroyChunk(const int32_t x, const int32_t y, const int32_t z);

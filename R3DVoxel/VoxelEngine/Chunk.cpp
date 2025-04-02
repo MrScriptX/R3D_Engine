@@ -85,7 +85,7 @@ void Chunk::BuildChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_m
 	world->bindMatToMesh(m_mesh_id, mat);
 }
 
-void Chunk::UpdateChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map, std::shared_ptr<GameObject> world)
+void Chunk::UpdateChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map, GameObject& world)
 {
 	// mesh should be updated only m_mesh_id != -1 otherwise, it should be built
 	if (m_active_voxel == false || m_mesh_id == -1)
@@ -158,7 +158,7 @@ void Chunk::UpdateChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_
 		}
 	}
 
-	world->UpdateMesh(m_mesh_id, mesh.vertices, mesh.indices);
+	world.UpdateMesh(m_mesh_id, mesh.vertices, mesh.indices);
 }
 
 void Chunk::DeleteChunk(std::shared_ptr<GameObject> world)
@@ -177,14 +177,19 @@ void Chunk::SetBlockType(const uint32_t x, const uint32_t y, const uint32_t z, c
 	m_blocktypes.at(x + y * Voxel::CHUNK_SIZE + z * Voxel::CHUNK_SIZE_SQR) = type;
 }
 
-bool Chunk::GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z)
+bool Chunk::GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const
 {
 	return m_active_voxel[x + y * Voxel::CHUNK_SIZE + z * Voxel::CHUNK_SIZE_SQR];
 }
 
-glm::vec3 Chunk::GetPosition()
+glm::vec3 Chunk::GetPosition() const
 {
 	return m_position;
+}
+
+int32_t Chunk::mesh_id() const
+{
+	return m_mesh_id;
 }
 
 void Chunk::CreateCube(Geometry& mesh, uint32_t x, uint32_t y, uint32_t z)

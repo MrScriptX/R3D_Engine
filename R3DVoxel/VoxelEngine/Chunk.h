@@ -39,15 +39,16 @@ public:
 	Chunk(const int32_t posx, const int32_t posy, const int32_t posz);
 
 	void BuildChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map, std::shared_ptr<GameObject> world, std::shared_ptr<Material> mat);
-	void UpdateChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map, std::shared_ptr<GameObject> world);
+	void UpdateChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map, GameObject& world);
 	void DeleteChunk(std::shared_ptr<GameObject> world);
 
 	void SetVoxel(const uint32_t x, const uint32_t y, const uint32_t z);
 	void SetBlockType(const uint32_t x, const uint32_t y, const uint32_t z, const TBlock type);
 
-	bool GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z);
+	bool GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const;
 
-	glm::vec3 GetPosition();
+	glm::vec3 GetPosition() const;
+	int32_t mesh_id() const;
 
 private:
 	void CreateCube(Geometry& mesh, uint32_t x, uint32_t y, uint32_t z);
