@@ -149,6 +149,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="utils\perlin.cpp" />
+    <ClCompile Include="utils\thread_pool.cpp" />
     <ClCompile Include="VoxelEngine\Chunk.cpp" />
     <ClCompile Include="VoxelEngine\ChunkManager.cpp" />
     <ClCompile Include="VoxelEngine\TerrainGenerator.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="utils\perlin.h" />
+    <ClInclude Include="utils\thread_pool.hpp" />
     <ClInclude Include="VoxelEngine\Chunk.h" />
     <ClInclude Include="VoxelEngine\ChunkManager.h" />
     <ClInclude Include="VoxelEngine\Cube.h" />

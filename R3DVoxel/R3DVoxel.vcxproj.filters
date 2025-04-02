@@ -40,6 +40,9 @@
     <ClCompile Include="WorldMenu.cpp">
       <Filter>Core\UI</Filter>
     </ClCompile>
+    <ClCompile Include="utils\thread_pool.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -65,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="WorldMenu.h">
       <Filter>Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\thread_pool.hpp">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
