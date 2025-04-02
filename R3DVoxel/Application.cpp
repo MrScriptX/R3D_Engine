@@ -66,7 +66,9 @@ void Application::Start()
 
 	do
 	{
-		chunk_manager.UpdateWorld(scene, mp_engine->GetMainCamera());
+		const bool updated = chunk_manager.UpdateWorld(*mp_engine->GetMainCamera());
+		if (updated)
+			scene->ToUpdate();
 
 		Watcher::WatchPosition("camera", mp_engine->GetMainCamera()->GetPosition());
 
