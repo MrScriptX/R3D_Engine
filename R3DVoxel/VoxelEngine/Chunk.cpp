@@ -167,10 +167,10 @@ void Chunk::DeleteChunk(std::shared_ptr<GameObject> world)
 		world->RemoveMesh(m_mesh_id);
 }
 
-std::optional<Geometry> Chunk::compute_mesh(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map)
+Geometry Chunk::compute_mesh(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map)
 {
-	if (m_active_voxel == false)
-		return {};
+	/*if (m_active_voxel == false)
+		return {};*/
 
 	m_visible_voxel = { true };
 
@@ -192,8 +192,8 @@ std::optional<Geometry> Chunk::compute_mesh(const std::map<ChunkKey, std::unique
 					{
 						// check if face is hidden by other chunk
 						m_visible_voxel[voxel].xneg =
-						    chunk_map.at({ static_cast<int32_t>(m_position.x) - 1, static_cast<int32_t>(m_position.y), static_cast<int32_t>(m_position.z) })
-						        ->GetVoxel(x + Voxel::CHUNK_SIZE - 1, y, z);
+							chunk_map.at({ static_cast<int32_t>(m_position.x) - 1, static_cast<int32_t>(m_position.y), static_cast<int32_t>(m_position.z) })
+								->GetVoxel(x + Voxel::CHUNK_SIZE - 1, y, z);
 					}
 
 					if (x < Voxel::CHUNK_SIZE - 1)
@@ -203,8 +203,8 @@ std::optional<Geometry> Chunk::compute_mesh(const std::map<ChunkKey, std::unique
 					else if (chunk_map.find({ static_cast<int32_t>(m_position.x) + 1, static_cast<int32_t>(m_position.y), static_cast<int32_t>(m_position.z) }) != chunk_map.end())
 					{
 						m_visible_voxel[voxel].xpos =
-						    chunk_map.at({ static_cast<int32_t>(m_position.x) + 1, static_cast<int32_t>(m_position.y), static_cast<int32_t>(m_position.z) })
-						        ->GetVoxel(x - Voxel::CHUNK_SIZE + 1, y, z);
+							chunk_map.at({ static_cast<int32_t>(m_position.x) + 1, static_cast<int32_t>(m_position.y), static_cast<int32_t>(m_position.z) })
+								->GetVoxel(x - Voxel::CHUNK_SIZE + 1, y, z);
 					}
 
 					if (y > 0)
@@ -256,6 +256,11 @@ void Chunk::render_mesh(const Geometry& mesh, GameObject& world, std::shared_ptr
 	world.bindMatToMesh(m_mesh_id, mat);
 }
 
+void Chunk::update_mesh(const Geometry& mesh, GameObject& world)
+{
+	world.UpdateMesh(m_mesh_id, mesh.vertices, mesh.indices);
+}
+
 void Chunk::SetVoxel(const uint32_t x, const uint32_t y, const uint32_t z)
 {
 	m_active_voxel.set(x + y * Voxel::CHUNK_SIZE + z * Voxel::CHUNK_SIZE_SQR, true);
@@ -269,6 +274,11 @@ void Chunk::SetBlockType(const uint32_t x, const uint32_t y, const uint32_t z, c
 bool Chunk::GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const
 {
 	return m_active_voxel[x + y * Voxel::CHUNK_SIZE + z * Voxel::CHUNK_SIZE_SQR];
+}
+
+bool Chunk::is_active() const
+{
+	return m_active_voxel.any();
 }
 
 glm::vec3 Chunk::GetPosition() const

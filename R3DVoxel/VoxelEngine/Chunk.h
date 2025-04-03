@@ -42,8 +42,9 @@ public:
 	void UpdateChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map, GameObject& world);
 	void DeleteChunk(std::shared_ptr<GameObject> world);
 
-	std::optional<Geometry> compute_mesh(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map);
+	Geometry compute_mesh(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map);
 	void render_mesh(const Geometry& mesh, GameObject& world, std::shared_ptr<Material> mat);
+	void update_mesh(const Geometry& mesh, GameObject& world);
 
 
 
@@ -51,6 +52,7 @@ public:
 	void SetBlockType(const uint32_t x, const uint32_t y, const uint32_t z, const TBlock type);
 
 	bool GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const;
+	bool is_active() const;
 
 	glm::vec3 GetPosition() const;
 	int32_t mesh_id() const;

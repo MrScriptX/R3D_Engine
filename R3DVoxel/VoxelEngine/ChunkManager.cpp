@@ -337,12 +337,28 @@ void ChunkManager::update_world_x(int32_t create_x, int32_t update_xplus, int32_
 		for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 		{
 			// m_chunk_map.at({ create_x, y, z })->BuildChunk(m_chunk_map, mp_world, mp_world_mat);
-			auto mesh = m_chunk_map.at({ create_x, y, z })->compute_mesh(m_chunk_map);
-			if (mesh.has_value())
-				m_chunk_map.at({ create_x, y, z })->render_mesh(mesh.value(), *mp_world, mp_world_mat);
+			Chunk* new_chunk = m_chunk_map.at({ create_x, y, z }).get();
+			if (new_chunk->is_active())
+			{
+				auto mesh = new_chunk->compute_mesh(m_chunk_map);
+				new_chunk->render_mesh(mesh, *mp_world, mp_world_mat);
+			}
 			
-			m_chunk_map.at({ update_xplus, y, z })->UpdateChunk(m_chunk_map, *mp_world);
-			m_chunk_map.at({ update_xmin, y, z })->UpdateChunk(m_chunk_map, *mp_world);
+			// m_chunk_map.at({ update_xplus, y, z })->UpdateChunk(m_chunk_map, *mp_world);
+			Chunk* front_chunk = m_chunk_map.at({ update_xplus, y, z }).get();
+			if (front_chunk->is_active() || front_chunk->mesh_id() != -1)
+			{
+				auto mesh = front_chunk->compute_mesh(m_chunk_map);
+				front_chunk->update_mesh(mesh, *mp_world);
+			}
+			
+			// m_chunk_map.at({ update_xmin, y, z })->UpdateChunk(m_chunk_map, *mp_world);
+			Chunk* back_chunk = m_chunk_map.at({ update_xmin, y, z }).get();
+			if (back_chunk->is_active() || back_chunk->mesh_id() != -1)
+			{
+				auto mesh = back_chunk->compute_mesh(m_chunk_map);
+				back_chunk->update_mesh(mesh, *mp_world);
+			}
 		}
 	}
 }
