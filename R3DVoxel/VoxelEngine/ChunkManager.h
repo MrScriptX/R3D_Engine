@@ -31,6 +31,9 @@ public:
 	render_update_t compute_world_update_x(const Camera& camera);
 	render_update_t compute_world_update_z(const Camera& camera);
 
+	std::map<ChunkKey, Geometry> compute_meshes(int32_t create_x, int32_t update_xplus, int32_t update_xmin);
+	void render_meshes(const std::map<ChunkKey, Geometry>& meshes, int32_t create_x, int32_t update_xplus, int32_t update_xmin);
+
 	void update_world_x(int32_t create_x, int32_t update_xplus, int32_t update_xmin) const;
 	void update_world_z(int32_t create_z, int32_t update_zplus, int32_t update_zmin) const;
 
