@@ -42,6 +42,11 @@ public:
 	void UpdateChunk(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map, GameObject& world);
 	void DeleteChunk(std::shared_ptr<GameObject> world);
 
+	std::optional<Geometry> compute_mesh(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map);
+	void render_mesh(const Geometry& mesh, GameObject& world, std::shared_ptr<Material> mat);
+
+
+
 	void SetVoxel(const uint32_t x, const uint32_t y, const uint32_t z);
 	void SetBlockType(const uint32_t x, const uint32_t y, const uint32_t z, const TBlock type);
 
