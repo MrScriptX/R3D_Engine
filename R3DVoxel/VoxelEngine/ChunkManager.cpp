@@ -208,12 +208,22 @@ render_update_t ChunkManager::compute_world_update_x(const Camera& camera)
 
 		m_render_max.x = m_render_max.x + 1;
 
+		// preallocate memory for chunks
 		for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
 		{
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
-				CreateNewChunk(m_render_max.x, y, z);
-				DestroyChunk(m_render_min.x, y, z);
+				const ChunkKey key = { .x = m_render_max.x, .y = y, .z = z };
+				_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, nullptr));
+			}
+		}
+
+		for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
+		{
+			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+			{
+				_setup_list.at({ m_render_max.x, y, z }) = create_chunk(m_render_max.x, y, z);
+				// DestroyChunk(m_render_min.x, y, z);
 			}
 		}
 
@@ -230,12 +240,22 @@ render_update_t ChunkManager::compute_world_update_x(const Camera& camera)
 
 		m_render_min.x = m_render_min.x - 1;
 
+		// preallocate memory for chunks
 		for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
 		{
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
-				CreateNewChunk(m_render_min.x, y, z);
-				DestroyChunk(m_render_max.x, y, z);
+				const ChunkKey key = { .x = m_render_min.x, .y = y, .z = z };
+				_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, nullptr));
+			}
+		}
+
+		for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
+		{
+			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
+			{
+				_setup_list.at({ m_render_min.x, y, z }) = create_chunk(m_render_min.x, y, z);
+				// DestroyChunk(m_render_max.x, y, z);
 			}
 		}
 
@@ -326,6 +346,28 @@ void ChunkManager::update_world_z(int32_t create_z, int32_t update_zplus, int32_
 			m_chunk_map.at({ x, y, update_zmin })->UpdateChunk(m_chunk_map, *mp_world);
 		}
 	}
+}
+
+void ChunkManager::copy_to_render()
+{
+	for (auto& [key, chunk] : _setup_list)
+	{
+		if (chunk)
+		{
+			m_chunk_map.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, std::move(chunk)));
+		}
+	}
+
+	for (auto& [key, chunk] : _destroy_list)
+	{
+		if (chunk)
+		{
+			m_chunk_map.erase(key);
+		}
+	}
+
+	_setup_list.clear();
+	_destroy_list.clear();
 }
 
 void ChunkManager::CreateNewChunk(int32_t x, int32_t y, int32_t z)

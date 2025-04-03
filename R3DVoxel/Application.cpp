@@ -68,13 +68,16 @@ void Application::Start()
 	{
 		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera());
 		if (update_x.updated)
+		{
+			chunk_manager.copy_to_render();
 			chunk_manager.update_world_x(update_x.created, update_x.update_plus, update_x.update_min);
+		}
 
-		const auto update_z = chunk_manager.compute_world_update_z(*mp_engine->GetMainCamera());
+		/* const auto update_z = chunk_manager.compute_world_update_z(*mp_engine->GetMainCamera());
 		if (update_z.updated)
-			chunk_manager.update_world_z(update_z.created, update_z.update_plus, update_z.update_min);
+			chunk_manager.update_world_z(update_z.created, update_z.update_plus, update_z.update_min);*/
 
-		if (update_x.updated || update_z.updated)
+		if (update_x.updated /* || update_z.updated */)
 			scene->ToUpdate();
 
 		Watcher::WatchPosition("camera", mp_engine->GetMainCamera()->GetPosition());

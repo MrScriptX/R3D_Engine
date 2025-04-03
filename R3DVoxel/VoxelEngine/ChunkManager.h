@@ -34,6 +34,8 @@ public:
 	void update_world_x(int32_t create_x, int32_t update_xplus, int32_t update_xmin) const;
 	void update_world_z(int32_t create_z, int32_t update_zplus, int32_t update_zmin) const;
 
+	void copy_to_render();
+
 	void CreateNewChunk(int32_t x, int32_t y, int32_t z);
 	void DestroyChunk(const int32_t x, const int32_t y, const int32_t z);
 
@@ -47,8 +49,10 @@ private:
 	std::shared_ptr<GameObject> mp_world;
 	std::shared_ptr<Material> mp_world_mat;
 
-	std::map<ChunkKey, std::unique_ptr<Chunk>> m_setup_list;
+	std::map<ChunkKey, std::unique_ptr<Chunk>> _setup_list;
+	std::map<ChunkKey, std::unique_ptr<Chunk>> _destroy_list;
 	std::map<ChunkKey, std::unique_ptr<Chunk>> m_chunk_map;
+
 	uint8_t m_load_radius = 10;
 	glm::vec3 m_render_position;
 

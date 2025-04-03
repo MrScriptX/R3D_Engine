@@ -21,6 +21,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MovingLight", "MovingLight\
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "R3DVoxel", "R3DVoxel\R3DVoxel.vcxproj", "{E129D7F0-3D7C-4F89-8034-30B8F0E20A14}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4401C86B-984C-4184-A0A5-33586F893073} = {4401C86B-984C-4184-A0A5-33586F893073}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
