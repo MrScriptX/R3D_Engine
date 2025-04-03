@@ -462,13 +462,13 @@ void ChunkManager::copy_to_render()
 {
 	for (auto& [key, chunk] : _setup_list)
 	{
-		if (chunk && !m_chunk_map.contains(key))
+		if (chunk && !m_chunk_map.contains(key)) // should make a simple list of keys of created chunks to prevent lookup
 		{
 			m_chunk_map.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, std::move(chunk)));
 		}
 	}
 
-	for (auto& [key, chunk] : _destroy_list)
+	for (auto& [key, chunk] : _destroy_list) // maybe store pointers to be deleted (prevents lookup in map)
 	{
 		if (chunk)
 		{

@@ -66,12 +66,12 @@ void Application::Start()
 
 	do
 	{
-		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera());
+		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera()); // secondary thread
 		if (update_x.updated)
 		{
-			auto meshes = chunk_manager.compute_meshes(update_x.created, update_x.update_plus, update_x.update_min);
-			chunk_manager.copy_to_render();
-			chunk_manager.render_meshes(meshes, update_x.created, update_x.update_plus, update_x.update_min);
+			auto meshes = chunk_manager.compute_meshes(update_x.created, update_x.update_plus, update_x.update_min); // secondary thread
+			chunk_manager.copy_to_render(); // sync threads here
+			chunk_manager.render_meshes(meshes, update_x.created, update_x.update_plus, update_x.update_min); // main thread
 			
 			// chunk_manager.update_world_x(update_x.created, update_x.update_plus, update_x.update_min);
 		}
