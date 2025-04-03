@@ -215,15 +215,19 @@ render_update_t ChunkManager::compute_world_update_x(const Camera& camera)
 			{
 				const ChunkKey key = { .x = m_render_max.x, .y = y, .z = z };
 				_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, nullptr));
+
+				const ChunkKey destroy_key = { .x = m_render_min.x, .y = y, .z = z };
+				_destroy_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(destroy_key, nullptr));
 			}
 		}
 
+		const int32_t z_offset = std::abs(m_render_min.z);
 		for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
 		{
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
 				_setup_list.at({ m_render_max.x, y, z }) = create_chunk(m_render_max.x, y, z);
-				// DestroyChunk(m_render_min.x, y, z);
+				_destroy_list.at({ m_render_min.x, y, z }) = create_chunk(m_render_min.x, y, z);
 			}
 		}
 
@@ -247,15 +251,19 @@ render_update_t ChunkManager::compute_world_update_x(const Camera& camera)
 			{
 				const ChunkKey key = { .x = m_render_min.x, .y = y, .z = z };
 				_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, nullptr));
+
+				const ChunkKey destroy_key = { .x = m_render_max.x, .y = y, .z = z };
+				_destroy_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(destroy_key, nullptr));
 			}
 		}
 
+		const int32_t z_offset = std::abs(m_render_min.z);
 		for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
 		{
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
 				_setup_list.at({ m_render_min.x, y, z }) = create_chunk(m_render_min.x, y, z);
-				// DestroyChunk(m_render_max.x, y, z);
+				_destroy_list.at({ m_render_max.x, y, z }) = create_chunk(m_render_max.x, y, z);
 			}
 		}
 
@@ -362,6 +370,7 @@ void ChunkManager::copy_to_render()
 	{
 		if (chunk)
 		{
+			m_chunk_map.at(key)->DeleteChunk(mp_world);
 			m_chunk_map.erase(key);
 		}
 	}
