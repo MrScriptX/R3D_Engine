@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include <semaphore>
+
 void Application::Start()
 {
 	vred::settings setting;
@@ -64,9 +66,37 @@ void Application::Start()
 
 	mp_engine->RenderUI(chunk_manager.GetMenu());
 
+	auto& tpool = thread_pool_t::instance();
+
+	std::binary_semaphore single_thread { 1 };
+	std::binary_semaphore sync_data { 1 };
+
+	auto task = [&chunk_manager, &scene, &single_thread, &sync_data, this]() {
+		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera()); // secondary thread
+		if (update_x.updated)
+		{
+			auto meshes = chunk_manager.compute_meshes(update_x.created, update_x.update_plus, update_x.update_min); // secondary thread
+
+			sync_data.acquire(); // sync threads here
+			
+			chunk_manager.copy_to_render();
+			chunk_manager.render_meshes(meshes, update_x.created, update_x.update_plus, update_x.update_min);
+			scene->ToUpdate();
+
+			sync_data.release();
+		}
+
+		single_thread.release();
+	};
+
 	do
 	{
-		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera()); // secondary thread
+		if (single_thread.try_acquire())
+		{
+			tpool.enqueue(task);
+		}
+
+		/* const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera()); // secondary thread
 		if (update_x.updated)
 		{
 			auto meshes = chunk_manager.compute_meshes(update_x.created, update_x.update_plus, update_x.update_min); // secondary thread
@@ -74,18 +104,22 @@ void Application::Start()
 			chunk_manager.render_meshes(meshes, update_x.created, update_x.update_plus, update_x.update_min); // main thread
 			
 			// chunk_manager.update_world_x(update_x.created, update_x.update_plus, update_x.update_min);
-		}
+		}*/
 
 		/* const auto update_z = chunk_manager.compute_world_update_z(*mp_engine->GetMainCamera());
 		if (update_z.updated)
 			chunk_manager.update_world_z(update_z.created, update_z.update_plus, update_z.update_min);*/
 
-		if (update_x.updated /* || update_z.updated */)
-			scene->ToUpdate();
+		//if (update_x.updated /* || update_z.updated */)
+		//	scene->ToUpdate();
 
 		Watcher::WatchPosition("camera", mp_engine->GetMainCamera()->GetPosition());
 
+		sync_data.acquire();
+
 		mp_engine->update();
 		mp_engine->draw();
+
+		sync_data.release();
 	} while (!mp_engine->shouldClose());
 }
