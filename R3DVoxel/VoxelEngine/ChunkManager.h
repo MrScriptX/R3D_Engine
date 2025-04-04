@@ -53,10 +53,10 @@ private:
 
 
 	std::map<ChunkKey, std::unique_ptr<Chunk>> _setup_list;
-	std::map<ChunkKey, std::unique_ptr<Chunk>> _destroy_list;
+	std::map<ChunkKey, Chunk*> _destroy_list;
 	std::map<ChunkKey, std::unique_ptr<Chunk>> _chunk_map;
 
-	uint8_t m_load_radius = 10;
+	uint8_t m_load_radius = 12;
 	glm::vec3 m_render_position;
 
 	glm::i32vec3 m_render_max;
