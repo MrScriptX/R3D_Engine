@@ -50,10 +50,10 @@ private:
 	std::shared_ptr<GameObject> mp_world;
 	std::shared_ptr<Material> mp_world_mat;
 
+
 	std::map<ChunkKey, std::unique_ptr<Chunk>> _setup_list;
 	std::map<ChunkKey, std::unique_ptr<Chunk>> _destroy_list;
-	
-	std::map<ChunkKey, std::unique_ptr<Chunk>> m_chunk_map;
+	std::map<ChunkKey, std::unique_ptr<Chunk>> _chunk_map;
 
 	uint8_t m_load_radius = 10;
 	glm::vec3 m_render_position;

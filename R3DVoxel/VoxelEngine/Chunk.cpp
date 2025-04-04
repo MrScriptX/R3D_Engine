@@ -169,9 +169,6 @@ void Chunk::DeleteChunk(std::shared_ptr<GameObject> world)
 
 Geometry Chunk::compute_mesh(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map)
 {
-	/*if (m_active_voxel == false)
-		return {};*/
-
 	m_visible_voxel = { true };
 
 	Geometry mesh;

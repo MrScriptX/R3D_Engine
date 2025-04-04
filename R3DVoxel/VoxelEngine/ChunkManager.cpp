@@ -30,7 +30,7 @@ void ChunkManager::CreateWorld()
 
 	// compute chunks in parallel
 	const int64_t num_threads = (m_render_max.x - m_render_min.x) + 2;
-	std::barrier sync(num_threads, [this, &chunks]() noexcept { m_chunk_map = std::move(chunks); });
+	std::barrier sync(num_threads, [this, &chunks]() noexcept { _chunk_map = std::move(chunks); });
 
 	for (int32_t x = m_render_min.x; x <= m_render_max.x; x++)
 	{
@@ -57,7 +57,7 @@ void ChunkManager::CreateWorld()
 		{
 			for (int32_t z = m_render_min.z; z <= m_render_max.z; z++)
 			{
-				m_chunk_map.at({ x, y, z })->BuildChunk(m_chunk_map, mp_world, mp_world_mat);
+				_chunk_map.at({ x, y, z })->BuildChunk(_chunk_map, mp_world, mp_world_mat);
 			}
 		}
 	}
@@ -168,7 +168,7 @@ void ChunkManager::render_meshes(const std::map<ChunkKey, Geometry>& meshes, std
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
 				const ChunkKey create_key = { update.created, y, z };
-				Chunk* new_chunk = m_chunk_map.at(create_key).get();
+				Chunk* new_chunk = _chunk_map.at(create_key).get();
 				if (new_chunk->is_active())
 				{
 					auto mesh = meshes.at(create_key);
@@ -176,7 +176,7 @@ void ChunkManager::render_meshes(const std::map<ChunkKey, Geometry>& meshes, std
 				}
 
 				const ChunkKey front_key = { update.update_plus , y, z };
-				Chunk* front_chunk = m_chunk_map.at(front_key).get();
+				Chunk* front_chunk = _chunk_map.at(front_key).get();
 				if (front_chunk->is_active() || front_chunk->mesh_id() != -1)
 				{
 					auto mesh = meshes.at(front_key);
@@ -184,7 +184,7 @@ void ChunkManager::render_meshes(const std::map<ChunkKey, Geometry>& meshes, std
 				}
 
 				const ChunkKey back_key = { update.update_min, y, z };
-				Chunk* back_chunk = m_chunk_map.at(back_key).get();
+				Chunk* back_chunk = _chunk_map.at(back_key).get();
 				if (back_chunk->is_active() || back_chunk->mesh_id() != -1)
 				{
 					auto mesh = meshes.at(back_key);
@@ -202,7 +202,7 @@ void ChunkManager::render_meshes(const std::map<ChunkKey, Geometry>& meshes, std
 			for (int32_t y = m_render_min.y; y <= m_render_max.y; y++)
 			{
 				const ChunkKey create_key = { x, y, update.created };
-				Chunk* new_chunk = m_chunk_map.at(create_key).get();
+				Chunk* new_chunk = _chunk_map.at(create_key).get();
 				if (new_chunk->is_active())
 				{
 					auto mesh = meshes.at(create_key);
@@ -210,7 +210,7 @@ void ChunkManager::render_meshes(const std::map<ChunkKey, Geometry>& meshes, std
 				}
 
 				const ChunkKey front_key = { x, y, update.update_plus };
-				Chunk* front_chunk = m_chunk_map.at(front_key).get();
+				Chunk* front_chunk = _chunk_map.at(front_key).get();
 				if (front_chunk->is_active() || front_chunk->mesh_id() != -1)
 				{
 					auto mesh = meshes.at(front_key);
@@ -218,7 +218,7 @@ void ChunkManager::render_meshes(const std::map<ChunkKey, Geometry>& meshes, std
 				}
 
 				const ChunkKey back_key = { x, y, update.update_min };
-				Chunk* back_chunk = m_chunk_map.at(back_key).get();
+				Chunk* back_chunk = _chunk_map.at(back_key).get();
 				if (back_chunk->is_active() || back_chunk->mesh_id() != -1)
 				{
 					auto mesh = meshes.at(back_key);
@@ -233,9 +233,9 @@ void ChunkManager::copy_to_render()
 {
 	for (auto& [key, chunk] : _setup_list)
 	{
-		if (chunk && !m_chunk_map.contains(key)) // should make a simple list of keys of created chunks to prevent lookup
+		if (chunk && !_chunk_map.contains(key)) // should make a simple list of keys of created chunks to prevent lookup
 		{
-			m_chunk_map.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, std::move(chunk)));
+			_chunk_map.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(key, std::move(chunk)));
 		}
 	}
 
@@ -243,8 +243,8 @@ void ChunkManager::copy_to_render()
 	{
 		if (chunk)
 		{
-			m_chunk_map.at(key)->DeleteChunk(mp_world);
-			m_chunk_map.erase(key);
+			_chunk_map.at(key)->DeleteChunk(mp_world);
+			_chunk_map.erase(key);
 		}
 	}
 
@@ -275,11 +275,11 @@ render_update_t ChunkManager::update_x_forward(const Camera& camera)
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(new_key, nullptr));
 
 			const ChunkKey front_key = { .x = m_render_max.x - 1, .y = y, .z = z };
-			auto copy_front = std::make_unique<Chunk>(*m_chunk_map.at(front_key));
+			auto copy_front = std::make_unique<Chunk>(*_chunk_map.at(front_key));
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(front_key, std::move(copy_front)));
 
 			const ChunkKey back_key = { .x = m_render_min.x + 1, .y = y, .z = z };
-			auto copy_back = std::make_unique<Chunk>(*m_chunk_map.at(back_key));
+			auto copy_back = std::make_unique<Chunk>(*_chunk_map.at(back_key));
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(back_key, std::move(copy_back)));
 
 			const ChunkKey destroy_key = { .x = m_render_min.x, .y = y, .z = z };
@@ -330,11 +330,11 @@ render_update_t ChunkManager::update_x_backward(const Camera& camera)
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(new_key, nullptr));
 
 			const ChunkKey front_key = { .x = m_render_min.x + 1, .y = y, .z = z };
-			auto copy_front = std::make_unique<Chunk>(*m_chunk_map.at(front_key));
+			auto copy_front = std::make_unique<Chunk>(*_chunk_map.at(front_key));
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(front_key, std::move(copy_front)));
 
 			const ChunkKey back_key = { .x = m_render_max.x - 1, .y = y, .z = z };
-			auto copy_back = std::make_unique<Chunk>(*m_chunk_map.at(back_key));
+			auto copy_back = std::make_unique<Chunk>(*_chunk_map.at(back_key));
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(back_key, std::move(copy_back)));
 
 			const ChunkKey destroy_key = { .x = m_render_max.x, .y = y, .z = z };
@@ -392,11 +392,11 @@ render_update_t ChunkManager::update_z_forward(const Camera& camera)
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(new_key, nullptr));
 
 			const ChunkKey front_key = { .x = x, .y = y, .z = m_render_max.z - 1 };
-			auto copy_front = std::make_unique<Chunk>(*m_chunk_map.at(front_key));
+			auto copy_front = std::make_unique<Chunk>(*_chunk_map.at(front_key));
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(front_key, std::move(copy_front)));
 
 			const ChunkKey back_key = { .x = x, .y = y, .z = m_render_min.z + 1 };
-			auto copy_back = std::make_unique<Chunk>(*m_chunk_map.at(back_key));
+			auto copy_back = std::make_unique<Chunk>(*_chunk_map.at(back_key));
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(back_key, std::move(copy_back)));
 
 			const ChunkKey destroy_key = { .x = x, .y = y, .z = m_render_min.z };
@@ -449,11 +449,11 @@ render_update_t ChunkManager::update_z_backward(const Camera& camera)
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(new_key, nullptr));
 
 			const ChunkKey front_key = { .x = x, .y = y, .z = m_render_min.z + 1 };
-			auto copy_front = std::make_unique<Chunk>(*m_chunk_map.at(front_key));
+			auto copy_front = std::make_unique<Chunk>(*_chunk_map.at(front_key));
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(front_key, std::move(copy_front)));
 
 			const ChunkKey back_key = { .x = x, .y = y, .z = m_render_max.z - 1 };
-			auto copy_back = std::make_unique<Chunk>(*m_chunk_map.at(back_key));
+			auto copy_back = std::make_unique<Chunk>(*_chunk_map.at(back_key));
 			_setup_list.insert(std::pair<ChunkKey, std::unique_ptr<Chunk>>(back_key, std::move(copy_back)));
 
 			const ChunkKey destroy_key = { .x = x, .y = y, .z = m_render_max.z };
