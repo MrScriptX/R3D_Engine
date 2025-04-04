@@ -28,7 +28,7 @@ public:
 	void CreateWorld();
 	bool UpdateWorld(const Camera& camera);
 
-	render_update_t compute_world_update_x(const Camera& camera);
+	std::optional<render_update_t> compute_world_update_x(const Camera& camera);
 	render_update_t compute_world_update_z(const Camera& camera);
 
 	std::map<ChunkKey, Geometry> compute_meshes(int32_t create_x, int32_t update_xplus, int32_t update_xmin);
@@ -45,6 +45,9 @@ public:
 	WorldMenu& GetMenu();
 
 private:
+	render_update_t update_x_forward(const Camera& camera);
+	render_update_t update_x_backward(const Camera& camera);
+
 	std::unique_ptr<Chunk> create_chunk(const int32_t& x, const int32_t& y, const int32_t& z) const;
 
 	std::unique_ptr<TerrainGenerator> mp_terrain_generator;
@@ -54,6 +57,7 @@ private:
 
 	std::map<ChunkKey, std::unique_ptr<Chunk>> _setup_list;
 	std::map<ChunkKey, std::unique_ptr<Chunk>> _destroy_list;
+	
 	std::map<ChunkKey, std::unique_ptr<Chunk>> m_chunk_map;
 
 	uint8_t m_load_radius = 10;

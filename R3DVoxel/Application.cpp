@@ -73,14 +73,15 @@ void Application::Start()
 
 	auto task = [&chunk_manager, &scene, &single_thread, &sync_data, this]() {
 		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera()); // secondary thread
-		if (update_x.updated)
+		if (update_x.has_value())
 		{
-			auto meshes = chunk_manager.compute_meshes(update_x.created, update_x.update_plus, update_x.update_min); // secondary thread
+			auto result = update_x.value();
+			auto meshes = chunk_manager.compute_meshes(result.created, result.update_plus, result.update_min); // secondary thread
 
 			sync_data.acquire(); // sync threads here
 			
 			chunk_manager.copy_to_render();
-			chunk_manager.render_meshes(meshes, update_x.created, update_x.update_plus, update_x.update_min);
+			chunk_manager.render_meshes(meshes, result.created, result.update_plus, result.update_min);
 			scene->ToUpdate();
 
 			sync_data.release();
@@ -95,23 +96,6 @@ void Application::Start()
 		{
 			tpool.enqueue(task);
 		}
-
-		/* const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera()); // secondary thread
-		if (update_x.updated)
-		{
-			auto meshes = chunk_manager.compute_meshes(update_x.created, update_x.update_plus, update_x.update_min); // secondary thread
-			chunk_manager.copy_to_render(); // sync threads here
-			chunk_manager.render_meshes(meshes, update_x.created, update_x.update_plus, update_x.update_min); // main thread
-			
-			// chunk_manager.update_world_x(update_x.created, update_x.update_plus, update_x.update_min);
-		}*/
-
-		/* const auto update_z = chunk_manager.compute_world_update_z(*mp_engine->GetMainCamera());
-		if (update_z.updated)
-			chunk_manager.update_world_z(update_z.created, update_z.update_plus, update_z.update_min);*/
-
-		//if (update_x.updated /* || update_z.updated */)
-		//	scene->ToUpdate();
 
 		Watcher::WatchPosition("camera", mp_engine->GetMainCamera()->GetPosition());
 
