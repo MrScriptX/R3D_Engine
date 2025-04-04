@@ -33,6 +33,7 @@ public:
 	std::map<ChunkKey, Geometry> compute_meshes(std::optional<render_update_t> x, std::optional<render_update_t> z);
 	void render_meshes(const std::map<ChunkKey, Geometry>& meshes, std::optional<render_update_t> x, std::optional<render_update_t> z);
 
+	void copy_to_world();
 	void copy_to_render();
 
 	WorldMenu& GetMenu();

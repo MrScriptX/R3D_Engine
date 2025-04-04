@@ -71,20 +71,42 @@ void Application::Start()
 	std::binary_semaphore single_thread { 1 };
 	std::binary_semaphore sync_data { 1 };
 
+	;
+
 	auto task = [&chunk_manager, &scene, &single_thread, &sync_data, this]() {
+		chunk_manager.copy_to_world(); // copy current rendered chunks to world
+
 		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera());
 		const auto update_z = chunk_manager.compute_world_update_z(*mp_engine->GetMainCamera());
 		const auto meshes = chunk_manager.compute_meshes(update_x, update_z);
 
 		if (update_x.has_value() || update_z.has_value())
 		{
+			std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+
 			sync_data.acquire();
 
 			chunk_manager.copy_to_render();
+
+			std::chrono::high_resolution_clock::time_point copy_phase = std::chrono::high_resolution_clock::now();
+			const auto copy_duration = std::chrono::duration_cast<std::chrono::milliseconds>(copy_phase - start).count();
+
 			chunk_manager.render_meshes(meshes, update_x, update_z);
+
+			std::chrono::high_resolution_clock::time_point render_phase = std::chrono::high_resolution_clock::now();
+			const auto render_duration = std::chrono::duration_cast<std::chrono::milliseconds>(render_phase - copy_phase).count();
+
+
 			scene->ToUpdate();
 
 			sync_data.release();
+
+			std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+			const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+			
+			Watcher::WatchVariable("blocking phase", duration);
+			Watcher::WatchVariable("copy phase", copy_duration);
+			Watcher::WatchVariable("render phase", render_duration);
 		}
 
 		single_thread.release();

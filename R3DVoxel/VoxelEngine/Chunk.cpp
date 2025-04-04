@@ -169,7 +169,7 @@ void Chunk::DeleteChunk(std::shared_ptr<GameObject> world)
 
 Geometry Chunk::compute_mesh(const std::map<ChunkKey, std::unique_ptr<Chunk>>& chunk_map)
 {
-	m_visible_voxel = { true };
+	m_visible_voxel = { false };
 
 	Geometry mesh;
 	for (uint32_t x = 0; x < Voxel::CHUNK_SIZE; x++)
@@ -275,7 +275,7 @@ bool Chunk::GetVoxel(const uint32_t x, const uint32_t y, const uint32_t z) const
 
 bool Chunk::is_active() const
 {
-	return m_active_voxel.any();
+	return !(m_active_voxel == false);
 }
 
 glm::vec3 Chunk::GetPosition() const
