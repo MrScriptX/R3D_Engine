@@ -26,7 +26,6 @@ public:
 	~ChunkManager() = default;
 
 	void CreateWorld();
-	bool UpdateWorld(const Camera& camera);
 
 	std::optional<render_update_t> compute_world_update_x(const Camera& camera);
 	std::optional<render_update_t> compute_world_update_z(const Camera& camera);
@@ -34,13 +33,7 @@ public:
 	std::map<ChunkKey, Geometry> compute_meshes(std::optional<render_update_t> x, std::optional<render_update_t> z);
 	void render_meshes(const std::map<ChunkKey, Geometry>& meshes, std::optional<render_update_t> x, std::optional<render_update_t> z);
 
-	void update_world_x(int32_t create_x, int32_t update_xplus, int32_t update_xmin) const;
-	void update_world_z(int32_t create_z, int32_t update_zplus, int32_t update_zmin) const;
-
 	void copy_to_render();
-
-	void CreateNewChunk(int32_t x, int32_t y, int32_t z);
-	void DestroyChunk(const int32_t x, const int32_t y, const int32_t z);
 
 	WorldMenu& GetMenu();
 
