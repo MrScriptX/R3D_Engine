@@ -29,10 +29,10 @@ public:
 	bool UpdateWorld(const Camera& camera);
 
 	std::optional<render_update_t> compute_world_update_x(const Camera& camera);
-	render_update_t compute_world_update_z(const Camera& camera);
+	std::optional<render_update_t> compute_world_update_z(const Camera& camera);
 
-	std::map<ChunkKey, Geometry> compute_meshes(int32_t create_x, int32_t update_xplus, int32_t update_xmin);
-	void render_meshes(const std::map<ChunkKey, Geometry>& meshes, int32_t create_x, int32_t update_xplus, int32_t update_xmin);
+	std::map<ChunkKey, Geometry> compute_meshes(std::optional<render_update_t> x, std::optional<render_update_t> z);
+	void render_meshes(const std::map<ChunkKey, Geometry>& meshes, std::optional<render_update_t> x, std::optional<render_update_t> z);
 
 	void update_world_x(int32_t create_x, int32_t update_xplus, int32_t update_xmin) const;
 	void update_world_z(int32_t create_z, int32_t update_zplus, int32_t update_zmin) const;
@@ -47,6 +47,8 @@ public:
 private:
 	render_update_t update_x_forward(const Camera& camera);
 	render_update_t update_x_backward(const Camera& camera);
+	render_update_t update_z_forward(const Camera& camera);
+	render_update_t update_z_backward(const Camera& camera);
 
 	std::unique_ptr<Chunk> create_chunk(const int32_t& x, const int32_t& y, const int32_t& z) const;
 

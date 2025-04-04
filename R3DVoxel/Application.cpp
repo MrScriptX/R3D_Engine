@@ -72,16 +72,16 @@ void Application::Start()
 	std::binary_semaphore sync_data { 1 };
 
 	auto task = [&chunk_manager, &scene, &single_thread, &sync_data, this]() {
-		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera()); // secondary thread
-		if (update_x.has_value())
-		{
-			auto result = update_x.value();
-			auto meshes = chunk_manager.compute_meshes(result.created, result.update_plus, result.update_min); // secondary thread
+		const auto update_x = chunk_manager.compute_world_update_x(*mp_engine->GetMainCamera());
+		const auto update_z = chunk_manager.compute_world_update_z(*mp_engine->GetMainCamera());
+		const auto meshes = chunk_manager.compute_meshes(update_x, update_z);
 
-			sync_data.acquire(); // sync threads here
-			
+		if (update_x.has_value() || update_z.has_value())
+		{
+			sync_data.acquire();
+
 			chunk_manager.copy_to_render();
-			chunk_manager.render_meshes(meshes, result.created, result.update_plus, result.update_min);
+			chunk_manager.render_meshes(meshes, update_x, update_z);
 			scene->ToUpdate();
 
 			sync_data.release();
